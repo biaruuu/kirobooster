@@ -1,0 +1,180 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>Profile Limits</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Karla:wght@400;500;700&family=Poppins:wght@400;600;700&display=swap" rel="stylesheet">
+    
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    fontFamily: {
+                        'sans': ['Karla', 'sans-serif'],
+                        'header': ['Poppins', 'sans-serif'],
+                    },
+                    colors: {
+                        'kiro-blue': '#007DFE',
+                        'kiro-bg': '#F4F7F9',
+                        'gray-bar': '#E5E7EB',
+                        'text-dark': '#003568',
+                    }
+                }
+            }
+        }
+    </script>
+    <style>
+        body { background-color: #F4F7F9; -webkit-tap-highlight-color: transparent; }
+        
+        #app-wrapper {
+            max-width: 480px;
+            margin: 0 auto;
+            background-color: #F4F7F9;
+            min-height: 100vh;
+            position: relative;
+            padding-bottom: 90px;
+        }
+
+        /* Progress Bar Styling to match GCash */
+        .progress-track {
+            background-color: #E5E7EB;
+            border-radius: 6px;
+            height: 14px;
+            overflow: hidden;
+            width: 100%;
+        }
+        .progress-fill {
+            background-color: #007DFE;
+            height: 100%;
+            border-radius: 6px;
+            transition: width 0.6s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+
+        /* Smooth Fade In */
+        .fade-in { animation: fadeIn 0.4s ease-out; }
+        @keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
+    </style>
+</head>
+<body>
+
+    <div id="app-wrapper">
+        
+        <header class="bg-kiro-blue text-white h-16 flex items-center px-4 sticky top-0 z-40 shadow-sm">
+            <a href="/profile" class="p-2 -ml-2 hover:bg-white/20 rounded-full transition">
+                <svg class="w-6 h-6" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M10 19l-7-7m0 0l7-7m-7 7h18"/></svg>
+            </a>
+            <h1 class="font-header font-semibold text-lg tracking-wide flex-1 text-center mr-8">Profile Limits</h1>
+            <button class="hover:bg-white/20 rounded-full p-1 transition">
+                <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"/></svg>
+            </button>
+        </header>
+
+        <main class="fade-in">
+            
+            <div class="bg-kiro-blue pb-8 px-6 pt-4 mb-4">
+                <h2 id="planName" class="text-white font-header font-bold text-3xl">Kiro Basic</h2>
+            </div>
+
+            <div class="bg-white px-6 py-5 mb-3 border-y border-gray-100">
+                <h3 class="text-text-dark font-header font-bold text-base mb-1">Cookie Storage Limit</h3>
+                <p class="text-gray-500 text-xs mb-4">Maximum number of active accounts allowed in your plan.</p>
+                
+                <div class="flex items-baseline gap-1 mb-2">
+                    <span class="text-text-dark font-bold text-xl">₱ <span id="cookieUsed">0.00</span></span>
+                    <span class="text-gray-500 text-xs font-medium">used out of <span id="cookieMax">10.00</span></span>
+                </div>
+                
+                <div class="progress-track">
+                    <div id="cookieBar" class="progress-fill" style="width: 0%"></div>
+                </div>
+                
+                <p class="text-center text-gray-500 text-xs mt-2 font-medium">₱ <span id="cookieLeft">10.00</span> left</p>
+                <p class="text-center text-gray-400 text-[10px] mt-1">Refreshes upon plan upgrade</p>
+            </div>
+
+            <div class="px-6 mt-6">
+                <p class="text-center text-gray-500 text-xs mb-2 font-medium">Learn more about your limits <a href="#" class="text-kiro-blue font-bold no-underline">here.</a></p>
+            </div>
+
+            <div class="bg-white mt-6 py-4 text-center cursor-pointer active:bg-gray-50 transition border-y border-gray-100" onclick="window.location.href='/transactions'">
+                <span class="text-kiro-blue font-bold text-sm flex items-center justify-center gap-1">
+                    View Transaction History <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"/></svg>
+                </span>
+            </div>
+
+        </main>
+
+        <nav class="fixed bottom-0 w-full max-w-[480px] bg-white border-t border-gray-100 pb-5 pt-2 px-4 flex justify-between items-end z-50 text-[10px] font-medium text-gray-400">
+            <a href="/home" class="flex flex-col items-center w-1/5 hover:text-kiro-blue transition">
+                <svg class="w-6 h-6 mb-1" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 12l2-2m0 0l7-7 7 7M5 10v10a1 1 0 001 1h3m10-11l2 2m-2-2v10a1 1 0 01-1 1h-3m-6 0a1 1 0 001-1v-4a1 1 0 011-1h2a1 1 0 011 1v4a1 1 0 001 1m-6 0h6"/></svg>
+                <span>Home</span>
+            </a>
+            <a href="/inbox" class="flex flex-col items-center w-1/5 hover:text-kiro-blue transition">
+                <svg class="w-6 h-6 mb-1" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 8l7.89 5.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z"/></svg>
+                <span>Inbox</span>
+            </a>
+            <div class="w-1/5 relative flex justify-center group cursor-pointer tap-effect">
+                <a href="/boost" class="absolute -top-8 bg-gradient-to-br from-[#007DFE] to-[#0055aa] w-14 h-14 rounded-2xl flex items-center justify-center text-white shadow-floating transform transition-all duration-300 group-hover:-translate-y-1">
+                    <svg class="w-7 h-7" fill="currentColor" viewBox="0 0 24 24"><path d="M13 10V3L4 14h7v7l9-11h-7z"/></svg>
+                </a>
+                <span class="mt-7 text-kiro-blue font-bold">Kiro</span>
+            </div>
+            <a href="/transactions" class="flex flex-col items-center w-1/5 hover:text-kiro-blue transition">
+                <svg class="w-6 h-6 mb-1" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2"/></svg>
+                <span>Orders</span>
+            </a>
+            <a href="/profile" class="flex flex-col items-center w-1/5 text-kiro-blue">
+                <svg class="w-6 h-6 mb-1" fill="currentColor" viewBox="0 0 24 24"><path d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z"/></svg>
+                <span>Profile</span>
+            </a>
+        </nav>
+
+    </div>
+
+    <script>
+        const token = localStorage.getItem('kb_token');
+        if (!token) window.location.href = '/login';
+
+        async function loadLimits() {
+            try {
+                const res = await fetch('/api/user/stats', {
+                    headers: { 'Authorization': `Bearer ${token}` }
+                });
+                const data = await res.json();
+                
+                if (data.success) {
+                    const stats = data.stats;
+                    
+                    // Set Plan Name
+                    document.getElementById('planName').textContent = stats.plan === 'premium' ? 'Kiro Premium' : 'Kiro Basic';
+                    
+                    // --- COOKIE LIMITS ---
+                    const cookiesUsed = stats.cookieCount || 0;
+                    const cookiesMax = stats.cookieLimit || 10;
+                    const cookiesLeft = cookiesMax - cookiesUsed;
+                    
+                    // Calculate percentage but max at 100%
+                    let cookiePercent = (cookiesUsed / cookiesMax) * 100;
+                    if (cookiePercent > 100) cookiePercent = 100;
+
+                    // Update UI using "₱" symbol purely for style matching (optional, remove symbol if strict)
+                    document.getElementById('cookieUsed').textContent = cookiesUsed.toLocaleString() + ".00"; 
+                    document.getElementById('cookieMax').textContent = cookiesMax.toLocaleString() + ".00";
+                    document.getElementById('cookieLeft').textContent = cookiesLeft.toLocaleString() + ".00";
+                    
+                    // Animate Bar
+                    setTimeout(() => {
+                        document.getElementById('cookieBar').style.width = cookiePercent + '%';
+                    }, 300);
+                }
+            } catch (err) {
+                console.error('Load error:', err);
+            }
+        }
+
+        loadLimits();
+    </script>
+</body>
+</html>

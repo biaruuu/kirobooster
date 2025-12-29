@@ -1,0 +1,257 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>Kiro Login</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Karla:wght@400;500;700&family=Poppins:wght@400;600;700&display=swap" rel="stylesheet">
+    
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    fontFamily: {
+                        'sans': ['Karla', 'sans-serif'],
+                        'header': ['Poppins', 'sans-serif'],
+                    },
+                    colors: {
+                        'kiro-blue': '#007DFE',
+                        'kiro-dark': '#0055aa',
+                        'kiro-bg': '#F4F7F9',
+                        'gray-label': '#9CA3AF',
+                    }
+                }
+            }
+        }
+    </script>
+    <style>
+        body { background-color: #007DFE; -webkit-tap-highlight-color: transparent; }
+        
+        #app-wrapper {
+            max-width: 480px;
+            margin: 0 auto;
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+            background-color: #007DFE;
+        }
+
+        /* White Content Card with Curve */
+        .content-area {
+            background-color: white;
+            border-top-left-radius: 24px;
+            border-top-right-radius: 24px;
+            flex: 1;
+            padding: 40px 28px;
+            box-shadow: 0 -10px 25px rgba(0,0,0,0.05);
+            animation: slideUp 0.6s cubic-bezier(0.16, 1, 0.3, 1);
+        }
+
+        /* --- FLOATING LABEL INPUT CSS --- */
+        .input-container {
+            position: relative;
+            margin-bottom: 24px;
+        }
+
+        .custom-input {
+            width: 100%;
+            height: 56px;
+            padding: 20px 16px 6px 16px; /* Space for label at top */
+            font-family: 'Karla', sans-serif;
+            font-size: 16px;
+            color: #1F2937;
+            background-color: #fff;
+            border: 1px solid #E5E7EB;
+            border-radius: 8px;
+            outline: none;
+            transition: all 0.2s ease;
+        }
+
+        /* Focus State */
+        .custom-input:focus {
+            border-color: #007DFE;
+            box-shadow: 0 0 0 1px #007DFE;
+        }
+
+        /* The Label */
+        .custom-label {
+            position: absolute;
+            left: 16px;
+            top: 18px;
+            font-size: 15px;
+            color: #6B7280;
+            pointer-events: none;
+            transition: all 0.2s ease-out;
+            background-color: transparent;
+        }
+
+        /* Floating Animation Logic */
+        .custom-input:focus ~ .custom-label,
+        .custom-input:not(:placeholder-shown) ~ .custom-label {
+            top: 8px;
+            font-size: 11px;
+            color: #007DFE;
+            font-weight: 700;
+        }
+
+        /* Right Icon (Eye) */
+        .input-icon {
+            position: absolute;
+            right: 16px;
+            top: 50%;
+            transform: translateY(-50%);
+            color: #9CA3AF;
+            cursor: pointer;
+            transition: color 0.2s;
+        }
+        .custom-input:focus ~ .input-icon { color: #007DFE; }
+
+        /* Animations */
+        @keyframes slideUp { from { transform: translateY(60px); opacity: 0; } to { transform: translateY(0); opacity: 1; } }
+        @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
+
+        .tap-effect:active { transform: scale(0.97); transition: transform 0.1s; }
+        
+        .spinner {
+            border: 3px solid rgba(255, 255, 255, 0.3);
+            width: 20px;
+            height: 20px;
+            border-radius: 50%;
+            border-left-color: white;
+            animation: spin 0.8s linear infinite;
+        }
+        @keyframes spin { 0% { transform: rotate(0deg); } 100% { transform: rotate(360deg); } }
+    </style>
+</head>
+<body>
+
+    <div id="app-wrapper">
+        
+        <div class="h-40 flex flex-col items-center justify-center text-white relative shrink-0">
+            <div class="absolute top-0 right-0 w-32 h-32 bg-white/10 rounded-full blur-3xl -mr-10 -mt-10 pointer-events-none"></div>
+            <div class="absolute bottom-0 left-0 w-24 h-24 bg-white/10 rounded-full blur-3xl -ml-5 pointer-events-none"></div>
+
+            <div class="w-16 h-16 bg-white/20 backdrop-blur-md rounded-2xl flex items-center justify-center shadow-lg mb-3 animate-[fadeIn_0.8s]">
+                <svg class="w-8 h-8 text-white" fill="currentColor" viewBox="0 0 24 24"><path d="M13 10V3L4 14h7v7l9-11h-7z"/></svg>
+            </div>
+            <h1 class="font-header font-bold text-xl tracking-wide opacity-90">Kiro</h1>
+        </div>
+
+        <div class="content-area">
+            
+            <div class="mb-8">
+                <h2 class="font-header font-bold text-2xl text-gray-800 mb-1">Welcome Back!</h2>
+                <p class="text-gray-400 text-sm">Please log in to your account.</p>
+            </div>
+
+            <div class="input-container">
+                <input type="text" id="username" class="custom-input" placeholder=" ">
+                <label class="custom-label">Username</label>
+            </div>
+
+            <div class="input-container relative">
+                <input type="password" id="password" class="custom-input" placeholder=" ">
+                <label class="custom-label">Password</label>
+                
+                <div class="input-icon" onclick="togglePassword()">
+                    <svg id="eyeIcon" class="w-6 h-6 hover:text-kiro-blue transition" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"/><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z"/></svg>
+                </div>
+            </div>
+            
+            <div class="flex justify-end -mt-4 mb-8">
+                <a href="#" onclick="alert('Please contact Support')" class="text-xs font-bold text-kiro-blue hover:text-kiro-dark transition">Forgot Password?</a>
+            </div>
+
+            <div id="errorBox" class="hidden bg-red-50 border border-red-100 rounded-xl p-3 mb-6 flex items-start gap-2 animate-[fadeIn_0.3s]">
+                <svg class="w-5 h-5 text-red-500 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4m0 4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"/></svg>
+                <p id="errorText" class="text-xs text-red-600 font-medium pt-0.5">Invalid credentials</p>
+            </div>
+
+            <button onclick="login()" id="loginBtn" class="w-full bg-kiro-blue text-white font-bold py-4 rounded-full text-base shadow-lg shadow-blue-200 tap-effect flex justify-center items-center gap-2 mb-6 transition-all hover:shadow-xl active:scale-[0.98]">
+                <span>Log In</span>
+            </button>
+
+            <div class="text-center pb-4">
+                <p class="text-sm text-gray-500 font-medium">Don't have an account? <a href="/register" class="text-kiro-blue font-bold ml-1 hover:underline tap-effect">Create one</a></p>
+            </div>
+
+        </div>
+        
+    </div>
+
+    <script>
+        // Auto-redirect if logged in
+        if (localStorage.getItem('kb_token')) {
+            window.location.href = '/home';
+        }
+
+        // Toggle Password
+        function togglePassword() {
+            const input = document.getElementById('password');
+            const icon = document.getElementById('eyeIcon');
+            if (input.type === 'password') {
+                input.type = 'text';
+                icon.classList.add('text-kiro-blue');
+                icon.innerHTML = '<path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13.875 18.825A10.05 10.05 0 0112 19c-4.478 0-8.268-2.943-9.543-7a9.97 9.97 0 011.563-3.029m5.858.908a3 3 0 114.243 4.243M9.878 9.878l4.242 4.242M9.88 9.88l-3.29-3.29m7.532 7.532l3.29 3.29M3 3l3.59 3.59m0 0A9.953 9.953 0 0112 5c4.478 0 8.268 2.943 9.543 7a10.025 10.025 0 01-4.132 5.411m0 0L21 21" />';
+            } else {
+                input.type = 'password';
+                icon.classList.remove('text-kiro-blue');
+                icon.innerHTML = '<path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"/><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z"/>';
+            }
+        }
+
+        // Login Logic
+        async function login() {
+            const username = document.getElementById('username').value.trim();
+            const password = document.getElementById('password').value.trim();
+            const btn = document.getElementById('loginBtn');
+            const errorBox = document.getElementById('errorBox');
+            const errorText = document.getElementById('errorText');
+
+            errorBox.classList.add('hidden');
+
+            if (!username || !password) {
+                errorText.textContent = "Please enter both username and password.";
+                errorBox.classList.remove('hidden');
+                return;
+            }
+
+            btn.disabled = true;
+            btn.innerHTML = '<div class="spinner"></div>';
+
+            try {
+                const res = await fetch('/api/auth/login', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ username, password })
+                });
+
+                const data = await res.json();
+
+                if (data.success) {
+                    localStorage.setItem('kb_token', data.token);
+                    if (data.user) {
+                        localStorage.setItem('kb_user', JSON.stringify(data.user));
+                    }
+                    window.location.href = '/home';
+                } else {
+                    throw new Error(data.message || 'Login failed');
+                }
+
+            } catch (err) {
+                errorText.textContent = err.message || "Connection error.";
+                errorBox.classList.remove('hidden');
+                btn.disabled = false;
+                btn.innerHTML = '<span>Log In</span>';
+            }
+        }
+
+        document.addEventListener('keypress', function (e) {
+            if (e.key === 'Enter') {
+                login();
+            }
+        });
+    </script>
+</body>
+</html>

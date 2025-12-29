@@ -1,0 +1,312 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>Kiroboost - Inbox</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700;800&family=Karla:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        primary: '#007DFE',
+                        primaryDark: '#0066CC',
+                        primaryLight: '#E8F4FF',
+                        navy: '#1A1F71',
+                        grayText: '#6B7280',
+                        grayBg: '#F5F7FA',
+                        success: '#22C55E',
+                        error: '#EF4444',
+                        warning: '#F59E0B'
+                    },
+                    fontFamily: {
+                        poppins: ['Poppins', 'sans-serif'],
+                        karla: ['Karla', 'sans-serif']
+                    }
+                }
+            }
+        }
+    </script>
+    <style>
+        * { -webkit-tap-highlight-color: transparent; box-sizing: border-box; }
+        body { font-family: 'Karla', sans-serif; padding-bottom: 80px; }
+        h1, h2, h3, h4, h5, h6, .font-poppins { font-family: 'Poppins', sans-serif; }
+        .animate-fade { animation: fadeIn 0.3s ease-out; }
+        @keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
+        .spinner { border: 3px solid rgba(0,125,254,0.2); border-top-color: #007DFE; border-radius: 50%; width: 24px; height: 24px; animation: spin 0.8s linear infinite; }
+        @keyframes spin { to { transform: rotate(360deg); } }
+        .nav-item.active { color: #007DFE; }
+        .message-card:active { transform: scale(0.98); transition: transform 0.1s; }
+        .filter-btn.active { background-color: #007DFE; color: white; }
+    </style>
+    <link rel="stylesheet" href="/christmas.css">
+</head>
+<body class="page-transition bg-grayBg min-h-screen">
+    <!-- Christmas Lights -->
+    <div class="christmas-lights">
+        <div class="light"></div>
+        <div class="light"></div>
+        <div class="light"></div>
+        <div class="light"></div>
+        <div class="light"></div>
+        <div class="light"></div>
+        <div class="light"></div>
+        <div class="light"></div>
+        <div class="light"></div>
+        <div class="light"></div>
+        <div class="light"></div>
+        <div class="light"></div>
+        <div class="light"></div>
+        <div class="light"></div>
+    </div>
+
+    <!-- Falling Snowflakes -->
+    <div class="snowflake">❄</div>
+    <div class="snowflake">❅</div>
+    <div class="snowflake">❆</div>
+    <div class="snowflake">❄</div>
+    <div class="snowflake">❅</div>
+    <div class="snowflake">❆</div>
+    <div class="snowflake">❄</div>
+    <div class="snowflake">❅</div>
+    <div class="snowflake">❆</div>
+    <div class="snowflake">❄</div>
+    <div class="snowflake">❅</div>
+    <div class="snowflake">❆</div>
+    <div class="snowflake">❄</div>
+    <div class="snowflake">❅</div>
+    <div class="snowflake">❆</div>
+    <div class="snowflake">❄</div>
+    <div class="snowflake">❅</div>
+    <div class="snowflake">❆</div>
+    <div class="snowflake">❄</div>
+    <div class="snowflake">❅</div>
+
+    <!-- Header -->
+    <div class="bg-primary px-5 pt-12 pb-4" style="margin-top: 50px;">
+        <div class="flex items-center justify-between">
+            <h1 class="text-white text-xl font-poppins font-bold">Inbox</h1>
+        </div>
+    </div>
+
+    <!-- Filters -->
+    <div class="bg-primary px-5 pb-4">
+        <div class="flex items-center gap-2 overflow-x-auto pb-2">
+            <span class="text-blue-100 text-sm font-karla mr-2">Filter</span>
+            <button onclick="setFilter('all')" class="filter-btn active px-4 py-2 bg-white/20 text-white rounded-full text-sm font-karla font-medium whitespace-nowrap transition-colors">All</button>
+            <button onclick="setFilter('unread')" class="filter-btn px-4 py-2 bg-white/20 text-white rounded-full text-sm font-karla font-medium whitespace-nowrap transition-colors">Unread</button>
+            <button onclick="setFilter('announcements')" class="filter-btn px-4 py-2 bg-white/20 text-white rounded-full text-sm font-karla font-medium whitespace-nowrap transition-colors">Announcements</button>
+            <button onclick="setFilter('promos')" class="filter-btn px-4 py-2 bg-white/20 text-white rounded-full text-sm font-karla font-medium whitespace-nowrap transition-colors">Promos</button>
+        </div>
+    </div>
+
+    <!-- Messages List -->
+    <div class="px-5 py-6">
+        <p class="text-grayText text-sm font-karla mb-4">Latest</p>
+        
+        <div id="messagesList" class="space-y-3">
+            <div class="flex items-center justify-center py-8">
+                <div class="spinner"></div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Message Detail Modal -->
+    <div id="messageModal" class="hidden fixed inset-0 bg-black/50 z-50">
+        <div class="bg-white h-full overflow-y-auto animate-fade">
+            <!-- Modal Header -->
+            <div class="bg-primary px-5 pt-12 pb-6 sticky top-0">
+                <div class="flex items-center justify-between">
+                    <button onclick="closeMessage()" class="p-2 -ml-2 text-white">
+                        <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7"/>
+                        </svg>
+                    </button>
+                    <h1 class="text-white text-lg font-poppins font-semibold">Inbox</h1>
+                    <button onclick="deleteMessage()" class="p-2 text-white">
+                        <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"/>
+                        </svg>
+                    </button>
+                </div>
+            </div>
+
+            <!-- Modal Content -->
+            <div class="px-5 py-6">
+                <div class="bg-white rounded-2xl shadow-sm p-5">
+                    <div class="flex flex-col items-center mb-6">
+                        <div class="w-16 h-16 bg-primaryLight rounded-full flex items-center justify-center mb-4">
+                            <svg class="w-8 h-8 text-primary" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 8l7.89 5.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z"/>
+                            </svg>
+                        </div>
+                        <p id="messageDate" class="text-grayText text-sm font-karla mb-2">--</p>
+                        <h2 id="messageTitle" class="text-xl text-primary font-poppins font-bold text-center">--</h2>
+                    </div>
+
+                    <div class="border-t border-gray-100 pt-6">
+                        <div id="messageImage" class="hidden mb-4 rounded-xl overflow-hidden">
+                            <img id="messageImg" class="w-full" src="" alt="">
+                        </div>
+                        <p id="messageContent" class="text-navy font-karla leading-relaxed whitespace-pre-wrap">--</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Bottom Navigation -->
+    <nav class="fixed bottom-0 left-0 right-0 bg-white border-t border-gray-100 px-2 py-2 z-40">
+        <div class="max-w-lg mx-auto flex items-center justify-around">
+            <a href="/home" class="nav-item flex flex-col items-center py-1 px-3 text-grayText">
+                <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 12l2-2m0 0l7-7 7 7M5 10v10a1 1 0 001 1h3m10-11l2 2m-2-2v10a1 1 0 01-1 1h-3m-6 0a1 1 0 001-1v-4a1 1 0 011-1h2a1 1 0 011 1v4a1 1 0 001 1m-6 0h6"/>
+                </svg>
+                <span class="text-xs mt-1 font-karla">Home</span>
+            </a>
+            <a href="/inbox" class="nav-item active flex flex-col items-center py-1 px-3">
+                <svg class="w-6 h-6" fill="currentColor" viewBox="0 0 24 24">
+                    <path d="M3 8l7.89 5.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z"/>
+                </svg>
+                <span class="text-xs mt-1 font-karla font-medium">Inbox</span>
+            </a>
+            <a href="/boost" class="flex flex-col items-center -mt-5">
+                <div class="w-14 h-14 bg-primary rounded-full flex items-center justify-center shadow-lg border-4 border-white">
+                    <svg class="w-7 h-7 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M13 10V3L4 14h7v7l9-11h-7z"/>
+                    </svg>
+                </div>
+                <span class="text-xs mt-1 font-karla text-grayText">Boost</span>
+            </a>
+            <a href="/transactions" class="nav-item flex flex-col items-center py-1 px-3 text-grayText">
+                <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2"/>
+                </svg>
+                <span class="text-xs mt-1 font-karla">Orders</span>
+            </a>
+            <a href="/profile" class="nav-item flex flex-col items-center py-1 px-3 text-grayText">
+                <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z"/>
+                </svg>
+                <span class="text-xs mt-1 font-karla">Profile</span>
+            </a>
+        </div>
+    </nav>
+
+    <script>
+        const token = localStorage.getItem('kb_token');
+        if (!token) window.location.href = '/login';
+
+        let currentFilter = 'all';
+        let currentMessageId = null;
+
+        async function loadMessages() {
+            const container = document.getElementById('messagesList');
+            container.innerHTML = '<div class="flex items-center justify-center py-8"><div class="spinner"></div></div>';
+
+            try {
+                const res = await fetch(`/api/user/inbox?filter=${currentFilter}&limit=50`, {
+                    headers: { 'Authorization': `Bearer ${token}` }
+                });
+                const data = await res.json();
+                
+                if (data.success) {
+                    if (data.messages.length === 0) {
+                        container.innerHTML = `
+                            <div class="text-center py-12">
+                                <svg class="w-16 h-16 text-gray-200 mx-auto mb-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M3 8l7.89 5.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z"/>
+                                </svg>
+                                <p class="text-grayText font-karla">No messages</p>
+                            </div>`;
+                        return;
+                    }
+
+                    container.innerHTML = data.messages.map(m => `
+                        <div onclick="openMessage('${m.messageId}')" class="message-card bg-white rounded-2xl p-4 shadow-sm cursor-pointer hover:shadow-md transition-shadow">
+                            <div class="flex items-start gap-4">
+                                <div class="w-12 h-12 ${m.isRead ? 'bg-gray-100' : 'bg-primaryLight'} rounded-full flex items-center justify-center flex-shrink-0">
+                                    <svg class="w-6 h-6 ${m.isRead ? 'text-grayText' : 'text-primary'}" fill="${m.isRead ? 'none' : 'currentColor'}" stroke="currentColor" viewBox="0 0 24 24">
+                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 8l7.89 5.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z"/>
+                                    </svg>
+                                </div>
+                                <div class="flex-1 min-w-0">
+                                    <div class="flex items-center justify-between mb-1">
+                                        <h3 class="text-navy ${m.isRead ? 'font-medium' : 'font-bold'} font-karla truncate pr-2">${m.title}</h3>
+                                        <span class="text-grayText text-xs font-karla whitespace-nowrap">${m.date}</span>
+                                    </div>
+                                    <p class="text-grayText text-sm font-karla line-clamp-2">${m.content}</p>
+                                </div>
+                            </div>
+                        </div>
+                    `).join('');
+                }
+            } catch (err) {
+                container.innerHTML = '<p class="text-error text-sm text-center py-4">Failed to load messages</p>';
+            }
+        }
+
+        function setFilter(filter) {
+            currentFilter = filter;
+            document.querySelectorAll('.filter-btn').forEach(btn => {
+                btn.classList.toggle('active', btn.textContent.toLowerCase().includes(filter === 'all' ? 'all' : filter));
+            });
+            loadMessages();
+        }
+
+        async function openMessage(messageId) {
+            currentMessageId = messageId;
+            document.getElementById('messageModal').classList.remove('hidden');
+
+            try {
+                const res = await fetch(`/api/user/inbox/${messageId}`, {
+                    headers: { 'Authorization': `Bearer ${token}` }
+                });
+                const data = await res.json();
+                
+                if (data.success) {
+                    const m = data.message;
+                    document.getElementById('messageDate').textContent = `${m.date}, ${m.time}`;
+                    document.getElementById('messageTitle').textContent = m.title;
+                    document.getElementById('messageContent').textContent = m.content;
+                    
+                    if (m.imageUrl) {
+                        document.getElementById('messageImg').src = m.imageUrl;
+                        document.getElementById('messageImage').classList.remove('hidden');
+                    } else {
+                        document.getElementById('messageImage').classList.add('hidden');
+                    }
+
+                    loadMessages(); // Refresh to update read status
+                }
+            } catch (err) {
+                console.error('Error loading message:', err);
+            }
+        }
+
+        function closeMessage() {
+            document.getElementById('messageModal').classList.add('hidden');
+            currentMessageId = null;
+        }
+
+        async function deleteMessage() {
+            if (!currentMessageId) return;
+            
+            try {
+                await fetch(`/api/user/inbox/${currentMessageId}`, {
+                    method: 'DELETE',
+                    headers: { 'Authorization': `Bearer ${token}` }
+                });
+                closeMessage();
+                loadMessages();
+            } catch (err) {
+                console.error('Error deleting message:', err);
+            }
+        }
+
+        loadMessages();
+    </script>
+</body>
+</html>
