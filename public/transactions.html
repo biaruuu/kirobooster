@@ -1,0 +1,377 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>Kiroboost - Orders</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700;800&family=Karla:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        primary: '#007DFE',
+                        primaryDark: '#0066CC',
+                        primaryLight: '#E8F4FF',
+                        navy: '#1A1F71',
+                        grayText: '#6B7280',
+                        grayBg: '#F5F7FA',
+                        success: '#22C55E',
+                        error: '#EF4444',
+                        warning: '#F59E0B'
+                    },
+                    fontFamily: {
+                        poppins: ['Poppins', 'sans-serif'],
+                        karla: ['Karla', 'sans-serif']
+                    }
+                }
+            }
+        }
+    </script>
+    <style>
+        * { -webkit-tap-highlight-color: transparent; box-sizing: border-box; }
+        body { font-family: 'Karla', sans-serif; padding-bottom: 80px; }
+        h1, h2, h3, h4, h5, h6, .font-poppins { font-family: 'Poppins', sans-serif; }
+        input:focus { outline: none; box-shadow: 0 0 0 3px rgba(0, 125, 254, 0.15); }
+        .animate-fade { animation: fadeIn 0.3s ease-out; }
+        @keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
+        .spinner { border: 3px solid rgba(0,125,254,0.2); border-top-color: #007DFE; border-radius: 50%; width: 24px; height: 24px; animation: spin 0.8s linear infinite; }
+        @keyframes spin { to { transform: rotate(360deg); } }
+        .nav-item.active { color: #007DFE; }
+        .order-card:active { transform: scale(0.98); transition: transform 0.1s; }
+    </style>
+    <link rel="stylesheet" href="/christmas.css">
+</head>
+<body class="page-transition bg-grayBg min-h-screen">
+    <!-- Christmas Lights -->
+    <div class="christmas-lights">
+        <div class="light"></div>
+        <div class="light"></div>
+        <div class="light"></div>
+        <div class="light"></div>
+        <div class="light"></div>
+        <div class="light"></div>
+        <div class="light"></div>
+        <div class="light"></div>
+        <div class="light"></div>
+        <div class="light"></div>
+        <div class="light"></div>
+        <div class="light"></div>
+        <div class="light"></div>
+        <div class="light"></div>
+    </div>
+
+    <!-- Falling Snowflakes -->
+    <div class="snowflake">❄</div>
+    <div class="snowflake">❅</div>
+    <div class="snowflake">❆</div>
+    <div class="snowflake">❄</div>
+    <div class="snowflake">❅</div>
+    <div class="snowflake">❆</div>
+    <div class="snowflake">❄</div>
+    <div class="snowflake">❅</div>
+    <div class="snowflake">❆</div>
+    <div class="snowflake">❄</div>
+    <div class="snowflake">❅</div>
+    <div class="snowflake">❆</div>
+    <div class="snowflake">❄</div>
+    <div class="snowflake">❅</div>
+    <div class="snowflake">❆</div>
+    <div class="snowflake">❄</div>
+    <div class="snowflake">❅</div>
+    <div class="snowflake">❆</div>
+    <div class="snowflake">❄</div>
+    <div class="snowflake">❅</div>
+
+    <!-- Header -->
+    <div class="bg-primary px-5 pt-12 pb-6" style="margin-top: 50px;">
+        <h1 class="text-white text-xl font-poppins font-bold mb-4">Transaction History</h1>
+        
+        <!-- Summary -->
+        <div class="grid grid-cols-3 gap-3">
+            <div class="bg-white/10 rounded-xl p-3 text-center">
+                <p id="totalOrders" class="text-2xl font-poppins font-bold text-white">--</p>
+                <p class="text-blue-100 text-xs font-karla">Total</p>
+            </div>
+            <div class="bg-white/10 rounded-xl p-3 text-center">
+                <p id="completedOrders" class="text-2xl font-poppins font-bold text-white">--</p>
+                <p class="text-blue-100 text-xs font-karla">Completed</p>
+            </div>
+            <div class="bg-white/10 rounded-xl p-3 text-center">
+                <p id="pendingOrders" class="text-2xl font-poppins font-bold text-white">--</p>
+                <p class="text-blue-100 text-xs font-karla">Pending</p>
+            </div>
+        </div>
+    </div>
+
+    <!-- Search -->
+    <div class="px-5 py-4 bg-white shadow-sm">
+        <div class="relative">
+            <svg class="w-5 h-5 text-grayText absolute left-4 top-1/2 -translate-y-1/2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"/>
+            </svg>
+            <input type="text" id="searchInput" 
+                class="w-full pl-12 pr-4 py-3 bg-grayBg border-0 rounded-xl text-navy font-karla"
+                placeholder="Search by reference..."
+                onkeypress="if(event.key==='Enter')searchOrders()">
+            <button onclick="clearSearch()" id="clearBtn" class="hidden absolute right-4 top-1/2 -translate-y-1/2 text-grayText">
+                <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"/>
+                </svg>
+            </button>
+        </div>
+    </div>
+
+    <!-- Orders List -->
+    <div class="px-5 py-4">
+        <div id="ordersList" class="space-y-3">
+            <div class="flex items-center justify-center py-8">
+                <div class="spinner"></div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Order Detail Modal -->
+    <div id="orderModal" class="hidden fixed inset-0 bg-black/50 z-50">
+        <div class="bg-white h-full overflow-y-auto animate-fade">
+            <div class="bg-primary px-5 pt-12 pb-6 sticky top-0">
+                <div class="flex items-center gap-4">
+                    <button onclick="closeOrder()" class="p-2 -ml-2 text-white">
+                        <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7"/>
+                        </svg>
+                    </button>
+                    <h1 class="text-white text-lg font-poppins font-semibold">Transaction Details</h1>
+                </div>
+            </div>
+
+            <div class="px-5 py-6">
+                <div class="bg-white rounded-2xl shadow-sm p-5">
+                    <div class="flex flex-col items-center mb-6">
+                        <div class="w-16 h-16 bg-primaryLight rounded-full flex items-center justify-center mb-4">
+                            <svg class="w-8 h-8 text-primary" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2"/>
+                            </svg>
+                        </div>
+                        <h2 id="orderCustomer" class="text-xl text-navy font-poppins font-bold text-center">--</h2>
+                    </div>
+
+                    <div class="space-y-4 border-t border-gray-100 pt-6">
+                        <div class="flex justify-between">
+                            <span class="text-grayText font-karla">Order ID</span>
+                            <span id="orderId" class="text-navy font-medium font-karla">--</span>
+                        </div>
+                        <div class="flex justify-between">
+                            <span class="text-grayText font-karla">Quantity</span>
+                            <span id="orderQuantity" class="text-navy font-medium font-karla">--</span>
+                        </div>
+                        <div class="flex justify-between">
+                            <span class="text-grayText font-karla">Status</span>
+                            <span id="orderStatus" class="font-karla">--</span>
+                        </div>
+                        <div class="flex justify-between">
+                            <span class="text-grayText font-karla">Date & Time</span>
+                            <span id="orderDate" class="text-navy font-medium font-karla">--</span>
+                        </div>
+                        <div class="flex justify-between items-start">
+                            <span class="text-grayText font-karla">Reference Note</span>
+                            <span id="orderRef" class="text-navy font-medium font-karla text-right max-w-[60%]">--</span>
+                        </div>
+                    </div>
+                </div>
+
+                <p class="text-center text-grayText text-sm font-karla mt-6">
+                    Have questions? <a href="#" class="text-primary font-medium">Get Help</a>
+                </p>
+            </div>
+        </div>
+    </div>
+
+    <!-- Bottom Navigation -->
+    <nav class="fixed bottom-0 left-0 right-0 bg-white border-t border-gray-100 px-2 py-2 z-40">
+        <div class="max-w-lg mx-auto flex items-center justify-around">
+            <a href="/home" class="nav-item flex flex-col items-center py-1 px-3 text-grayText">
+                <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 12l2-2m0 0l7-7 7 7M5 10v10a1 1 0 001 1h3m10-11l2 2m-2-2v10a1 1 0 01-1 1h-3m-6 0a1 1 0 001-1v-4a1 1 0 011-1h2a1 1 0 011 1v4a1 1 0 001 1m-6 0h6"/>
+                </svg>
+                <span class="text-xs mt-1 font-karla">Home</span>
+            </a>
+            <a href="/inbox" class="nav-item flex flex-col items-center py-1 px-3 text-grayText">
+                <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 8l7.89 5.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z"/>
+                </svg>
+                <span class="text-xs mt-1 font-karla">Inbox</span>
+            </a>
+            <a href="/boost" class="flex flex-col items-center -mt-5">
+                <div class="w-14 h-14 bg-primary rounded-full flex items-center justify-center shadow-lg border-4 border-white">
+                    <svg class="w-7 h-7 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M13 10V3L4 14h7v7l9-11h-7z"/>
+                    </svg>
+                </div>
+                <span class="text-xs mt-1 font-karla text-grayText">Boost</span>
+            </a>
+            <a href="/transactions" class="nav-item active flex flex-col items-center py-1 px-3">
+                <svg class="w-6 h-6" fill="currentColor" viewBox="0 0 24 24">
+                    <path d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2"/>
+                </svg>
+                <span class="text-xs mt-1 font-karla font-medium">Orders</span>
+            </a>
+            <a href="/profile" class="nav-item flex flex-col items-center py-1 px-3 text-grayText">
+                <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z"/>
+                </svg>
+                <span class="text-xs mt-1 font-karla">Profile</span>
+            </a>
+        </div>
+    </nav>
+
+    <script>
+        const token = localStorage.getItem('kb_token');
+        if (!token) window.location.href = '/login';
+
+        let allOrders = [];
+
+        async function loadOrders() {
+            const container = document.getElementById('ordersList');
+            container.innerHTML = '<div class="flex items-center justify-center py-8"><div class="spinner"></div></div>';
+
+            try {
+                const res = await fetch('/api/user/orders/history?limit=100', {
+                    headers: { 'Authorization': `Bearer ${token}` }
+                });
+                const data = await res.json();
+                
+                if (data.success) {
+                    allOrders = data.orders;
+                    
+                    document.getElementById('totalOrders').textContent = data.summary.total;
+                    document.getElementById('completedOrders').textContent = data.summary.completed;
+                    document.getElementById('pendingOrders').textContent = data.summary.pending;
+                    
+                    renderOrders(allOrders);
+                }
+            } catch (err) {
+                container.innerHTML = '<p class="text-error text-sm text-center py-4">Failed to load orders</p>';
+            }
+        }
+
+        function renderOrders(orders) {
+            const container = document.getElementById('ordersList');
+            
+            if (orders.length === 0) {
+                container.innerHTML = `
+                    <div class="text-center py-12">
+                        <svg class="w-16 h-16 text-gray-200 mx-auto mb-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2"/>
+                        </svg>
+                        <p class="text-grayText font-karla">No orders yet</p>
+                        <a href="/boost" class="text-primary text-sm font-medium mt-2 inline-block">Create your first order</a>
+                    </div>`;
+                return;
+            }
+
+            const grouped = {};
+            orders.forEach(o => {
+                const date = o.date;
+                if (!grouped[date]) grouped[date] = [];
+                grouped[date].push(o);
+            });
+
+            let html = '';
+            Object.keys(grouped).forEach(date => {
+                html += `<div class="mb-4">
+                    <p class="text-grayText text-sm font-karla mb-2 font-medium">${date}</p>
+                    <div class="space-y-2">`;
+                
+                grouped[date].forEach(o => {
+                    const statusColors = {
+                        'pending': 'bg-amber-100 text-warning',
+                        'processing': 'bg-blue-100 text-primary',
+                        'completed': 'bg-green-100 text-success',
+                        'cancelled': 'bg-red-100 text-error',
+                        'refunded': 'bg-gray-100 text-grayText'
+                    };
+                    const statusClass = statusColors[o.status] || 'bg-gray-100 text-grayText';
+
+                    html += `
+                        <div onclick="openOrder('${o.orderId}')" class="order-card bg-white rounded-xl p-4 shadow-sm cursor-pointer">
+                            <div class="flex items-center justify-between">
+                                <div class="flex-1 min-w-0">
+                                    <p class="text-navy font-semibold font-karla truncate">${o.customerName}</p>
+                                    <p class="text-grayText text-sm font-karla">${o.time} • ${o.quantity} shares</p>
+                                </div>
+                                <span class="text-xs px-2 py-1 rounded-full ${statusClass} font-medium">${o.status}</span>
+                            </div>
+                        </div>`;
+                });
+                
+                html += '</div></div>';
+            });
+
+            container.innerHTML = html;
+        }
+
+        async function searchOrders() {
+            const query = document.getElementById('searchInput').value.trim();
+            if (!query) {
+                renderOrders(allOrders);
+                document.getElementById('clearBtn').classList.add('hidden');
+                return;
+            }
+
+            document.getElementById('clearBtn').classList.remove('hidden');
+
+            try {
+                const res = await fetch(`/api/user/orders/search?reference=${encodeURIComponent(query)}`, {
+                    headers: { 'Authorization': `Bearer ${token}` }
+                });
+                const data = await res.json();
+                
+                if (data.success) {
+                    renderOrders(data.orders);
+                } else {
+                    renderOrders([]);
+                }
+            } catch (err) {
+                renderOrders([]);
+            }
+        }
+
+        function clearSearch() {
+            document.getElementById('searchInput').value = '';
+            document.getElementById('clearBtn').classList.add('hidden');
+            renderOrders(allOrders);
+        }
+
+        function openOrder(orderId) {
+            const order = allOrders.find(o => o.orderId === orderId);
+            if (!order) return;
+
+            const statusColors = {
+                'pending': 'bg-amber-100 text-warning',
+                'processing': 'bg-blue-100 text-primary',
+                'completed': 'bg-green-100 text-success',
+                'cancelled': 'bg-red-100 text-error',
+                'refunded': 'bg-gray-100 text-grayText'
+            };
+            const statusClass = statusColors[order.status] || 'bg-gray-100 text-grayText';
+
+            document.getElementById('orderCustomer').textContent = order.customerName;
+            document.getElementById('orderId').textContent = order.orderId;
+            document.getElementById('orderQuantity').textContent = order.quantity + ' shares';
+            document.getElementById('orderStatus').innerHTML = `<span class="px-2 py-1 rounded-full ${statusClass} text-sm font-medium">${order.status}</span>`;
+            document.getElementById('orderDate').textContent = `${order.date} ${order.time}`;
+            document.getElementById('orderRef').textContent = order.referenceNote || '-';
+
+            document.getElementById('orderModal').classList.remove('hidden');
+        }
+
+        function closeOrder() {
+            document.getElementById('orderModal').classList.add('hidden');
+        }
+
+        loadOrders();
+    </script>
+</body>
+</html>
