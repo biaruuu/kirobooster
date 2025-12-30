@@ -9,7 +9,8 @@
      crossorigin="anonymous"></script>
 
     <script src="https://cdn.tailwindcss.com"></script>
-    <link href="https://fonts.googleapis.com/css2?family=Karla:wght@400;500;700&family=Poppins:wght@400;600;700&display=swap" rel="stylesheet">
+    
+    <link href="https://fonts.googleapis.com/css2?family=Karla:wght@400;500;700&family=Poppins:wght@400;500;600;700&display=swap" rel="stylesheet">
     
     <script>
         tailwind.config = {
@@ -20,14 +21,15 @@
                         'header': ['Poppins', 'sans-serif'],
                     },
                     colors: {
-                        'kiro-blue': '#007DFE',
-                        'kiro-dark': '#0055aa',
-                        'kiro-bg': '#F4F7F9',
+                        'brand-blue': '#007DFE',
+                        'brand-dark': '#0055aa',
+                        'brand-bg': '#F2F4F8',
                         'success': '#22C55E',
                         'warning': '#F59E0B',
                     },
                     boxShadow: {
-                        'card': '0 8px 20px rgba(0,0,0,0.06)',
+                        'soft': '0 4px 20px rgba(0,0,0,0.05)',
+                        'nav': '0 -4px 20px rgba(0,0,0,0.05)',
                         'floating': '0 10px 25px -5px rgba(0, 125, 254, 0.4)',
                         'fire': '0 0 15px rgba(255, 87, 34, 0.6), 0 0 5px rgba(255, 193, 7, 0.8)',
                     }
@@ -36,7 +38,7 @@
         }
     </script>
     <style>
-        body { background-color: #F4F7F9; -webkit-tap-highlight-color: transparent; }
+        body { background-color: #F2F4F8; -webkit-tap-highlight-color: transparent; }
         
         #app-wrapper {
             max-width: 480px;
@@ -45,30 +47,34 @@
             min-height: 100vh;
             position: relative;
             padding-bottom: 90px;
+            overflow-x: hidden;
         }
 
-        .curved-header {
-            background: linear-gradient(180deg, #007DFE 0%, #0069d9 100%);
-            border-bottom-left-radius: 40px;
-            border-bottom-right-radius: 40px;
+        /* GCash-style Header Gradient */
+        .brand-header {
+            background: linear-gradient(180deg, #007DFE 0%, #0055AA 100%);
+            padding-bottom: 25px;
+            border-bottom-left-radius: 25px;
+            border-bottom-right-radius: 25px;
         }
 
-        /* Animations */
-        .fade-in { animation: fadeIn 0.5s cubic-bezier(0.22, 1, 0.36, 1); }
-        @keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
+        /* Hide Scrollbar for Carousels */
+        .no-scrollbar::-webkit-scrollbar { display: none; }
+        .no-scrollbar { -ms-overflow-style: none; scrollbar-width: none; }
 
         .tap-effect:active { transform: scale(0.95); transition: transform 0.1s; opacity: 0.8; }
+        
+        .fade-in { animation: fadeIn 0.5s ease-out forwards; opacity: 0; transform: translateY(10px); }
+        @keyframes fadeIn { to { opacity: 1; transform: translateY(0); } }
 
-        /* --- PREMIUM FIRE ANIMATION --- */
+        /* --- PREMIUM FIRE ANIMATION (Preserved from old code) --- */
         .premium-fire {
-            background: #fff;
-            border: 1px solid #ff9800 !important;
+            border: 2px solid #ff9800 !important;
             animation: heat-pulse 2s infinite alternate;
             position: relative;
             overflow: hidden;
         }
 
-        /* The Heating Glow */
         @keyframes heat-pulse {
             0% { box-shadow: 0 4px 6px rgba(255, 152, 0, 0.2); }
             100% { box-shadow: 0 0 15px rgba(255, 87, 34, 0.5), 0 0 5px rgba(255, 193, 7, 0.6); border-color: #ff5722; }
@@ -90,200 +96,242 @@
 
         @keyframes shimmer {
             0% { left: -150%; }
-            30% { left: 150%; } /* Fast swipe */
-            100% { left: 150%; } /* Pause */
+            30% { left: 150%; } 
+            100% { left: 150%; } 
         }
 
-        /* Fire Text */
         .text-fire {
-            background: linear-gradient(to right, #d32f2f, #f57c00);
+            background: linear-gradient(to right, #ffffff, #ffd700);
             -webkit-background-clip: text;
             -webkit-text-fill-color: transparent;
+            text-shadow: 0 0 2px rgba(255, 0, 0, 0.5);
         }
-
-        .no-scrollbar::-webkit-scrollbar { display: none; }
-        .no-scrollbar { -ms-overflow-style: none; scrollbar-width: none; }
     </style>
 </head>
 <body>
 
     <div id="app-wrapper">
         
-        <header class="curved-header h-[190px] relative px-6 pt-10 shadow-sm z-10">
-            <div class="flex justify-between items-start">
-                <div class="flex items-center gap-2.5">
-                     <div class="w-9 h-9 bg-white/20 rounded-full flex items-center justify-center border border-white/30 text-white font-bold backdrop-blur-sm" id="headerAvatar">
+        <header class="brand-header px-5 pt-10 shadow-sm relative z-10">
+            <div class="flex justify-between items-start mb-6">
+                <div class="flex items-center gap-2">
+                     <div class="w-8 h-8 bg-white/20 rounded-full flex items-center justify-center border border-white/30 text-white font-bold backdrop-blur-sm text-sm" id="headerAvatar">
                         -
                      </div>
                     <div class="flex flex-col">
-                        <span class="text-white/90 text-[11px] font-medium tracking-wide">Hello!</span>
-                        <span id="headerName" class="text-white font-header font-bold text-lg leading-none truncate w-40 drop-shadow-sm">Loading...</span>
+                        <span class="text-white/90 text-[10px] font-medium tracking-wide">Hello!</span>
+                        <span id="headerName" class="text-white font-header font-bold text-lg leading-none truncate w-32 drop-shadow-sm">Loading...</span>
                     </div>
                 </div>
                 
-                <button class="bg-white/10 border border-white/20 rounded-full px-3 py-1 flex items-center gap-1 tap-effect backdrop-blur-md">
-                    <svg class="w-4 h-4 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8.228 9c.549-1.165 2.03-2 3.772-2 2.21 0 4 1.343 4 3 0 1.4-1.278 2.575-3.006 2.907-.542.104-.994.54-.994 1.093m0 3h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg>
+                <button class="bg-blue-800/40 border border-white/20 rounded-full px-3 py-1 flex items-center gap-1 tap-effect backdrop-blur-md">
+                    <svg class="w-3.5 h-3.5 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8.228 9c.549-1.165 2.03-2 3.772-2 2.21 0 4 1.343 4 3 0 1.4-1.278 2.575-3.006 2.907-.542.104-.994.54-.994 1.093m0 3h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg>
                     <span class="text-white text-[10px] font-bold tracking-wider">HELP</span>
                 </button>
             </div>
 
-            <div class="absolute left-5 right-5 -bottom-14 bg-white rounded-2xl p-5 shadow-card z-20 fade-in">
-                <div class="flex justify-between items-start mb-1">
-                    <div class="flex items-center gap-1.5 text-gray-500 text-[10px] font-bold tracking-wider">
-                        <span class="uppercase">Available Cookies</span>
-                        <svg class="w-3.5 h-3.5 cursor-pointer hover:text-kiro-blue" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"/><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z"/></svg>
+            <div class="flex justify-between items-end pb-4">
+                <div class="text-white">
+                    <div class="flex items-center gap-2 mb-1 opacity-90">
+                        <span class="text-[10px] font-bold tracking-widest uppercase">Available Cookies</span>
+                        <svg class="w-3.5 h-3.5 cursor-pointer" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"/><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z"/></svg>
+                    </div>
+                    <div class="flex items-baseline gap-2">
+                        <h1 id="cookieBalance" class="font-header font-semibold text-[2.5rem] leading-none tracking-tight">--</h1>
+                        <span class="text-sm opacity-70 font-medium">/ <span id="cookieLimit">--</span></span>
                     </div>
                 </div>
-                <div class="flex justify-between items-center mt-0.5">
-                    <div class="flex items-baseline gap-1">
-                        <h1 id="cookieBalance" class="font-header font-bold text-[1.75rem] text-gray-800 leading-tight">--</h1>
-                        <span class="text-xs text-gray-400 font-medium translate-y-[-2px]">/ <span id="cookieLimit">--</span></span>
+                
+                <a href="/cookies" class="bg-white text-brand-blue font-bold py-2 px-4 rounded-full flex items-center gap-1.5 text-xs shadow-lg tap-effect transform translate-y-2">
+                    <div class="bg-brand-blue text-white rounded-full p-0.5">
+                         <svg class="w-2.5 h-2.5" fill="none" stroke="currentColor" stroke-width="3" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M12 4v16m8-8H4"></path></svg>
                     </div>
-                    <a href="/cookies" class="bg-gray-50 hover:bg-gray-100 text-kiro-blue border border-gray-100 font-bold py-2 px-3.5 rounded-full flex items-center gap-1.5 text-[11px] transition tap-effect">
-                        <div class="bg-kiro-blue text-white rounded-full p-0.5">
-                            <svg class="w-2.5 h-2.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="4" d="M12 4v16m8-8H4"></path></svg>
-                        </div>
-                        <span>Add Acct</span>
-                    </a>
-                </div>
+                    Add Acct
+                </a>
             </div>
         </header>
 
-        <div class="h-[70px] bg-transparent"></div>
-
-        <main class="px-4 pb-6 fade-in">
+        <main class="fade-in">
             
-            <section class="mt-2 mb-4">
-                <div class="grid grid-cols-2 gap-3">
-                    <div class="bg-white p-3 rounded-xl border border-gray-100 shadow-sm flex items-center gap-3 tap-effect">
-                       <div class="bg-green-100 p-2 rounded-full text-success">
-                           <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg>
-                       </div>
-                       <div class="flex flex-col">
-                           <span class="text-[10px] text-gray-400 font-bold uppercase tracking-wide">Status</span>
-                           <span id="userStatus" class="text-xs font-bold text-gray-800 leading-none mt-0.5">Loading...</span>
-                       </div>
-                    </div>
+            <section class="px-4 py-6 bg-white rounded-t-3xl -mt-4 relative z-0">
+                <div class="grid grid-cols-4 gap-y-6 gap-x-2 text-center">
                     
-                    <div id="planCard" class="bg-white p-3 rounded-xl border border-gray-100 shadow-sm flex items-center gap-3 tap-effect transition-all duration-300">
-                       <div id="planIconBg" class="bg-amber-100 p-2 rounded-full text-warning transition-colors">
-                           <svg id="planIcon" class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11.049 2.927c.3-.921 1.603-.921 1.902 0l1.519 4.674a1 1 0 00.95.69h4.915c.969 0 1.371 1.24.588 1.81l-3.976 2.888a1 1 0 00-.363 1.118l1.518 4.674c.3.922-.755 1.688-1.538 1.118l-3.976-2.888a1 1 0 00-1.176 0l-3.976 2.888c-.783.57-1.838-.197-1.538-1.118l1.518-4.674a1 1 0 00-.363-1.118l-3.976-2.888c-.784-.57-.38-1.81.588-1.81h4.914a1 1 0 00.951-.69l1.519-4.674z"></path></svg>
-                       </div>
-                       <div class="flex flex-col z-10">
-                           <span class="text-[10px] text-gray-400 font-bold uppercase tracking-wide">Plan</span>
-                           <span id="planName" class="text-xs font-bold text-gray-800 leading-none mt-0.5">Basic</span>
-                       </div>
+                    <a href="/boost" class="flex flex-col items-center gap-2 tap-effect cursor-pointer group">
+                        <div class="w-11 h-11 rounded-xl bg-white border border-gray-100 shadow-sm flex items-center justify-center text-brand-blue group-hover:scale-105 transition-transform">
+                            <svg class="w-6 h-6" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M13 10V3L4 14h7v7l9-11h-7z"></path></svg>
+                        </div>
+                        <span class="text-[11px] font-medium text-gray-700">Boost</span>
+                    </a>
+
+                    <a href="/cookies" class="flex flex-col items-center gap-2 tap-effect cursor-pointer group">
+                        <div class="w-11 h-11 rounded-xl bg-white border border-gray-100 shadow-sm flex items-center justify-center text-brand-blue group-hover:scale-105 transition-transform">
+                            <svg class="w-6 h-6" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M12 4v1m6 11h2m-6 0h-2v4m0-11v3m0 0h.01M12 12h4.01M16 20h4M4 12h4m12 0h.01M5 8h2a1 1 0 001-1V5a1 1 0 00-1-1H5a1 1 0 00-1 1v2a1 1 0 001 1zm12 0h2a1 1 0 001-1V5a1 1 0 00-1-1H5a1 1 0 00-1 1v2a1 1 0 001 1zM5 20h2a1 1 0 001-1v-2a1 1 0 00-1-1H5a1 1 0 00-1 1v2a1 1 0 001 1z"></path></svg>
+                        </div>
+                        <span class="text-[11px] font-medium text-gray-700">Accounts</span>
+                    </a>
+
+                    <a href="/transactions" class="flex flex-col items-center gap-2 tap-effect cursor-pointer group">
+                        <div class="w-11 h-11 rounded-xl bg-white border border-gray-100 shadow-sm flex items-center justify-center text-brand-blue group-hover:scale-105 transition-transform">
+                            <svg class="w-6 h-6" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2"></path></svg>
+                        </div>
+                        <span class="text-[11px] font-medium text-gray-700">Orders</span>
+                    </a>
+
+                    <a href="/inbox" class="flex flex-col items-center gap-2 tap-effect cursor-pointer group relative">
+                        <div class="w-11 h-11 rounded-xl bg-white border border-gray-100 shadow-sm flex items-center justify-center text-brand-blue group-hover:scale-105 transition-transform">
+                            <svg class="w-6 h-6" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M3 8l7.89 5.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z"></path></svg>
+                        </div>
+                        <div id="gridBadge" class="hidden absolute top-0 right-3 w-3 h-3 bg-red-500 rounded-full border-2 border-white shadow-sm"></div>
+                        <span class="text-[11px] font-medium text-gray-700">Inbox</span>
+                    </a>
+
+                    <div id="adminIcon" class="hidden flex-col items-center gap-2 tap-effect cursor-pointer group">
+                        <a href="/admin" class="w-11 h-11 rounded-xl bg-white border border-gray-100 shadow-sm flex items-center justify-center text-brand-blue group-hover:scale-105 transition-transform">
+                            <svg class="w-6 h-6" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M10.325 4.317c.426-1.756 2.924-1.756 3.35 0a1.724 1.724 0 002.573 1.066c1.543-.94 3.31.826 2.37 2.37a1.724 1.724 0 001.065 2.572c1.756.426 1.756 2.924 0 3.35a1.724 1.724 0 00-1.066 2.573c.94 1.543-.826 3.31-2.37 2.37a1.724 1.724 0 00-2.572 1.065c-.426 1.756-2.924 1.756-3.35 0a1.724 1.724 0 00-2.573-1.066c-1.543.94-3.31-.826-2.37-2.37a1.724 1.724 0 00-1.065-2.572c-1.756-.426-1.756-2.924 0-3.35a1.724 1.724 0 001.066-2.573c-.94-1.543.826-3.31 2.37-2.37.996.608 2.296.07 2.572-1.065z"></path><path stroke-linecap="round" stroke-linejoin="round" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"></path></svg>
+                        </a>
+                        <span class="text-[11px] font-medium text-gray-700">Admin</span>
                     </div>
-               </div>
+
+                    <a href="/limits" class="flex flex-col items-center gap-2 tap-effect cursor-pointer group">
+                        <div class="w-11 h-11 rounded-xl bg-white border border-gray-100 shadow-sm flex items-center justify-center text-green-500 group-hover:scale-105 transition-transform">
+                            <svg class="w-6 h-6" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M16 8v8m-4-5v5m-4-2v2m-2 4h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z"></path></svg>
+                        </div>
+                        <span class="text-[11px] font-medium text-gray-700">Limits</span>
+                    </a>
+
+                    <a href="/profile" class="flex flex-col items-center gap-2 tap-effect cursor-pointer group">
+                        <div class="w-11 h-11 rounded-xl bg-white border border-gray-100 shadow-sm flex items-center justify-center text-brand-blue group-hover:scale-105 transition-transform">
+                            <svg class="w-6 h-6" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z"></path></svg>
+                        </div>
+                        <span class="text-[11px] font-medium text-gray-700">Profile</span>
+                    </a>
+
+                    <div class="flex flex-col items-center gap-2 tap-effect cursor-pointer group">
+                        <div class="w-11 h-11 rounded-xl bg-white border border-gray-100 shadow-sm flex items-center justify-center text-brand-blue group-hover:scale-105 transition-transform">
+                           <div class="flex gap-0.5">
+                               <div class="w-1.5 h-1.5 bg-brand-blue rounded-full"></div>
+                               <div class="w-1.5 h-1.5 bg-brand-blue rounded-full"></div>
+                               <div class="w-1.5 h-1.5 bg-brand-blue rounded-full"></div>
+                           </div>
+                        </div>
+                        <span class="text-[11px] font-medium text-gray-700">View All</span>
+                    </div>
+                </div>
             </section>
 
-            <div class="grid grid-cols-4 gap-y-7 gap-x-2 text-center py-2">
-                <a href="/boost" class="flex flex-col items-center gap-2 group cursor-pointer tap-effect">
-                    <div class="w-12 h-12 rounded-xl bg-blue-50/80 text-kiro-blue flex items-center justify-center transition group-hover:scale-105 border border-blue-100">
-                        <svg class="w-6 h-6" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M13 10V3L4 14h7v7l9-11h-7z"></path></svg>
-                    </div>
-                    <span class="text-[11px] font-medium text-gray-600">Boost</span>
-                </a>
-                <a href="/cookies" class="flex flex-col items-center gap-2 group cursor-pointer tap-effect">
-                    <div class="w-12 h-12 rounded-xl bg-blue-50/80 text-kiro-blue flex items-center justify-center transition group-hover:scale-105 border border-blue-100">
-                        <svg class="w-6 h-6" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M12 4v1m6 11h2m-6 0h-2v4m0-11v3m0 0h.01M12 12h4.01M16 20h4M4 12h4m12 0h.01M5 8h2a1 1 0 001-1V5a1 1 0 00-1-1H5a1 1 0 00-1 1v2a1 1 0 001 1zm12 0h2a1 1 0 001-1V5a1 1 0 00-1-1H5a1 1 0 00-1 1v2a1 1 0 001 1zM5 20h2a1 1 0 001-1v-2a1 1 0 00-1-1H5a1 1 0 00-1 1v2a1 1 0 001 1z"></path></svg>
-                    </div>
-                    <span class="text-[11px] font-medium text-gray-600">Accounts</span>
-                </a>
-                <a href="/transactions" class="flex flex-col items-center gap-2 group cursor-pointer tap-effect">
-                    <div class="w-12 h-12 rounded-xl bg-blue-50/80 text-kiro-blue flex items-center justify-center transition group-hover:scale-105 border border-blue-100">
-                        <svg class="w-6 h-6" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2"></path></svg>
-                    </div>
-                    <span class="text-[11px] font-medium text-gray-600">Orders</span>
-                </a>
-                <a href="/inbox" class="flex flex-col items-center gap-2 group cursor-pointer tap-effect relative">
-                    <div class="w-12 h-12 rounded-xl bg-blue-50/80 text-kiro-blue flex items-center justify-center transition group-hover:scale-105 border border-blue-100">
-                        <svg class="w-6 h-6" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M3 8l7.89 5.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z"></path></svg>
-                    </div>
-                    <div id="gridBadge" class="hidden absolute top-0 right-3 w-3 h-3 bg-red-500 rounded-full border-2 border-white shadow-sm"></div>
-                    <span class="text-[11px] font-medium text-gray-600">Inbox</span>
-                </a>
-                <div id="adminIcon" class="hidden flex flex-col items-center gap-2 group cursor-pointer tap-effect">
-                    <a href="/admin" class="w-12 h-12 rounded-xl bg-blue-50/80 text-kiro-blue flex items-center justify-center transition group-hover:scale-105 border border-blue-100">
-                        <svg class="w-6 h-6" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M10.325 4.317c.426-1.756 2.924-1.756 3.35 0a1.724 1.724 0 002.573 1.066c1.543-.94 3.31.826 2.37 2.37a1.724 1.724 0 001.065 2.572c1.756.426 1.756 2.924 0 3.35a1.724 1.724 0 00-1.066 2.573c.94 1.543-.826 3.31-2.37 2.37a1.724 1.724 0 00-2.572 1.065c-.426 1.756-2.924 1.756-3.35 0a1.724 1.724 0 00-2.573-1.066c-1.543.94-3.31-.826-2.37-2.37a1.724 1.724 0 00-1.065-2.572c-1.756-.426-1.756-2.924 0-3.35a1.724 1.724 0 001.066-2.573c-.94-1.543.826-3.31 2.37-2.37.996.608 2.296.07 2.572-1.065z"></path><path stroke-linecap="round" stroke-linejoin="round" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"></path></svg>
-                    </a>
-                    <span class="text-[11px] font-medium text-gray-700">Admin</span>
-                </div>
-                <a href="/limits" class="flex flex-col items-center gap-2 group cursor-pointer tap-effect">
-                    <div class="w-12 h-12 rounded-xl bg-blue-50/80 text-kiro-blue flex items-center justify-center transition group-hover:scale-105 border border-blue-100">
-                        <svg class="w-6 h-6" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M16 8v8m-4-5v5m-4-2v2m-2 4h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z"></path></svg>
-                    </div>
-                    <span class="text-[11px] font-medium text-gray-600">Limits</span>
-                </a>
-                 <a href="/profile" class="flex flex-col items-center gap-2 group cursor-pointer tap-effect">
-                    <div class="w-12 h-12 rounded-xl bg-blue-50/80 text-kiro-blue flex items-center justify-center transition group-hover:scale-105 border border-blue-100">
-                        <svg class="w-6 h-6" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z"></path></svg>
-                    </div>
-                    <span class="text-[11px] font-medium text-gray-600">Profile</span>
-                </a>
-                <div class="flex flex-col items-center gap-2 group cursor-pointer tap-effect">
-                    <div class="w-12 h-12 rounded-xl bg-blue-50/80 text-kiro-blue flex items-center justify-center transition group-hover:scale-105 border border-blue-100">
-                        <div class="flex space-x-1">
-                            <div class="w-1.5 h-1.5 bg-kiro-blue rounded-full"></div>
-                            <div class="w-1.5 h-1.5 bg-kiro-blue rounded-full"></div>
-                            <div class="w-1.5 h-1.5 bg-kiro-blue rounded-full"></div>
-                        </div>
-                    </div>
-                    <span class="text-[11px] font-medium text-gray-600">View All</span>
-                </div>
-            </div>
+            <div class="h-2 bg-gray-100 w-full"></div>
 
-            <section class="mt-4">
-                <div class="flex justify-between items-center mb-3">
-                    <h3 class="font-header font-bold text-gray-800 text-base pl-1">Check This Out</h3>
-                    <button class="text-[11px] font-bold text-kiro-blue flex items-center gap-0.5">Show more <svg class="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"/></svg></button>
+            <section class="pt-5 pb-2 pl-4 bg-white">
+                <div class="flex justify-between items-center pr-4 mb-3">
+                    <h3 class="font-header font-bold text-gray-800 text-[15px]">Account Status</h3>
+                    <div class="text-[12px] font-bold text-brand-blue flex items-center">
+                        Details
+                        <svg class="w-3 h-3 ml-0.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"/></svg>
+                    </div>
                 </div>
-                <a href="/boost" class="block w-full bg-gradient-to-r from-kiro-blue to-[#0055aa] rounded-xl p-4 text-white relative overflow-hidden shadow-card tap-effect group">
-                    <div class="relative z-10 w-[65%]">
-                        <div class="flex items-center gap-1.5 mb-2">
-                             <div class="w-5 h-5 bg-white/20 rounded-full flex items-center justify-center font-bold text-[10px]">K</div>
-                             <span class="text-xs font-bold tracking-wide">KIROBOOST</span>
+
+                <div class="flex overflow-x-auto gap-3 pb-4 pr-4 no-scrollbar">
+                    
+                    <div class="min-w-[280px] bg-gradient-to-r from-blue-500 to-blue-600 rounded-xl overflow-hidden relative shadow-md tap-effect">
+                        <div class="p-4 relative z-10 text-white flex flex-col justify-between h-[130px]">
+                            <div>
+                                <div class="flex items-center gap-1 mb-2">
+                                    <span class="bg-white text-blue-600 text-[10px] font-bold px-1.5 rounded-sm">USER</span>
+                                </div>
+                                <h4 class="font-bold text-xl">Verification</h4>
+                                <p id="userStatus" class="text-sm w-2/3 opacity-90 leading-tight mt-1 font-bold">Loading...</p>
+                            </div>
                         </div>
-                        <h4 class="font-bold text-lg leading-tight mb-2">Start Boosting Your Reach Today!</h4>
-                        <div class="inline-block bg-white text-kiro-blue text-[10px] font-bold px-3 py-1 rounded-full group-active:scale-95 transition">
-                            Boost Now
+                        <svg class="absolute right-[-10px] bottom-[-10px] w-24 h-24 text-white/20" fill="currentColor" viewBox="0 0 20 20"><path fill-rule="evenodd" d="M6.267 3.455a3.066 3.066 0 001.745-.723 3.066 3.066 0 013.976 0 3.066 3.066 0 001.745.723 3.066 3.066 0 012.812 2.812c.051.643.304 1.254.723 1.745a3.066 3.066 0 010 3.976 3.066 3.066 0 00-.723 1.745 3.066 3.066 0 01-2.812 2.812 3.066 3.066 0 00-1.745.723 3.066 3.066 0 01-3.976 0 3.066 3.066 0 00-1.745-.723 3.066 3.066 0 01-2.812-2.812 3.066 3.066 0 00-.723-1.745 3.066 3.066 0 010-3.976 3.066 3.066 0 00.723-1.745 3.066 3.066 0 012.812-2.812zm7.44 5.252a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clip-rule="evenodd"/></svg>
+                    </div>
+
+                    <div id="planCard" class="min-w-[280px] bg-gradient-to-r from-gray-700 to-gray-800 rounded-xl overflow-hidden relative shadow-md tap-effect transition-all duration-300">
+                        <div class="p-4 relative z-10 text-white flex flex-col justify-between h-[130px]">
+                            <div>
+                                <div class="flex items-center gap-1 mb-2">
+                                    <span class="bg-white text-gray-800 text-[10px] font-bold px-1.5 rounded-sm">PLAN</span>
+                                </div>
+                                <h4 id="planName" class="font-bold text-xl">Basic</h4>
+                                <p class="text-[10px] w-2/3 opacity-90 leading-tight mt-1">Current Subscription</p>
+                            </div>
+                            <a href="/upgrade" class="bg-white/20 backdrop-blur-sm text-white text-[10px] font-bold py-1 px-3 rounded-full self-start w-auto">
+                                Upgrade
+                            </a>
+                        </div>
+                        <div id="planIconBg" class="absolute right-4 bottom-4 w-12 h-12 rounded-full flex items-center justify-center bg-white/10 text-white/50">
+                            <svg id="planIcon" class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11.049 2.927c.3-.921 1.603-.921 1.902 0l1.519 4.674a1 1 0 00.95.69h4.915c.969 0 1.371 1.24.588 1.81l-3.976 2.888a1 1 0 00-.363 1.118l1.518 4.674c.3.922-.755 1.688-1.538 1.118l-3.976-2.888a1 1 0 00-1.176 0l-3.976 2.888c-.783.57-1.838-.197-1.538-1.118l1.518-4.674a1 1 0 00-.363-1.118l-3.976-2.888c-.784-.57-.38-1.81.588-1.81h4.914a1 1 0 00.951-.69l1.519-4.674z"></path></svg>
                         </div>
                     </div>
-                    <div class="absolute right-4 bottom-4 z-10 opacity-90">
-                        <svg class="w-16 h-16 text-white/20" fill="currentColor" viewBox="0 0 20 20"><path fill-rule="evenodd" d="M12.395 2.553a1 1 0 00-1.45-.385c-.345.23-.614.558-.822.88-.214.33-.403.713-.57 1.116-.334.804-.614 1.768-.84 2.734a31.365 31.365 0 00-.613 3.58 2.64 2.64 0 01-.945-1.067c-.328-.68-.398-1.534-.398-2.654A1 1 0 005.05 6.05 6.981 6.981 0 003 11a7 7 0 1011.95-4.95c-.592-.591-.98-.985-1.348-1.467-.363-.476-.724-1.063-1.207-2.03zM12.12 15.12A3 3 0 017 13s.879.5 2.5.5c0-1 .5-4 1.25-4.5.5 1 .786 1.293 1.371 1.879A2.99 2.99 0 0113 13a2.99 2.99 0 01-.879 2.121z" clip-rule="evenodd"/></svg>
+
+                </div>
+            </section>
+
+             <div class="h-2 bg-gray-100 w-full"></div>
+
+            <section class="p-4 bg-white mb-6">
+                <h3 class="font-header font-bold text-gray-800 text-[15px] mb-3">Check This Out</h3>
+                
+                <div class="grid grid-cols-2 gap-3">
+                    <a href="/boost" class="bg-blue-50 rounded-xl overflow-hidden shadow-sm tap-effect block">
+                        <div class="h-24 bg-brand-blue relative">
+                             <div class="absolute bottom-0 left-0 p-3 w-full bg-gradient-to-t from-black/50 to-transparent">
+                                 <h4 class="text-white font-bold text-sm leading-tight">KIRO BOOST</h4>
+                                 <p class="text-white/80 text-[10px]">Grow now!</p>
+                             </div>
+                             <div class="absolute top-2 right-2 w-8 h-8 bg-white/20 rounded-full flex items-center justify-center text-white text-xs font-bold">K</div>
+                        </div>
+                        <div class="p-2">
+                            <p class="text-[10px] text-gray-500">Instant Engagement</p>
+                        </div>
+                    </a>
+
+                    <div class="bg-gray-50 rounded-xl overflow-hidden shadow-sm tap-effect">
+                         <div class="h-24 bg-slate-700 relative flex items-center justify-center">
+                            <span class="text-white font-bold text-lg">Feedback</span>
+                        </div>
+                         <div class="p-2">
+                            <p class="text-[10px] text-gray-500">Help improve Kiro</p>
+                        </div>
                     </div>
-                    <div class="absolute top-0 right-0 h-full w-1/3 bg-white/5 skew-x-12"></div>
-                </a>
+                </div>
             </section>
 
         </main>
 
-        <nav class="fixed bottom-0 w-full max-w-[480px] bg-white border-t border-gray-100 pb-5 pt-2 px-4 flex justify-between items-end z-50 text-[10px] font-medium text-gray-400">
-            <a href="/home" class="flex flex-col items-center w-1/5 text-kiro-blue">
-                <svg class="w-6 h-6 mb-1" fill="currentColor" viewBox="0 0 24 24"><path d="M10 20v-6h4v6h5v-8h3L12 3 2 12h3v8z"/></svg>
+        <nav class="fixed bottom-0 w-full max-w-[480px] bg-white shadow-nav pb-5 pt-2 px-2 flex justify-between items-end z-50 text-[10px] font-medium text-gray-400">
+            
+            <a href="/home" class="flex flex-col items-center w-1/5 text-brand-blue">
+                <svg class="w-6 h-6 mb-0.5" fill="currentColor" viewBox="0 0 24 24"><path d="M10 20v-6h4v6h5v-8h3L12 3 2 12h3v8z"/></svg>
                 <span>Home</span>
             </a>
-            <a href="/inbox" class="flex flex-col items-center w-1/5 hover:text-kiro-blue transition-colors duration-200">
+
+            <a href="/inbox" class="flex flex-col items-center w-1/5 hover:text-brand-blue transition-colors">
                 <div class="relative">
-                    <svg class="w-6 h-6 mb-1" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 8l7.89 5.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z"/></svg>
-                    <div id="navBadge" class="hidden absolute -top-1 -right-1 w-2.5 h-2.5 bg-red-500 rounded-full border-2 border-white"></div>
+                    <svg class="w-6 h-6 mb-0.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 8l7.89 5.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z"/></svg>
+                    <div id="navBadge" class="hidden absolute top-0 right-0 w-2 h-2 bg-red-500 rounded-full border border-white"></div>
                 </div>
                 <span>Inbox</span>
             </a>
+
             <div class="w-1/5 relative flex justify-center group cursor-pointer tap-effect">
-                <a href="/boost" class="absolute -top-8 bg-gradient-to-br from-[#007DFE] to-[#0055aa] w-14 h-14 rounded-2xl flex items-center justify-center text-white shadow-floating transform transition-all duration-300 group-hover:-translate-y-1">
-                    <svg class="w-7 h-7" fill="currentColor" viewBox="0 0 24 24"><path d="M13 10V3L4 14h7v7l9-11h-7z"/></svg>
+                <a href="/boost" class="absolute -top-10">
+                    <div class="bg-gradient-to-b from-[#007DFE] to-[#0055aa] w-[60px] h-[60px] rounded-[20px] flex items-center justify-center text-white shadow-floating border-4 border-white">
+                        <svg class="w-7 h-7" fill="currentColor" viewBox="0 0 24 24"><path d="M13 10V3L4 14h7v7l9-11h-7z"/></svg>
+                    </div>
+                    <span class="block text-center mt-1 text-[10px] text-brand-blue font-bold">Kiro</span>
                 </a>
-                <span class="mt-7 text-kiro-blue font-bold">Kiro</span>
             </div>
-            <a href="/transactions" class="flex flex-col items-center w-1/5 hover:text-kiro-blue transition-colors duration-200">
-                <svg class="w-6 h-6 mb-1" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2"/></svg>
+
+            <a href="/transactions" class="flex flex-col items-center w-1/5 hover:text-brand-blue transition-colors">
+                <svg class="w-6 h-6 mb-0.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2"/></svg>
                 <span>Orders</span>
             </a>
-            <a href="/profile" class="flex flex-col items-center w-1/5 hover:text-kiro-blue transition-colors duration-200">
-                <svg class="w-6 h-6 mb-1" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z"/></svg>
+
+            <a href="/profile" class="flex flex-col items-center w-1/5 hover:text-brand-blue transition-colors">
+                <svg class="w-6 h-6 mb-0.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z"/></svg>
                 <span>Profile</span>
             </a>
+
         </nav>
 
     </div>
@@ -314,40 +362,61 @@
                     user = { ...user, ...stats };
                     localStorage.setItem('kb_user', JSON.stringify(user));
                     
-                    // HEADER
-                    document.getElementById('headerName').textContent = stats.username;
-                    document.getElementById('headerAvatar').textContent = stats.username.substring(0, 1).toUpperCase();
+                    // HEADER (Mapped to new UI)
+                    const headerNameEl = document.getElementById('headerName');
+                    if(headerNameEl) headerNameEl.textContent = stats.username;
                     
-                    // BALANCE
-                    document.getElementById('cookieBalance').textContent = stats.cookieCount || 0;
-                    document.getElementById('cookieLimit').textContent = stats.cookieLimit || 10;
+                    const avatarEl = document.getElementById('headerAvatar');
+                    if(avatarEl) avatarEl.textContent = stats.username.substring(0, 1).toUpperCase();
                     
-                    // STATUS
-                    const statusEl = document.getElementById('userStatus');
-                    statusEl.textContent = stats.isActive ? 'Verified' : 'Pending';
-                    statusEl.className = stats.isActive ? 'text-xs font-bold text-success leading-none mt-0.5' : 'text-xs font-bold text-warning leading-none mt-0.5';
+                    // BALANCE (Mapped to new UI)
+                    const balEl = document.getElementById('cookieBalance');
+                    if(balEl) balEl.textContent = stats.cookieCount || 0;
 
-                    // PLAN & FIRE ANIMATION
+                    const limitEl = document.getElementById('cookieLimit');
+                    if(limitEl) limitEl.textContent = stats.cookieLimit || 10;
+                    
+                    // STATUS (Mapped to new Carousel Card 1)
+                    const statusEl = document.getElementById('userStatus');
+                    if(statusEl) {
+                        statusEl.textContent = stats.isActive ? 'Verified Account' : 'Pending Verification';
+                        // Adjust text color based on status if needed, though card is blue now
+                        if (!stats.isActive) statusEl.textContent += " (Check Inbox)";
+                    }
+
+                    // PLAN & FIRE ANIMATION (Mapped to new Carousel Card 2)
                     const planEl = document.getElementById('planName');
                     const planCard = document.getElementById('planCard');
                     const planIconBg = document.getElementById('planIconBg');
                     const planIcon = document.getElementById('planIcon');
 
-                    if (stats.plan === 'premium') {
-                        planEl.textContent = 'Premium';
-                        planEl.className = 'text-xs font-bold text-red-600 leading-none mt-0.5 text-fire';
-                        
-                        // Activate Fire Effects
-                        planCard.classList.add('premium-fire');
-                        planIconBg.className = 'bg-red-50 p-2 rounded-full text-red-500 transition-colors duration-300';
-                        planIcon.innerHTML = '<path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17.657 18.657A8 8 0 016.343 7.343S7 9 9 10c0-2 .5-5 2.986-7C14 5 16.09 5.777 17.656 7.343A7.975 7.975 0 0120 13a7.975 7.975 0 01-2.343 5.657z"></path><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9.879 16.121A3 3 0 1012.015 11L11 14H9c0 .768.293 1.536.879 2.121z"></path>';
-                    } else {
-                        planEl.textContent = 'Basic';
-                        planEl.className = 'text-xs font-bold text-gray-500 leading-none mt-0.5';
+                    if (planEl && planCard) {
+                        if (stats.plan === 'premium') {
+                            planEl.textContent = 'Premium';
+                            // Add Fire Text class to the title
+                            planEl.className = 'font-bold text-xl text-fire';
+                            
+                            // Activate Fire Effects on the Card container
+                            planCard.classList.add('premium-fire');
+                            
+                            // Change Icon to Fire/Crown
+                            if(planIcon) planIcon.innerHTML = '<path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17.657 18.657A8 8 0 016.343 7.343S7 9 9 10c0-2 .5-5 2.986-7C14 5 16.09 5.777 17.656 7.343A7.975 7.975 0 0120 13a7.975 7.975 0 01-2.343 5.657z"></path><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9.879 16.121A3 3 0 1012.015 11L11 14H9c0 .768.293 1.536.879 2.121z"></path>';
+                            if(planIconBg) planIconBg.className = 'absolute right-4 bottom-4 w-12 h-12 rounded-full flex items-center justify-center bg-orange-500/20 text-orange-400';
+                            
+                        } else {
+                            planEl.textContent = 'Basic';
+                            planEl.className = 'font-bold text-xl text-white'; // Reset
+                            planCard.classList.remove('premium-fire');
+                        }
                     }
 
+                    // ADMIN ICON
                     if (stats.isAdmin) {
-                        document.getElementById('adminIcon').classList.remove('hidden');
+                        const adminEl = document.getElementById('adminIcon');
+                        if(adminEl) {
+                            adminEl.classList.remove('hidden');
+                            adminEl.classList.add('flex'); // Because I used flex-col in HTML
+                        }
                     }
                 }
 
@@ -355,16 +424,21 @@
                 const inboxRes = await fetch('/api/user/inbox?filter=unread&limit=1', { headers: { 'Authorization': `Bearer ${token}` } });
                 const inboxData = await inboxRes.json();
                 if (inboxData.success && inboxData.unreadCount > 0) {
-                    document.getElementById('gridBadge').classList.remove('hidden');
-                    document.getElementById('navBadge').classList.remove('hidden');
+                    const gridBadge = document.getElementById('gridBadge');
+                    const navBadge = document.getElementById('navBadge');
+                    if(gridBadge) gridBadge.classList.remove('hidden');
+                    if(navBadge) navBadge.classList.remove('hidden');
                 }
 
             } catch (err) {
-                console.error("Data load error");
+                console.error("Data load error", err);
                 // Attempt local cache fallback
                 if(user.username) {
-                    document.getElementById('headerName').textContent = user.username;
-                    document.getElementById('cookieBalance').textContent = user.cookieCount || 0;
+                    const hName = document.getElementById('headerName');
+                    if(hName) hName.textContent = user.username;
+                    
+                    const bal = document.getElementById('cookieBalance');
+                    if(bal) bal.textContent = user.cookieCount || 0;
                 }
             }
         }
