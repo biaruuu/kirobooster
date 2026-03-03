@@ -6,7 +6,7 @@ const app = express();
 const PORT = process.env.PORT || 3000;
 
 // API Configuration - Your KiroBoost API
-const API_URL = process.env.API_URL || 'https://kiroboost-api.vercel.app';
+const API_URL = process.env.API_URL || 'https://kiroboost-api-newshare.onrender.com';
 
 // Headers configuration matching the Python script exactly
 const FB_HEADERS = {
