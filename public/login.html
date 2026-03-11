@@ -2,586 +2,595 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>KiroBoost — Sign In</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>KiroBoost — Login</title>
+
+    <!-- Bootstrap 5 -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
+    <!-- Geist Font (Google Fonts) -->
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Geist:wght@300;400;500;600;700&display=swap" rel="stylesheet">
 
     <style>
-        *, *::before, *::after {
-            box-sizing: border-box;
+        /* ───── Design Tokens ───────────────────────────────── */
+        :root {
+            --bg:             #000000;
+            --surface:        #0a0a0a;
+            --surface-2:      #111111;
+            --border:         #1f1f1f;
+            --border-strong:  #2e2e2e;
+            --text:           #ededed;
+            --text-muted:     #888888;
+            --text-faint:     #484848;
+            --accent:         #ffffff;
+            --accent-dim:     #ededed;
+            --danger:         #ff4040;
+            --danger-bg:      #150000;
+            --danger-border:  #3a0000;
+            --r-sm: 6px;
+            --r-md: 10px;
+            --r-lg: 14px;
+            --font: 'Geist', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+            --ease: 0.15s ease;
+        }
+
+        /* ───── Reset ────────────────────────────────────────── */
+        *, *::before, *::after { box-sizing: border-box; }
+
+        body {
+            font-family: var(--font);
+            background-color: var(--bg);
+            color: var(--text);
+            min-height: 100svh;
+            display: flex;
+            flex-direction: column;
+            -webkit-font-smoothing: antialiased;
             margin: 0;
             padding: 0;
-            -webkit-tap-highlight-color: transparent;
         }
 
-        :root {
-            --bg:             #ffffff;
-            --bg-muted:       #fafafa;
-            --border:         #e4e4e7;
-            --border-input:   #d4d4d8;
-            --border-hover:   #a1a1aa;
-            --border-focus:   #18181b;
-            --text:           #18181b;
-            --text-muted:     #71717a;
-            --text-subtle:    #a1a1aa;
-            --accent:         #18181b;
-            --accent-fg:      #ffffff;
-            --error:          #ef4444;
-            --error-bg:       #fef2f2;
-            --error-border:   #fecaca;
-            --error-text:     #b91c1c;
-            --radius:         8px;
-            --radius-sm:      6px;
-            --radius-lg:      12px;
+        ::selection { background: #fff; color: #000; }
+
+        /* Subtle grid overlay */
+        body::after {
+            content: '';
+            position: fixed;
+            inset: 0;
+            background-image:
+                linear-gradient(rgba(255,255,255,0.025) 1px, transparent 1px),
+                linear-gradient(90deg, rgba(255,255,255,0.025) 1px, transparent 1px);
+            background-size: 48px 48px;
+            pointer-events: none;
+            z-index: 0;
         }
 
-        html, body {
-            height: 100%;
-            font-family: 'Geist', -apple-system, BlinkMacSystemFont, sans-serif;
-            background-color: var(--bg-muted);
-            color: var(--text);
-            -webkit-font-smoothing: antialiased;
-            -moz-osx-font-smoothing: grayscale;
-        }
-
-        /* ── Page Layout ─────────────────────────────────── */
-
-        .page {
-            min-height: 100vh;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            padding: 24px 16px;
-        }
-
-        /* ── Card ─────────────────────────────────────────── */
-
-        .card {
-            width: 100%;
-            max-width: 388px;
-            background: var(--bg);
-            border: 1px solid var(--border);
-            border-radius: var(--radius-lg);
-            padding: 28px 28px 28px;
-            animation: cardIn .3s cubic-bezier(.16,1,.3,1) both;
-        }
-
-        @keyframes cardIn {
-            from { opacity: 0; transform: translateY(10px) scale(.99); }
-            to   { opacity: 1; transform: none; }
-        }
-
-        /* ── Brand ────────────────────────────────────────── */
-
-        .brand {
-            display: flex;
-            align-items: center;
-            gap: 9px;
-            margin-bottom: 24px;
-        }
-
-        .brand-mark {
-            width: 30px;
-            height: 30px;
-            background: var(--accent);
-            border-radius: 7px;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            flex-shrink: 0;
-        }
-
-        .brand-mark svg {
-            width: 15px;
-            height: 15px;
-            fill: var(--accent-fg);
-        }
-
-        .brand-name {
-            font-size: 14.5px;
-            font-weight: 600;
-            letter-spacing: -0.015em;
-            color: var(--text);
-        }
-
-        /* ── Header ───────────────────────────────────────── */
-
-        .card-head {
-            margin-bottom: 20px;
-            padding-bottom: 20px;
+        /* ───── Header ───────────────────────────────────────── */
+        .kb-nav {
+            position: sticky;
+            top: 0;
+            z-index: 200;
+            background: rgba(0,0,0,0.85);
+            backdrop-filter: blur(16px);
+            -webkit-backdrop-filter: blur(16px);
             border-bottom: 1px solid var(--border);
         }
 
-        .card-title {
-            font-size: 18px;
-            font-weight: 600;
-            letter-spacing: -0.03em;
-            color: var(--text);
-            line-height: 1.3;
-        }
-
-        .card-sub {
-            font-size: 13px;
-            color: var(--text-muted);
-            margin-top: 3px;
-            line-height: 1.5;
-        }
-
-        /* ── Form ─────────────────────────────────────────── */
-
-        .form-fields {
+        .kb-nav-inner {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 0 24px;
+            height: 56px;
             display: flex;
-            flex-direction: column;
-            gap: 14px;
-            margin-bottom: 14px;
+            align-items: center;
+            justify-content: space-between;
         }
 
-        /* ── Floating Label Field (MUI style) ─────────────── */
-
-        .field {
-            position: relative;
-        }
-
-        .field-input {
-            width: 100%;
-            height: 50px;
-            padding: 18px 14px 7px 13px;
-            font-family: 'Geist', sans-serif;
-            font-size: 14px;
-            font-weight: 400;
+        .kb-brand {
+            display: flex;
+            align-items: center;
+            gap: 9px;
+            text-decoration: none;
             color: var(--text);
-            background: var(--bg);
-            border: 1px solid var(--border-input);
-            border-radius: var(--radius);
-            outline: none;
-            transition: border-color .15s ease, box-shadow .15s ease;
-            caret-color: var(--accent);
-            line-height: 1;
-        }
-
-        .field-input::placeholder { color: transparent; }
-
-        .field-input:hover {
-            border-color: var(--border-hover);
-        }
-
-        .field-input:focus {
-            border-color: var(--border-focus);
-            box-shadow: 0 0 0 3px rgba(24,24,27,.08);
-        }
-
-        .field-input.has-icon {
-            padding-right: 42px;
-        }
-
-        .field-label {
-            position: absolute;
-            left: 13px;
-            top: 50%;
-            transform: translateY(-50%);
-            font-family: 'Geist', sans-serif;
-            font-size: 13.5px;
-            font-weight: 400;
-            color: var(--text-subtle);
-            pointer-events: none;
-            transition: all .15s cubic-bezier(.4,0,.2,1);
-            background: transparent;
-            line-height: 1;
-            white-space: nowrap;
-        }
-
-        /* Float up on focus or when filled */
-        .field-input:focus        + .field-label,
-        .field-input:not(:placeholder-shown) + .field-label {
-            top: 9px;
-            transform: none;
-            font-size: 10px;
+            font-size: 15px;
             font-weight: 600;
-            letter-spacing: 0.06em;
-            text-transform: uppercase;
-            color: var(--text-muted);
+            letter-spacing: -0.025em;
         }
+        .kb-brand:hover { color: var(--text); opacity: 0.75; }
 
-        .field-input:focus + .field-label {
-            color: var(--accent);
-        }
-
-        /* Eye toggle */
-        .eye-btn {
-            position: absolute;
-            right: 11px;
-            top: 50%;
-            transform: translateY(-50%);
-            width: 28px;
-            height: 28px;
+        .kb-brand-mark {
+            width: 27px;
+            height: 27px;
+            background: #fff;
+            border-radius: 6px;
             display: flex;
             align-items: center;
             justify-content: center;
-            background: none;
-            border: none;
-            cursor: pointer;
-            color: var(--text-subtle);
-            border-radius: var(--radius-sm);
-            transition: color .15s, background .15s;
-        }
-
-        .eye-btn:hover {
-            color: var(--text-muted);
-            background: var(--bg-muted);
-        }
-
-        .eye-btn svg {
-            width: 15px;
-            height: 15px;
             flex-shrink: 0;
         }
 
-        /* ── Forgot row ───────────────────────────────────── */
-
-        .row-forgot {
+        .kb-nav-end {
             display: flex;
-            justify-content: flex-end;
-            margin-bottom: 18px;
+            align-items: center;
+            gap: 6px;
         }
 
-        .link-forgot {
+        .kb-nav-link {
+            font-size: 13px;
+            color: var(--text-muted);
+            text-decoration: none;
+            padding: 6px 10px;
+            border-radius: var(--r-sm);
+            transition: color var(--ease), background var(--ease);
+            font-weight: 500;
+        }
+        .kb-nav-link:hover { color: var(--text); background: var(--surface-2); }
+
+        .kb-nav-cta {
+            font-size: 13px;
+            font-family: var(--font);
+            font-weight: 500;
+            color: #000;
+            background: #fff;
+            border: none;
+            padding: 6px 14px;
+            border-radius: var(--r-sm);
+            cursor: pointer;
+            text-decoration: none;
+            transition: background var(--ease);
+        }
+        .kb-nav-cta:hover { background: var(--accent-dim); color: #000; }
+
+        /* ───── Main ─────────────────────────────────────────── */
+        .kb-main {
+            flex: 1;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 56px 20px;
+            position: relative;
+            z-index: 1;
+        }
+
+        /* ───── Card ─────────────────────────────────────────── */
+        .kb-card {
+            width: 100%;
+            max-width: 392px;
+            background: var(--surface);
+            border: 1px solid var(--border);
+            border-radius: var(--r-lg);
+            overflow: hidden;
+            box-shadow: 0 0 0 1px rgba(255,255,255,0.03), 0 8px 40px rgba(0,0,0,0.6);
+            animation: cardUp 0.28s cubic-bezier(0.16,1,0.3,1) both;
+        }
+
+        @keyframes cardUp {
+            from { opacity: 0; transform: translateY(10px); }
+            to   { opacity: 1; transform: translateY(0); }
+        }
+
+        /* Card header */
+        .kb-card-top {
+            padding: 26px 26px 20px;
+            border-bottom: 1px solid var(--border);
+        }
+
+        .kb-eyebrow {
+            font-size: 11px;
+            font-weight: 500;
+            letter-spacing: 0.09em;
+            text-transform: uppercase;
+            color: var(--text-faint);
+            margin-bottom: 12px;
+            display: flex;
+            align-items: center;
+            gap: 7px;
+        }
+        .kb-eyebrow::before {
+            content: '';
+            display: inline-block;
+            width: 4px;
+            height: 4px;
+            border-radius: 50%;
+            background: var(--text-faint);
+            flex-shrink: 0;
+        }
+
+        .kb-title {
+            font-size: 19px;
+            font-weight: 600;
+            letter-spacing: -0.03em;
+            color: var(--text);
+            margin-bottom: 3px;
+        }
+
+        .kb-sub {
+            font-size: 13px;
+            color: var(--text-muted);
+        }
+
+        /* Card body */
+        .kb-card-body {
+            padding: 22px 26px 24px;
+        }
+
+        /* Card foot */
+        .kb-card-foot {
+            padding: 14px 26px;
+            border-top: 1px solid var(--border);
+            text-align: center;
+        }
+        .kb-card-foot p {
+            font-size: 13px;
+            color: var(--text-muted);
+            margin: 0;
+        }
+        .kb-card-foot a {
+            color: var(--text);
+            font-weight: 500;
+            text-decoration: none;
+        }
+        .kb-card-foot a:hover { opacity: 0.7; }
+
+        /* ───── Fields ───────────────────────────────────────── */
+        .kb-field { margin-bottom: 12px; }
+
+        .kb-field-header {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            margin-bottom: 6px;
+        }
+
+        .kb-label {
             font-size: 12px;
             font-weight: 500;
             color: var(--text-muted);
-            text-decoration: none;
-            transition: color .15s;
+            letter-spacing: 0.01em;
         }
 
-        .link-forgot:hover { color: var(--text); }
+        .kb-forgot {
+            font-size: 11px;
+            color: var(--text-faint);
+            text-decoration: none;
+            font-weight: 500;
+            transition: color var(--ease);
+        }
+        .kb-forgot:hover { color: var(--text-muted); }
 
-        /* ── Error ────────────────────────────────────────── */
+        .kb-input-wrap { position: relative; }
 
-        .error-box {
+        .kb-input {
+            width: 100%;
+            height: 36px;
+            padding: 0 36px 0 11px;
+            background: var(--surface-2);
+            border: 1px solid var(--border);
+            border-radius: var(--r-sm);
+            font-family: var(--font);
+            font-size: 14px;
+            color: var(--text);
+            outline: none;
+            transition: border-color var(--ease), box-shadow var(--ease), background var(--ease);
+        }
+        .kb-input::placeholder { color: var(--text-faint); font-size: 13px; }
+        .kb-input:focus {
+            border-color: rgba(255,255,255,0.4);
+            box-shadow: 0 0 0 3px rgba(255,255,255,0.06);
+            background: #0d0d0d;
+        }
+
+        .kb-icon-btn {
+            position: absolute;
+            right: 8px;
+            top: 50%;
+            transform: translateY(-50%);
+            background: none;
+            border: none;
+            padding: 4px;
+            border-radius: 4px;
+            color: var(--text-faint);
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            transition: color var(--ease);
+            line-height: 0;
+        }
+        .kb-icon-btn:hover { color: var(--text-muted); }
+
+        /* ───── Alert ────────────────────────────────────────── */
+        .kb-alert {
             display: none;
             align-items: flex-start;
             gap: 8px;
-            background: var(--error-bg);
-            border: 1px solid var(--error-border);
-            border-radius: var(--radius-sm);
-            padding: 9px 11px;
-            margin-bottom: 14px;
+            padding: 10px 11px;
+            border-radius: var(--r-sm);
+            border: 1px solid var(--danger-border);
+            background: var(--danger-bg);
+            margin-bottom: 12px;
+            animation: fadeIn 0.18s ease;
+        }
+        .kb-alert.show { display: flex; }
+        .kb-alert svg { flex-shrink: 0; color: var(--danger); margin-top: 1px; }
+        .kb-alert-msg {
+            font-size: 12px;
+            color: #ff7070;
+            line-height: 1.5;
         }
 
-        .error-box.show {
-            display: flex;
-            animation: fadeSlide .2s ease both;
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(-3px); }
+            to   { opacity: 1; transform: translateY(0); }
         }
 
-        .error-box svg {
-            width: 14px;
-            height: 14px;
-            color: var(--error);
-            flex-shrink: 0;
-            margin-top: 1px;
-        }
-
-        .error-box p {
-            font-size: 12.5px;
-            font-weight: 500;
-            color: var(--error-text);
-            line-height: 1.45;
-        }
-
-        /* ── Primary button ───────────────────────────────── */
-
-        .btn {
+        /* ───── Button ───────────────────────────────────────── */
+        .kb-btn {
             width: 100%;
-            height: 40px;
+            height: 36px;
             display: flex;
             align-items: center;
             justify-content: center;
             gap: 7px;
-            background: var(--accent);
-            color: var(--accent-fg);
-            font-family: 'Geist', sans-serif;
+            font-family: var(--font);
             font-size: 13.5px;
             font-weight: 500;
             letter-spacing: -0.01em;
             border: none;
-            border-radius: var(--radius);
+            border-radius: var(--r-sm);
             cursor: pointer;
-            user-select: none;
-            -webkit-user-select: none;
-            transition: opacity .15s, transform .1s;
-            margin-bottom: 18px;
+            transition: background var(--ease), opacity var(--ease), transform 0.1s;
+            margin-top: 4px;
         }
 
-        .btn:hover:not(:disabled) { opacity: .85; }
-
-        .btn:active:not(:disabled) { transform: scale(.98); }
-
-        .btn:disabled {
-            opacity: .5;
-            cursor: not-allowed;
+        .kb-btn-white {
+            background: #fff;
+            color: #000;
         }
+        .kb-btn-white:hover:not(:disabled) { background: #ebebeb; }
+        .kb-btn-white:active:not(:disabled) { transform: scale(0.988); }
+        .kb-btn-white:disabled { opacity: 0.45; cursor: not-allowed; pointer-events: none; }
 
-        /* ── Spinner ──────────────────────────────────────── */
-
-        .spinner {
-            width: 15px;
-            height: 15px;
-            border: 2px solid rgba(255,255,255,.25);
-            border-top-color: #fff;
+        /* ───── Spinner ──────────────────────────────────────── */
+        .kb-spin {
+            width: 14px;
+            height: 14px;
+            border: 2px solid rgba(0,0,0,0.15);
+            border-top-color: #000;
             border-radius: 50%;
-            animation: spin .6s linear infinite;
-            flex-shrink: 0;
+            animation: spin 0.6s linear infinite;
         }
-
         @keyframes spin { to { transform: rotate(360deg); } }
 
-        /* ── Footer ───────────────────────────────────────── */
-
-        .card-footer {
-            text-align: center;
-            font-size: 12.5px;
-            color: var(--text-muted);
-            padding-top: 18px;
+        /* ───── Page Footer ──────────────────────────────────── */
+        .kb-footer {
             border-top: 1px solid var(--border);
+            padding: 14px 24px;
+            position: relative;
+            z-index: 1;
         }
-
-        .card-footer a {
-            color: var(--text);
-            font-weight: 500;
-            text-decoration: none;
-            transition: opacity .15s;
-        }
-
-        .card-footer a:hover { opacity: .7; }
-
-        /* ── Keyframes ────────────────────────────────────── */
-
-        @keyframes fadeSlide {
-            from { opacity: 0; transform: translateY(-3px); }
-            to   { opacity: 1; transform: none; }
-        }
-
-        /* ── Mobile (≤480px) ──────────────────────────────── */
-
-        @media (max-width: 480px) {
-            body { background: var(--bg-muted); }
-
-            .page {
-                align-items: flex-end;
-                padding: 0;
-                padding-top: 60px; /* space for fixed top bar */
-            }
-
-            .card {
-                max-width: 100%;
-                border-radius: 16px 16px 0 0;
-                border-bottom: none;
-                border-left: none;
-                border-right: none;
-                padding: 24px 20px 36px;
-                animation: slideUp .35s cubic-bezier(.16,1,.3,1) both;
-            }
-
-            @keyframes slideUp {
-                from { opacity: 0; transform: translateY(30px); }
-                to   { opacity: 1; transform: none; }
-            }
-
-            .top-bar {
-                display: flex !important;
-            }
-        }
-
-        /* Fixed top bar — mobile only */
-        .top-bar {
-            display: none;
-            position: fixed;
-            top: 0; left: 0; right: 0;
-            height: 52px;
-            background: var(--bg);
-            border-bottom: 1px solid var(--border);
+        .kb-footer-inner {
+            max-width: 1200px;
+            margin: 0 auto;
+            display: flex;
             align-items: center;
-            padding: 0 20px;
-            z-index: 50;
+            justify-content: space-between;
+            flex-wrap: wrap;
+            gap: 8px;
+        }
+        .kb-footer-copy {
+            font-size: 12px;
+            color: var(--text-faint);
+        }
+        .kb-footer-links {
+            display: flex;
+            align-items: center;
+            gap: 14px;
+        }
+        .kb-footer-links a {
+            font-size: 12px;
+            color: var(--text-faint);
+            text-decoration: none;
+            transition: color var(--ease);
+        }
+        .kb-footer-links a:hover { color: var(--text-muted); }
+
+        /* ───── Responsive ───────────────────────────────────── */
+        @media (max-width: 480px) {
+            .kb-main { padding: 36px 16px 48px; align-items: flex-start; }
+            .kb-card { border-radius: var(--r-md); }
+            .kb-card-top { padding: 20px 20px 16px; }
+            .kb-card-body { padding: 18px 20px 20px; }
+            .kb-card-foot { padding: 12px 20px; }
+            .kb-nav-inner { padding: 0 16px; }
+            .kb-footer { padding: 12px 16px; }
+            .kb-footer-links { gap: 10px; }
         }
 
-        .top-bar .brand { margin-bottom: 0; }
+        @media (max-width: 360px) {
+            .kb-title { font-size: 17px; }
+            .kb-card-top { padding: 16px 16px 14px; }
+            .kb-card-body { padding: 16px; }
+            .kb-card-foot { padding: 10px 16px; }
+        }
 
-        /* Tablet and up */
-        @media (min-width: 481px) {
-            .page { padding: 40px 24px; }
+        /* Tablet centered */
+        @media (min-width: 768px) and (max-width: 1024px) {
+            .kb-main { padding: 64px 24px; }
         }
     </style>
 </head>
 <body>
 
-    <!-- Mobile top bar -->
-    <div class="top-bar">
-        <div class="brand">
-            <div class="brand-mark">
-                <svg viewBox="0 0 24 24"><path d="M13 10V3L4 14h7v7l9-11h-7z"/></svg>
-            </div>
-            <span class="brand-name">KiroBoost</span>
-        </div>
-    </div>
-
-    <div class="page">
-        <div class="card">
-
-            <!-- Brand (hidden on mobile — shown in top bar instead) -->
-            <div class="brand" id="desktopBrand">
-                <div class="brand-mark">
-                    <svg viewBox="0 0 24 24"><path d="M13 10V3L4 14h7v7l9-11h-7z"/></svg>
+    <!-- ───── Navigation ─────────────────────────────────────── -->
+    <nav class="kb-nav">
+        <div class="kb-nav-inner">
+            <a href="/" class="kb-brand">
+                <div class="kb-brand-mark">
+                    <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#000" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+                        <path d="M13 2L3 14h9l-1 8 10-12h-9l1-8z"/>
+                    </svg>
                 </div>
-                <span class="brand-name">KiroBoost</span>
+                KiroBoost
+            </a>
+            <div class="kb-nav-end">
+                <a href="/register" class="kb-nav-link">Sign up</a>
+                <a href="/register" class="kb-nav-cta">Get started</a>
+            </div>
+        </div>
+    </nav>
+
+    <!-- ───── Main ────────────────────────────────────────────── -->
+    <main class="kb-main">
+        <div class="kb-card">
+
+            <!-- Top -->
+            <div class="kb-card-top">
+                <div class="kb-eyebrow">KiroBoost</div>
+                <h1 class="kb-title">Welcome back</h1>
+                <p class="kb-sub">Log in to your account to continue.</p>
             </div>
 
-            <!-- Card header -->
-            <div class="card-head">
-                <h1 class="card-title">Sign in</h1>
-                <p class="card-sub">Enter your credentials to access your account.</p>
-            </div>
+            <!-- Body -->
+            <div class="kb-card-body">
 
-            <!-- Inputs -->
-            <div class="form-fields">
+                <!-- Error -->
+                <div class="kb-alert" id="errorBox" role="alert" aria-live="polite">
+                    <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                        <circle cx="12" cy="12" r="10"/>
+                        <line x1="12" y1="8" x2="12" y2="12"/>
+                        <line x1="12" y1="16" x2="12.01" y2="16"/>
+                    </svg>
+                    <span class="kb-alert-msg" id="errorText"></span>
+                </div>
 
                 <!-- Username -->
-                <div class="field">
-                    <input
-                        type="text"
-                        id="username"
-                        class="field-input"
-                        placeholder=" "
-                        autocomplete="username"
-                        autocapitalize="none"
-                        autocorrect="off"
-                        spellcheck="false"
-                    >
-                    <label class="field-label" for="username">Username</label>
+                <div class="kb-field">
+                    <div class="kb-field-header">
+                        <label class="kb-label" for="username">Username</label>
+                    </div>
+                    <div class="kb-input-wrap">
+                        <input
+                            class="kb-input"
+                            type="text"
+                            id="username"
+                            placeholder="Enter your username"
+                            autocomplete="username"
+                            spellcheck="false"
+                            autofocus
+                        >
+                    </div>
                 </div>
 
                 <!-- Password -->
-                <div class="field">
-                    <input
-                        type="password"
-                        id="password"
-                        class="field-input has-icon"
-                        placeholder=" "
-                        autocomplete="current-password"
-                    >
-                    <label class="field-label" for="password">Password</label>
-                    <button
-                        class="eye-btn"
-                        type="button"
-                        id="eyeBtn"
-                        onclick="togglePassword()"
-                        tabindex="-1"
-                        aria-label="Toggle password visibility"
-                    >
-                        <svg id="iconShow" fill="none" stroke="currentColor" stroke-width="1.75" viewBox="0 0 24 24">
-                            <path stroke-linecap="round" stroke-linejoin="round" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"/>
-                            <path stroke-linecap="round" stroke-linejoin="round" d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z"/>
-                        </svg>
-                        <svg id="iconHide" fill="none" stroke="currentColor" stroke-width="1.75" viewBox="0 0 24 24" style="display:none">
-                            <path stroke-linecap="round" stroke-linejoin="round" d="M13.875 18.825A10.05 10.05 0 0112 19c-4.478 0-8.268-2.943-9.543-7a9.97 9.97 0 011.563-3.029m5.858.908a3 3 0 114.243 4.243M9.878 9.878l4.242 4.242M9.88 9.88l-3.29-3.29m7.532 7.532l3.29 3.29M3 3l3.59 3.59m0 0A9.953 9.953 0 0112 5c4.478 0 8.268 2.943 9.543 7a10.025 10.025 0 01-4.132 5.411m0 0L21 21"/>
-                        </svg>
-                    </button>
+                <div class="kb-field">
+                    <div class="kb-field-header">
+                        <label class="kb-label" for="password">Password</label>
+                        <a class="kb-forgot" href="#" onclick="alert('Please contact support.'); return false;">Forgot password?</a>
+                    </div>
+                    <div class="kb-input-wrap">
+                        <input
+                            class="kb-input"
+                            type="password"
+                            id="password"
+                            placeholder="Enter your password"
+                            autocomplete="current-password"
+                        >
+                        <button class="kb-icon-btn" id="eyeBtn" type="button" aria-label="Toggle password" onclick="togglePassword()">
+                            <svg id="eyeIcon" width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                                <path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/>
+                                <circle cx="12" cy="12" r="3"/>
+                            </svg>
+                        </button>
+                    </div>
                 </div>
 
+                <!-- Button -->
+                <button class="kb-btn kb-btn-white" id="loginBtn" type="button" onclick="login()">
+                    <span id="btnContent">Log in</span>
+                </button>
+
             </div>
 
-            <!-- Forgot password -->
-            <div class="row-forgot">
-                <a href="#" class="link-forgot" onclick="alert('Please contact Support.'); return false;">
-                    Forgot password?
-                </a>
-            </div>
-
-            <!-- Error box -->
-            <div class="error-box" id="errorBox" role="alert" aria-live="polite">
-                <svg fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
-                    <circle cx="12" cy="12" r="10"/>
-                    <path stroke-linecap="round" d="M12 8v4m0 4h.01"/>
-                </svg>
-                <p id="errorText">Invalid credentials.</p>
-            </div>
-
-            <!-- Sign in button -->
-            <button class="btn" id="loginBtn" type="button" onclick="login()">
-                <span id="btnText">Sign in</span>
-            </button>
-
-            <!-- Footer -->
-            <div class="card-footer">
-                Don't have an account?&nbsp; <a href="/register">Create one</a>
+            <!-- Foot -->
+            <div class="kb-card-foot">
+                <p>Don't have an account? <a href="/register">Sign up</a></p>
             </div>
 
         </div>
-    </div>
+    </main>
 
+    <!-- ───── Footer ─────────────────────────────────────────── -->
+    <footer class="kb-footer">
+        <div class="kb-footer-inner">
+            <span class="kb-footer-copy">© 2025 KiroBoost</span>
+            <div class="kb-footer-links">
+                <a href="#">Privacy</a>
+                <a href="#">Terms</a>
+                <a href="#">Support</a>
+            </div>
+        </div>
+    </footer>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
     <script>
-        // ─── Redirect if already logged in ─────────────────
-        (function () {
-            if (localStorage.getItem('kb_token')) {
-                window.location.href = '/home';
-            }
-        })();
+        // ── Auth guard ──────────────────────────────────────────
+        if (localStorage.getItem('kb_token')) {
+            window.location.replace('/home');
+        }
 
-        // ─── Hide desktop brand on mobile ──────────────────
-        (function () {
-            const brand = document.getElementById('desktopBrand');
-            function checkMobile() {
-                brand.style.display = window.innerWidth <= 480 ? 'none' : 'flex';
-            }
-            checkMobile();
-            window.addEventListener('resize', checkMobile);
-        })();
+        // ── Toggle password visibility ──────────────────────────
+        const EYE_OPEN = `<path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/><circle cx="12" cy="12" r="3"/>`;
+        const EYE_OFF  = `<path d="M17.94 17.94A10.07 10.07 0 0 1 12 20c-7 0-11-8-11-8a18.45 18.45 0 0 1 5.06-5.94M9.9 4.24A9.12 9.12 0 0 1 12 4c7 0 11 8 11 8a18.5 18.5 0 0 1-2.16 3.19m-6.72-1.07a3 3 0 1 1-4.24-4.24"/><line x1="1" y1="1" x2="23" y2="23"/>`;
 
-        // ─── Password toggle ────────────────────────────────
         function togglePassword() {
-            const input    = document.getElementById('password');
-            const iconShow = document.getElementById('iconShow');
-            const iconHide = document.getElementById('iconHide');
-            const isHidden = input.type === 'password';
-
-            input.type           = isHidden ? 'text' : 'password';
-            iconShow.style.display = isHidden ? 'none' : '';
-            iconHide.style.display = isHidden ? '' : 'none';
+            const inp  = document.getElementById('password');
+            const icon = document.getElementById('eyeIcon');
+            const show = inp.type === 'password';
+            inp.type       = show ? 'text' : 'password';
+            icon.innerHTML = show ? EYE_OFF : EYE_OPEN;
         }
 
-        // ─── Error helpers ───────────────────────────────────
+        // ── Show / hide error ───────────────────────────────────
         function showError(msg) {
-            const box = document.getElementById('errorBox');
             document.getElementById('errorText').textContent = msg;
-            box.classList.add('show');
+            document.getElementById('errorBox').classList.add('show');
         }
-
         function hideError() {
             document.getElementById('errorBox').classList.remove('show');
         }
 
-        // ─── Login ───────────────────────────────────────────
+        // ── Button state helpers ────────────────────────────────
+        const btn     = document.getElementById('loginBtn');
+        const btnBody = document.getElementById('btnContent');
+
+        function setLoading(on) {
+            btn.disabled = on;
+            btnBody.innerHTML = on
+                ? `<span class="kb-spin"></span><span>Logging in…</span>`
+                : `Log in`;
+        }
+
+        function setSuccess() {
+            btnBody.innerHTML = `
+                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+                    <polyline points="20 6 9 17 4 12"/>
+                </svg>
+                <span>Success!</span>`;
+        }
+
+        // ── Login ───────────────────────────────────────────────
         async function login() {
             const username = document.getElementById('username').value.trim();
             const password = document.getElementById('password').value;
-            const btn      = document.getElementById('loginBtn');
-            const btnText  = document.getElementById('btnText');
 
             hideError();
 
             if (!username || !password) {
-                showError('Please enter both username and password.');
+                showError('Please enter your username and password.');
                 return;
             }
 
-            // ── Loading state
-            btn.disabled = true;
-            btnText.style.display = 'none';
-            const spinner = document.createElement('div');
-            spinner.className = 'spinner';
-            spinner.id = 'btnSpinner';
-            btn.appendChild(spinner);
+            setLoading(true);
 
             try {
                 const res = await fetch('/api/auth/login', {
@@ -590,38 +599,31 @@
                     body:    JSON.stringify({ username, password })
                 });
 
-                // Handle non-JSON gracefully
-                const contentType = res.headers.get('content-type') || '';
-                if (!contentType.includes('application/json')) {
-                    throw new Error('Server error. Please try again.');
-                }
-
                 const data = await res.json();
 
-                if (data.success && data.token) {
+                if (data.success) {
+                    // Persist session
                     localStorage.setItem('kb_token', data.token);
-                    if (data.user) localStorage.setItem('kb_user', JSON.stringify(data.user));
-                    window.location.href = '/home';
+                    if (data.user) {
+                        localStorage.setItem('kb_user', JSON.stringify(data.user));
+                    }
+
+                    setSuccess();
+                    setTimeout(() => window.location.replace('/home'), 500);
                 } else {
-                    throw new Error(data.message || 'Login failed. Please try again.');
+                    throw new Error(data.message || 'Invalid username or password.');
                 }
 
             } catch (err) {
                 showError(err.message || 'Connection error. Please try again.');
-            } finally {
-                // ── Restore button (unless navigating away)
-                btn.disabled = false;
-                btnText.style.display = '';
-                const sp = document.getElementById('btnSpinner');
-                if (sp) sp.remove();
+                setLoading(false);
             }
         }
 
-        // ─── Enter key ───────────────────────────────────────
+        // ── Enter key ───────────────────────────────────────────
         document.addEventListener('keydown', e => {
-            if (e.key === 'Enter') login();
+            if (e.key === 'Enter' && !btn.disabled) login();
         });
     </script>
-
 </body>
 </html>
