@@ -2,206 +2,1643 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>Kiro</title>
-    
-    <script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-3120865640610493"
-     crossorigin="anonymous"></script>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>KiroBoost — Professional SMM Panel</title>
+    <meta name="description" content="KiroBoost is a zero-delay Facebook share engine. Add cookies, drop a link, watch shares stack up in real time. Free forever.">
 
-    <script src="https://cdn.tailwindcss.com"></script>
-    <link href="https://fonts.googleapis.com/css2?family=Karla:wght@400;500;700&family=Poppins:wght@600;700;800&display=swap" rel="stylesheet">
-    
-    <script>
-        tailwind.config = {
-            theme: {
-                extend: {
-                    fontFamily: {
-                        'sans': ['Karla', 'sans-serif'],
-                        'header': ['Poppins', 'sans-serif'],
-                    },
-                    colors: {
-                        'kiro-blue': '#007DFE',
-                        'kiro-navy': '#001b3a',
-                        'kiro-text': '#374151',
-                    }
-                }
-            }
-        }
-    </script>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Geist:wght@300;400;500;600;700;800;900&family=Geist+Mono:wght@400;500&display=swap" rel="stylesheet">
+
     <style>
-        body { background-color: #ffffff; -webkit-tap-highlight-color: transparent; overflow-x: hidden; }
-        
-        /* Main Content Transition */
-        #main-content { opacity: 0; transition: opacity 0.6s ease-out; }
-        #main-content.visible { opacity: 1; }
+        /* ══════════════════════════════════════════════════════
+           DESIGN TOKENS — shared with login.html & register.html
+        ══════════════════════════════════════════════════════ */
+        :root {
+            --bg:            #000000;
+            --surface:       #0a0a0a;
+            --surface-2:     #111111;
+            --surface-3:     #161616;
+            --border:        #1f1f1f;
+            --border-strong: #2e2e2e;
+            --text:          #ededed;
+            --text-muted:    #888888;
+            --text-faint:    #444444;
+            --accent:        #ffffff;
+            --accent-dim:    #e8e8e8;
+            --green:         #22c55e;
+            --amber:         #f59e0b;
+            --red:           #ef4444;
+            --r-sm:  6px;
+            --r-md:  10px;
+            --r-lg:  14px;
+            --r-xl:  20px;
+            --font:  'Geist', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+            --mono:  'Geist Mono', 'SF Mono', 'Fira Code', monospace;
+            --ease:  0.15s ease;
+        }
 
-        /* --- COUNTDOWN OVERLAY --- */
-        #countdown-overlay {
+        *, *::before, *::after { box-sizing: border-box; }
+        html { scroll-behavior: smooth; }
+
+        body {
+            font-family: var(--font);
+            background: var(--bg);
+            color: var(--text);
+            margin: 0; padding: 0;
+            -webkit-font-smoothing: antialiased;
+            -moz-osx-font-smoothing: grayscale;
+            overflow-x: hidden;
+        }
+
+        ::selection { background: #fff; color: #000; }
+
+        /* ── Grid overlay ──────────────────────────────────── */
+        #grid-overlay {
             position: fixed;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            background-color: #007DFE;
-            z-index: 9999;
+            inset: 0;
+            background-image:
+                linear-gradient(rgba(255,255,255,0.022) 1px, transparent 1px),
+                linear-gradient(90deg, rgba(255,255,255,0.022) 1px, transparent 1px);
+            background-size: 48px 48px;
+            pointer-events: none;
+            z-index: 0;
+        }
+
+        /* ══════════════════════════════════════════════════════
+           NAVIGATION
+        ══════════════════════════════════════════════════════ */
+        .kb-nav {
+            position: fixed;
+            inset: 0 0 auto;
+            z-index: 300;
+            background: rgba(0,0,0,0.82);
+            backdrop-filter: blur(20px);
+            -webkit-backdrop-filter: blur(20px);
+            border-bottom: 1px solid var(--border);
+        }
+
+        .kb-nav-inner {
+            max-width: 1160px;
+            margin: 0 auto;
+            padding: 0 24px;
+            height: 56px;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        /* Logo */
+        .kb-brand {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            text-decoration: none;
+            color: var(--text);
+            font-size: 14.5px;
+            font-weight: 600;
+            letter-spacing: -0.025em;
+            flex-shrink: 0;
+            margin-right: 8px;
+        }
+        .kb-brand:hover { color: var(--text); opacity: 0.7; }
+        .kb-brand-icon {
+            width: 26px; height: 26px;
+            background: #fff;
+            border-radius: 6px;
+            display: flex; align-items: center; justify-content: center;
+            flex-shrink: 0;
+        }
+
+        /* Nav links */
+        .kb-nav-links {
+            display: flex;
+            align-items: center;
+            gap: 2px;
+            flex: 1;
+        }
+        .kb-nav-a {
+            font-size: 13px;
+            color: var(--text-muted);
+            text-decoration: none;
+            padding: 5px 10px;
+            border-radius: var(--r-sm);
+            font-weight: 500;
+            white-space: nowrap;
+            transition: color var(--ease), background var(--ease);
+        }
+        .kb-nav-a:hover { color: var(--text); background: var(--surface-2); }
+
+        /* Nav right */
+        .kb-nav-right {
+            display: flex;
+            align-items: center;
+            gap: 6px;
+            margin-left: auto;
+        }
+        .kb-btn-ghost {
+            font-size: 13px;
+            font-family: var(--font);
+            color: var(--text-muted);
+            text-decoration: none;
+            padding: 6px 12px;
+            border-radius: var(--r-sm);
+            font-weight: 500;
+            border: none;
+            background: none;
+            cursor: pointer;
+            transition: color var(--ease), background var(--ease);
+        }
+        .kb-btn-ghost:hover { color: var(--text); background: var(--surface-2); }
+
+        .kb-btn-white {
+            font-size: 13px;
+            font-family: var(--font);
+            font-weight: 500;
+            color: #000;
+            background: #fff;
+            border: none;
+            padding: 6px 15px;
+            border-radius: var(--r-sm);
+            text-decoration: none;
+            white-space: nowrap;
+            transition: background var(--ease);
+            cursor: pointer;
+        }
+        .kb-btn-white:hover { background: var(--accent-dim); color: #000; }
+
+        /* Hamburger */
+        .kb-ham {
+            display: none;
+            align-items: center;
+            background: none;
+            border: none;
+            padding: 6px;
+            color: var(--text-muted);
+            cursor: pointer;
+            border-radius: var(--r-sm);
+            margin-left: 4px;
+        }
+        .kb-ham:hover { background: var(--surface-2); color: var(--text); }
+
+        /* Mobile drawer */
+        .kb-drawer {
+            display: none;
+            position: fixed;
+            top: 56px; left: 0; right: 0;
+            background: rgba(0,0,0,0.96);
+            backdrop-filter: blur(24px);
+            border-bottom: 1px solid var(--border);
+            padding: 10px 20px 18px;
+            z-index: 299;
+            flex-direction: column;
+            gap: 2px;
+        }
+        .kb-drawer.open { display: flex; }
+        .kb-drawer a {
+            font-size: 14px;
+            color: var(--text-muted);
+            text-decoration: none;
+            padding: 9px 10px;
+            border-radius: var(--r-sm);
+            font-weight: 500;
+            transition: color var(--ease), background var(--ease);
+        }
+        .kb-drawer a:hover { color: var(--text); background: var(--surface-2); }
+        .kb-drawer hr { border-color: var(--border); margin: 8px 0; }
+        .kb-drawer .kb-drawer-cta {
+            background: #fff;
+            color: #000 !important;
+            font-weight: 600;
+            text-align: center;
+            margin-top: 2px;
+        }
+        .kb-drawer .kb-drawer-cta:hover { background: var(--accent-dim) !important; }
+
+        /* ══════════════════════════════════════════════════════
+           HERO
+        ══════════════════════════════════════════════════════ */
+        .kb-hero {
+            position: relative;
+            z-index: 1;
+            padding: 148px 24px 88px;
+            text-align: center;
+        }
+
+        /* soft radial glow */
+        .kb-hero::before {
+            content: '';
+            position: absolute;
+            top: 0; left: 50%;
+            transform: translateX(-50%);
+            width: 720px; height: 480px;
+            background: radial-gradient(ellipse at 50% 30%,
+                rgba(255,255,255,0.05) 0%,
+                transparent 65%);
+            pointer-events: none;
+        }
+
+        .kb-hero-badge {
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            padding: 4px 12px 4px 8px;
+            background: var(--surface-2);
+            border: 1px solid var(--border-strong);
+            border-radius: 99px;
+            font-size: 12px;
+            font-weight: 500;
+            color: var(--text-muted);
+            margin-bottom: 28px;
+            animation: heroFadeUp 0.6s cubic-bezier(.16,1,.3,1) both;
+        }
+        .kb-pulse {
+            width: 6px; height: 6px;
+            border-radius: 50%;
+            background: var(--green);
+            box-shadow: 0 0 8px var(--green);
+            animation: pulse 2s ease-in-out infinite;
+        }
+        @keyframes pulse {
+            0%, 100% { opacity: 1; transform: scale(1); }
+            50%       { opacity: 0.4; transform: scale(0.85); }
+        }
+
+        .kb-hero-h1 {
+            font-size: clamp(44px, 7.5vw, 84px);
+            font-weight: 800;
+            letter-spacing: -0.045em;
+            line-height: 1.02;
+            color: var(--text);
+            margin-bottom: 22px;
+            animation: heroFadeUp 0.6s 0.06s cubic-bezier(.16,1,.3,1) both;
+        }
+        .kb-hero-h1 span { color: var(--text-faint); }
+
+        .kb-hero-p {
+            font-size: clamp(15px, 2.2vw, 18px);
+            color: var(--text-muted);
+            font-weight: 400;
+            line-height: 1.7;
+            max-width: 500px;
+            margin: 0 auto 36px;
+            animation: heroFadeUp 0.6s 0.12s cubic-bezier(.16,1,.3,1) both;
+        }
+
+        .kb-hero-btns {
             display: flex;
             align-items: center;
             justify-content: center;
-            transition: transform 0.5s cubic-bezier(0.7, 0, 0.3, 1);
-        }
-        
-        /* Popping Numbers */
-        .count-number {
-            font-family: 'Poppins', sans-serif;
-            font-size: 140px;
-            font-weight: 800;
-            color: white;
-            opacity: 0;
-            transform: scale(0.5);
-            animation: popNumber 0.9s cubic-bezier(0.175, 0.885, 0.32, 1.275) forwards;
+            gap: 10px;
+            flex-wrap: wrap;
+            animation: heroFadeUp 0.6s 0.18s cubic-bezier(.16,1,.3,1) both;
         }
 
-        @keyframes popNumber {
-            0% { opacity: 0; transform: scale(0.5); }
-            50% { opacity: 1; transform: scale(1.1); }
-            100% { opacity: 0; transform: scale(1.5); }
-        }
-
-        /* Circular Sweep Loader */
-        .loader-ring {
-            position: absolute;
-            width: 240px;
-            height: 240px;
-            border-radius: 50%;
-            border: 6px solid rgba(255,255,255,0.1);
-            border-top-color: white;
-            animation: spin 1s linear infinite;
-        }
-        @keyframes spin { to { transform: rotate(360deg); } }
-
-        /* --- DOCUMENT STYLING --- */
-        .rules-list li {
-            position: relative;
-            padding-left: 1.5rem;
-            margin-bottom: 1rem;
-            line-height: 1.6;
-            color: #4B5563;
+        .kb-cta {
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
             font-size: 14px;
+            font-family: var(--font);
+            font-weight: 600;
+            color: #000;
+            background: #fff;
+            border: none;
+            padding: 10px 22px;
+            border-radius: var(--r-sm);
+            text-decoration: none;
+            cursor: pointer;
+            transition: background var(--ease), transform 0.1s;
         }
-        .rules-list li::before {
-            content: "•";
-            color: #007DFE;
-            font-weight: bold;
-            position: absolute;
-            left: 0;
-            top: -1px;
-            font-size: 1.2rem;
+        .kb-cta:hover  { background: var(--accent-dim); color: #000; }
+        .kb-cta:active { transform: scale(0.98); }
+
+        .kb-cta-sec {
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            font-size: 14px;
+            font-family: var(--font);
+            font-weight: 500;
+            color: var(--text-muted);
+            background: transparent;
+            border: 1px solid var(--border-strong);
+            padding: 10px 22px;
+            border-radius: var(--r-sm);
+            text-decoration: none;
+            cursor: pointer;
+            transition: color var(--ease), border-color var(--ease), background var(--ease);
+        }
+        .kb-cta-sec:hover { color: var(--text); border-color: var(--text-faint); background: var(--surface-2); }
+
+        @keyframes heroFadeUp {
+            from { opacity: 0; transform: translateY(18px); }
+            to   { opacity: 1; transform: translateY(0); }
         }
 
-        .tap-effect:active { transform: scale(0.97); transition: transform 0.1s; opacity: 0.9; }
+        /* ── Terminal window ───────────────────────────────── */
+        .kb-terminal-wrap {
+            position: relative;
+            z-index: 1;
+            max-width: 640px;
+            margin: 60px auto 0;
+            animation: heroFadeUp 0.6s 0.24s cubic-bezier(.16,1,.3,1) both;
+        }
+
+        /* glow behind terminal */
+        .kb-terminal-wrap::before {
+            content: '';
+            position: absolute;
+            inset: -40px;
+            background: radial-gradient(ellipse, rgba(255,255,255,0.035) 0%, transparent 70%);
+            pointer-events: none;
+            z-index: -1;
+        }
+
+        .kb-terminal {
+            background: var(--surface);
+            border: 1px solid var(--border-strong);
+            border-radius: var(--r-lg);
+            overflow: hidden;
+            box-shadow: 0 0 0 1px rgba(255,255,255,0.04),
+                        0 20px 60px rgba(0,0,0,0.7);
+        }
+
+        .kb-terminal-bar {
+            display: flex;
+            align-items: center;
+            gap: 7px;
+            padding: 12px 16px;
+            border-bottom: 1px solid var(--border);
+            background: var(--surface-2);
+        }
+        .kb-dot {
+            width: 11px; height: 11px;
+            border-radius: 50%;
+        }
+        .kb-dot-r { background: #ff5f57; }
+        .kb-dot-y { background: #ffbd2e; }
+        .kb-dot-g { background: #28ca41; }
+        .kb-terminal-title {
+            font-family: var(--mono);
+            font-size: 11px;
+            color: var(--text-faint);
+            margin-left: 6px;
+        }
+
+        .kb-terminal-body {
+            padding: 20px 20px 24px;
+            font-family: var(--mono);
+            font-size: 13px;
+            line-height: 1.8;
+            text-align: left;
+        }
+
+        .kb-t-prompt { color: var(--text-faint); }
+        .kb-t-cmd    { color: var(--text); }
+        .kb-t-key    { color: #7dd3fc; }
+        .kb-t-val    { color: #86efac; }
+        .kb-t-dim    { color: var(--text-faint); }
+        .kb-t-success{ color: var(--green); }
+        .kb-t-warn   { color: var(--amber); }
+        .kb-t-num    { color: #c4b5fd; }
+        .kb-t-cursor {
+            display: inline-block;
+            width: 8px; height: 14px;
+            background: var(--text-muted);
+            vertical-align: text-bottom;
+            animation: blink 1s step-end infinite;
+        }
+        @keyframes blink { 0%,100%{opacity:1} 50%{opacity:0} }
+
+        /* ══════════════════════════════════════════════════════
+           STATS STRIP
+        ══════════════════════════════════════════════════════ */
+        .kb-stats-strip {
+            position: relative;
+            z-index: 1;
+            background: var(--surface);
+            border-top: 1px solid var(--border);
+            border-bottom: 1px solid var(--border);
+        }
+        .kb-stats-grid {
+            max-width: 1160px;
+            margin: 0 auto;
+            padding: 0 24px;
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+        }
+        .kb-stat {
+            padding: 30px 20px;
+            text-align: center;
+            border-right: 1px solid var(--border);
+        }
+        .kb-stat:last-child { border-right: none; }
+        .kb-stat-n {
+            font-size: 30px;
+            font-weight: 700;
+            letter-spacing: -0.045em;
+            color: var(--text);
+            margin-bottom: 4px;
+            font-variant-numeric: tabular-nums;
+        }
+        .kb-stat-l {
+            font-size: 12px;
+            color: var(--text-faint);
+            font-weight: 500;
+        }
+
+        /* ══════════════════════════════════════════════════════
+           SHARED SECTION STYLES
+        ══════════════════════════════════════════════════════ */
+        .kb-section {
+            position: relative;
+            z-index: 1;
+            max-width: 1160px;
+            margin: 0 auto;
+            padding: 96px 24px;
+        }
+        .kb-section-alt {
+            background: var(--surface);
+            border-top: 1px solid var(--border);
+            border-bottom: 1px solid var(--border);
+        }
+
+        .kb-section-eyebrow {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            font-size: 11px;
+            font-weight: 500;
+            letter-spacing: 0.1em;
+            text-transform: uppercase;
+            color: var(--text-faint);
+            margin-bottom: 14px;
+        }
+        .kb-section-eyebrow::before {
+            content: '';
+            width: 20px; height: 1px;
+            background: var(--text-faint);
+            flex-shrink: 0;
+        }
+
+        .kb-section-h2 {
+            font-size: clamp(28px, 4vw, 46px);
+            font-weight: 700;
+            letter-spacing: -0.038em;
+            line-height: 1.08;
+            color: var(--text);
+            margin-bottom: 14px;
+        }
+
+        .kb-section-p {
+            font-size: 15px;
+            color: var(--text-muted);
+            line-height: 1.7;
+            max-width: 460px;
+        }
+
+        /* ══════════════════════════════════════════════════════
+           FEATURES GRID
+        ══════════════════════════════════════════════════════ */
+        .kb-grid-9 {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 1px;
+            background: var(--border);
+            border: 1px solid var(--border);
+            border-radius: var(--r-lg);
+            overflow: hidden;
+            margin-top: 60px;
+        }
+
+        .kb-feat {
+            background: var(--surface);
+            padding: 30px 26px;
+            transition: background var(--ease);
+        }
+        .kb-feat:hover { background: var(--surface-2); }
+
+        .kb-feat-icon {
+            width: 34px; height: 34px;
+            background: var(--surface-2);
+            border: 1px solid var(--border-strong);
+            border-radius: var(--r-sm);
+            display: flex; align-items: center; justify-content: center;
+            color: var(--text-faint);
+            margin-bottom: 16px;
+            transition: border-color var(--ease), color var(--ease);
+        }
+        .kb-feat:hover .kb-feat-icon {
+            border-color: var(--text-faint);
+            color: var(--text-muted);
+        }
+
+        .kb-feat-h {
+            font-size: 13.5px;
+            font-weight: 600;
+            letter-spacing: -0.02em;
+            color: var(--text);
+            margin-bottom: 7px;
+        }
+
+        .kb-feat-p {
+            font-size: 12.5px;
+            color: var(--text-muted);
+            line-height: 1.7;
+        }
+
+        /* ══════════════════════════════════════════════════════
+           HOW IT WORKS — STEPS
+        ══════════════════════════════════════════════════════ */
+        .kb-steps {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 0;
+            border: 1px solid var(--border);
+            border-radius: var(--r-lg);
+            overflow: hidden;
+            margin-top: 60px;
+        }
+        .kb-step {
+            padding: 36px 28px;
+            border-right: 1px solid var(--border);
+            background: var(--surface);
+            transition: background var(--ease);
+        }
+        .kb-step:last-child { border-right: none; }
+        .kb-step:hover { background: var(--surface-2); }
+
+        .kb-step-n {
+            font-family: var(--mono);
+            font-size: 11px;
+            font-weight: 500;
+            color: var(--text-faint);
+            letter-spacing: 0.06em;
+            margin-bottom: 20px;
+        }
+        .kb-step-icon-wrap {
+            width: 36px; height: 36px;
+            background: var(--surface-2);
+            border: 1px solid var(--border-strong);
+            border-radius: var(--r-sm);
+            display: flex; align-items: center; justify-content: center;
+            color: var(--text-faint);
+            margin-bottom: 18px;
+        }
+        .kb-step-h {
+            font-size: 14px;
+            font-weight: 600;
+            letter-spacing: -0.02em;
+            color: var(--text);
+            margin-bottom: 10px;
+        }
+        .kb-step-p {
+            font-size: 12.5px;
+            color: var(--text-muted);
+            line-height: 1.72;
+        }
+
+        /* ══════════════════════════════════════════════════════
+           SPEED TABLE
+        ══════════════════════════════════════════════════════ */
+        .kb-tbl-wrap {
+            margin-top: 56px;
+            border: 1px solid var(--border);
+            border-radius: var(--r-lg);
+            overflow: hidden;
+        }
+        .kb-tbl {
+            width: 100%;
+            border-collapse: collapse;
+        }
+        .kb-tbl thead tr { background: var(--surface-2); }
+        .kb-tbl th {
+            font-size: 11px;
+            font-weight: 500;
+            letter-spacing: 0.07em;
+            text-transform: uppercase;
+            color: var(--text-faint);
+            padding: 12px 20px;
+            text-align: left;
+            border-bottom: 1px solid var(--border);
+        }
+        .kb-tbl td {
+            font-size: 13px;
+            color: var(--text-muted);
+            padding: 15px 20px;
+            border-bottom: 1px solid var(--border);
+        }
+        .kb-tbl tbody tr:last-child td { border-bottom: none; }
+        .kb-tbl tbody tr:hover td { background: var(--surface-2); }
+        .kb-tbl td:first-child { color: var(--text); font-weight: 500; font-family: var(--mono); font-size: 12.5px; }
+
+        .chip {
+            display: inline-block;
+            font-size: 11px;
+            font-weight: 500;
+            padding: 2px 9px;
+            border-radius: 99px;
+        }
+        .chip-green  { background: rgba(34,197,94,0.1);  color: var(--green);  border: 1px solid rgba(34,197,94,0.2); }
+        .chip-amber  { background: rgba(245,158,11,0.1); color: var(--amber);  border: 1px solid rgba(245,158,11,0.2); }
+        .chip-neutral{ background: var(--surface-2); color: var(--text-muted); border: 1px solid var(--border-strong); }
+
+        /* ══════════════════════════════════════════════════════
+           ABOUT — TWO COL
+        ══════════════════════════════════════════════════════ */
+        .kb-about-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 72px;
+            align-items: start;
+        }
+
+        .kb-check-list {
+            list-style: none;
+            padding: 0; margin: 28px 0 0;
+            display: flex;
+            flex-direction: column;
+            gap: 13px;
+        }
+        .kb-check-list li {
+            display: flex;
+            align-items: flex-start;
+            gap: 10px;
+            font-size: 13px;
+            color: var(--text-muted);
+            line-height: 1.6;
+        }
+        .kb-check-list li svg { flex-shrink: 0; color: var(--text-faint); margin-top: 2px; }
+
+        /* Info card */
+        .kb-info-card {
+            background: var(--surface);
+            border: 1px solid var(--border);
+            border-radius: var(--r-lg);
+            overflow: hidden;
+        }
+        .kb-info-card-header {
+            padding: 16px 20px;
+            border-bottom: 1px solid var(--border);
+            background: var(--surface-2);
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+        }
+        .kb-info-card-header-title {
+            font-size: 12px;
+            font-weight: 600;
+            color: var(--text-muted);
+            letter-spacing: -0.01em;
+        }
+        .kb-info-row {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 13px 20px;
+            border-bottom: 1px solid var(--border);
+        }
+        .kb-info-row:last-child { border-bottom: none; }
+        .kb-info-key {
+            font-size: 12px;
+            color: var(--text-faint);
+            font-weight: 500;
+        }
+        .kb-info-val {
+            font-size: 12.5px;
+            color: var(--text);
+            font-weight: 500;
+        }
+
+        /* inline badges */
+        .badge-green {
+            display: inline-flex;
+            align-items: center;
+            gap: 5px;
+            font-size: 11px;
+            font-weight: 500;
+            color: var(--green);
+            background: rgba(34,197,94,0.08);
+            border: 1px solid rgba(34,197,94,0.18);
+            padding: 2px 9px;
+            border-radius: 99px;
+        }
+        .badge-green::before {
+            content: '';
+            width: 5px; height: 5px;
+            border-radius: 50%;
+            background: var(--green);
+            flex-shrink: 0;
+        }
+        .badge-dim {
+            font-size: 11px;
+            font-weight: 500;
+            color: var(--text-faint);
+            background: var(--surface-2);
+            border: 1px solid var(--border-strong);
+            padding: 2px 9px;
+            border-radius: 99px;
+        }
+
+        /* ══════════════════════════════════════════════════════
+           FAQ
+        ══════════════════════════════════════════════════════ */
+        .kb-faq {
+            margin-top: 56px;
+            border: 1px solid var(--border);
+            border-radius: var(--r-lg);
+            overflow: hidden;
+        }
+        .kb-faq-item {
+            border-bottom: 1px solid var(--border);
+        }
+        .kb-faq-item:last-child { border-bottom: none; }
+        .kb-faq-q {
+            width: 100%;
+            background: none;
+            border: none;
+            padding: 18px 20px;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            gap: 12px;
+            cursor: pointer;
+            text-align: left;
+            font-family: var(--font);
+            font-size: 13.5px;
+            font-weight: 500;
+            color: var(--text);
+            letter-spacing: -0.01em;
+            transition: background var(--ease);
+        }
+        .kb-faq-q:hover { background: var(--surface-2); }
+        .kb-faq-q svg {
+            flex-shrink: 0;
+            color: var(--text-faint);
+            transition: transform 0.2s ease;
+        }
+        .kb-faq-item.open .kb-faq-q svg { transform: rotate(45deg); }
+        .kb-faq-a {
+            display: none;
+            padding: 0 20px 18px;
+            font-size: 13px;
+            color: var(--text-muted);
+            line-height: 1.72;
+        }
+        .kb-faq-item.open .kb-faq-a { display: block; }
+
+        /* ══════════════════════════════════════════════════════
+           CTA BANNER
+        ══════════════════════════════════════════════════════ */
+        .kb-cta-banner {
+            position: relative;
+            z-index: 1;
+            border-top: 1px solid var(--border);
+        }
+        .kb-cta-banner::before {
+            content: '';
+            position: absolute;
+            top: 0; left: 50%;
+            transform: translateX(-50%);
+            width: 600px; height: 300px;
+            background: radial-gradient(ellipse, rgba(255,255,255,0.04) 0%, transparent 70%);
+            pointer-events: none;
+        }
+        .kb-cta-inner {
+            max-width: 1160px;
+            margin: 0 auto;
+            padding: 100px 24px;
+            text-align: center;
+            position: relative;
+        }
+        .kb-cta-h2 {
+            font-size: clamp(34px, 5.5vw, 62px);
+            font-weight: 800;
+            letter-spacing: -0.045em;
+            line-height: 1.04;
+            color: var(--text);
+            margin-bottom: 18px;
+        }
+        .kb-cta-p {
+            font-size: 15px;
+            color: var(--text-muted);
+            margin-bottom: 40px;
+            line-height: 1.65;
+        }
+
+        /* ══════════════════════════════════════════════════════
+           FOOTER
+        ══════════════════════════════════════════════════════ */
+        .kb-footer {
+            position: relative;
+            z-index: 1;
+            background: var(--surface);
+            border-top: 1px solid var(--border);
+        }
+        .kb-footer-grid {
+            max-width: 1160px;
+            margin: 0 auto;
+            padding: 56px 24px 40px;
+            display: grid;
+            grid-template-columns: 1.6fr 1fr 1fr 1fr;
+            gap: 40px;
+        }
+        .kb-footer-brand-row {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            font-size: 14.5px;
+            font-weight: 600;
+            color: var(--text);
+            letter-spacing: -0.025em;
+            margin-bottom: 12px;
+        }
+        .kb-footer-tagline {
+            font-size: 12.5px;
+            color: var(--text-faint);
+            line-height: 1.7;
+            max-width: 210px;
+        }
+        .kb-footer-col-h {
+            font-size: 12px;
+            font-weight: 600;
+            color: var(--text);
+            margin-bottom: 14px;
+            letter-spacing: -0.01em;
+        }
+        .kb-footer-links {
+            list-style: none;
+            padding: 0; margin: 0;
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+        }
+        .kb-footer-links a {
+            font-size: 12.5px;
+            color: var(--text-faint);
+            text-decoration: none;
+            transition: color var(--ease);
+        }
+        .kb-footer-links a:hover { color: var(--text-muted); }
+
+        .kb-footer-bottom {
+            max-width: 1160px;
+            margin: 0 auto;
+            padding: 14px 24px;
+            border-top: 1px solid var(--border);
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            flex-wrap: wrap;
+            gap: 8px;
+        }
+        .kb-footer-copy { font-size: 12px; color: var(--text-faint); }
+        .kb-footer-bottom-links { display: flex; gap: 16px; }
+        .kb-footer-bottom-links a {
+            font-size: 12px;
+            color: var(--text-faint);
+            text-decoration: none;
+            transition: color var(--ease);
+        }
+        .kb-footer-bottom-links a:hover { color: var(--text-muted); }
+
+        /* ══════════════════════════════════════════════════════
+           SCROLL REVEAL
+        ══════════════════════════════════════════════════════ */
+        .reveal {
+            opacity: 0;
+            transform: translateY(22px);
+            transition: opacity 0.55s ease, transform 0.55s ease;
+        }
+        .reveal.in { opacity: 1; transform: none; }
+        .reveal-delay-1 { transition-delay: 0.08s; }
+        .reveal-delay-2 { transition-delay: 0.16s; }
+
+        /* ══════════════════════════════════════════════════════
+           RESPONSIVE
+        ══════════════════════════════════════════════════════ */
+        @media (max-width: 1024px) {
+            .kb-grid-9   { grid-template-columns: repeat(2, 1fr); }
+            .kb-steps    { grid-template-columns: repeat(2, 1fr); }
+            .kb-step:nth-child(2) { border-right: none; }
+            .kb-step:nth-child(3) { border-top: 1px solid var(--border); border-right: none; }
+            .kb-stats-grid{ grid-template-columns: repeat(2, 1fr); }
+            .kb-stat { border-right: 1px solid var(--border); border-bottom: 1px solid var(--border); }
+            .kb-stat:nth-child(2n) { border-right: none; }
+            .kb-stat:nth-last-child(-n+2) { border-bottom: none; }
+            .kb-about-grid{ grid-template-columns: 1fr; gap: 48px; }
+            .kb-footer-grid { grid-template-columns: 1fr 1fr; gap: 32px; }
+        }
+
+        @media (max-width: 768px) {
+            .kb-nav-links { display: none; }
+            .kb-btn-ghost { display: none; }
+            .kb-ham       { display: flex; }
+            .kb-hero      { padding: 112px 20px 64px; }
+            .kb-section   { padding: 64px 20px; }
+            .kb-grid-9    { grid-template-columns: 1fr; }
+            .kb-steps     { grid-template-columns: 1fr; }
+            .kb-step      { border-right: none !important; border-bottom: 1px solid var(--border); }
+            .kb-step:last-child { border-bottom: none; }
+            .kb-step:nth-child(3) { border-top: none; }
+            .kb-tbl th, .kb-tbl td { padding: 11px 14px; font-size: 12px; }
+            .kb-cta-inner { padding: 72px 20px; }
+            .kb-footer-grid { grid-template-columns: 1fr 1fr; padding: 40px 20px 28px; gap: 24px; }
+            .kb-footer-bottom { padding: 12px 20px; }
+            .kb-nav-inner { padding: 0 16px; }
+            .kb-terminal-wrap { margin-top: 44px; }
+        }
+
+        @media (max-width: 480px) {
+            .kb-stats-grid { grid-template-columns: 1fr 1fr; }
+            .kb-footer-grid { grid-template-columns: 1fr; }
+            .kb-hero-btns   { flex-direction: column; align-items: stretch; }
+            .kb-cta, .kb-cta-sec { justify-content: center; }
+            .kb-tbl         { font-size: 11.5px; }
+            .kb-tbl th, .kb-tbl td { padding: 9px 10px; }
+        }
     </style>
 </head>
-<body class="bg-white">
+<body>
 
-    <div id="countdown-overlay">
-        <div class="loader-ring"></div>
-        <div id="countdown-text" class="count-number">3</div>
+<div id="grid-overlay"></div>
+
+<!-- ══════════════════════════════════════════════════════════
+     NAVIGATION
+══════════════════════════════════════════════════════════ -->
+<nav class="kb-nav">
+    <div class="kb-nav-inner">
+        <a href="/" class="kb-brand">
+            <div class="kb-brand-icon">
+                <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="#000" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+                    <path d="M13 2L3 14h9l-1 8 10-12h-9l1-8z"/>
+                </svg>
+            </div>
+            KiroBoost
+        </a>
+
+        <div class="kb-nav-links">
+            <a href="#features"  class="kb-nav-a">Features</a>
+            <a href="#how"       class="kb-nav-a">How it works</a>
+            <a href="#speed"     class="kb-nav-a">Speed modes</a>
+            <a href="#about"     class="kb-nav-a">About</a>
+            <a href="#faq"       class="kb-nav-a">FAQ</a>
+        </div>
+
+        <div class="kb-nav-right">
+            <a href="/login"    class="kb-btn-ghost">Log in</a>
+            <a href="/register" class="kb-btn-white">Get started</a>
+            <button class="kb-ham" id="hamBtn" aria-label="Menu">
+                <svg id="hamIcon" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                    <line x1="3" y1="6" x2="21" y2="6"/>
+                    <line x1="3" y1="12" x2="21" y2="12"/>
+                    <line x1="3" y1="18" x2="21" y2="18"/>
+                </svg>
+            </button>
+        </div>
+    </div>
+</nav>
+
+<!-- Mobile drawer -->
+<div class="kb-drawer" id="drawer">
+    <a href="#features"  onclick="closeDrawer()">Features</a>
+    <a href="#how"       onclick="closeDrawer()">How it works</a>
+    <a href="#speed"     onclick="closeDrawer()">Speed modes</a>
+    <a href="#about"     onclick="closeDrawer()">About</a>
+    <a href="#faq"       onclick="closeDrawer()">FAQ</a>
+    <hr>
+    <a href="/login"    onclick="closeDrawer()">Log in</a>
+    <a href="/register" class="kb-drawer-cta" onclick="closeDrawer()">Get started free →</a>
+</div>
+
+<!-- ══════════════════════════════════════════════════════════
+     HERO
+══════════════════════════════════════════════════════════ -->
+<section class="kb-hero">
+    <div class="kb-hero-badge">
+        <span class="kb-pulse"></span>
+        Free SMM Panel — Active &amp; Operational
     </div>
 
-    <div id="main-content">
-        
-        <header class="fixed top-0 left-0 w-full bg-kiro-blue h-14 flex items-center justify-center px-4 z-50 shadow-sm">
-            <h1 class="text-white font-header font-semibold text-[17px] tracking-wide">
-                Kiro
-            </h1>
-        </header>
+    <h1 class="kb-hero-h1">
+        Boost your reach.<br>
+        <span>Faster than ever.</span>
+    </h1>
 
-        <div class="max-w-md mx-auto pt-24 px-8 pb-10">
-            
-            <div class="text-center mb-8">
-                <h2 class="font-header font-extrabold text-[26px] leading-tight text-kiro-navy mb-2">
-                    Welcome to <span class="text-kiro-blue">Kiro</span>
-                </h2>
-                <p class="text-sm text-gray-400 font-medium">Please review our community guidelines.</p>
+    <p class="kb-hero-p">
+        KiroBoost is a zero-delay Facebook share engine built for SMM operators. Add cookies, drop a post link, and watch shares stack up live.
+    </p>
+
+    <div class="kb-hero-btns">
+        <a href="/register" class="kb-cta">
+            Get started free
+            <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+                <line x1="5" y1="12" x2="19" y2="12"/><polyline points="12 5 19 12 12 19"/>
+            </svg>
+        </a>
+        <a href="#features" class="kb-cta-sec">Explore features</a>
+    </div>
+
+    <!-- Terminal widget -->
+    <div class="kb-terminal-wrap">
+        <div class="kb-terminal">
+            <div class="kb-terminal-bar">
+                <span class="kb-dot kb-dot-r"></span>
+                <span class="kb-dot kb-dot-y"></span>
+                <span class="kb-dot kb-dot-g"></span>
+                <span class="kb-terminal-title">kiroboost — share session</span>
             </div>
+            <div class="kb-terminal-body" id="termBody">
+                <div><span class="kb-t-prompt">$ </span><span class="kb-t-cmd">kiro share --post <span class="kb-t-val">"fb.com/post/12345"</span> --speed <span class="kb-t-val">instant</span></span></div>
+                <div style="height:6px"></div>
+                <div><span class="kb-t-key">▶ Extracting token</span><span class="kb-t-dim">...</span></div>
+                <div><span class="kb-t-success">✓ Token extracted</span> <span class="kb-t-dim">— EAAG7xK9…</span></div>
+                <div style="height:4px"></div>
+                <div><span class="kb-t-key">▶ Resolving post ID</span><span class="kb-t-dim">...</span></div>
+                <div><span class="kb-t-success">✓ Post ID:</span> <span class="kb-t-num">1234567890123456</span></div>
+                <div style="height:4px"></div>
+                <div><span class="kb-t-key">▶ Launching batch session</span></div>
+                <div><span class="kb-t-dim">&nbsp;&nbsp;accounts:&nbsp;</span><span class="kb-t-num">12</span><span class="kb-t-dim"> &nbsp;|&nbsp; speed:&nbsp;</span><span class="kb-t-val">instant</span><span class="kb-t-dim"> &nbsp;|&nbsp; target:&nbsp;</span><span class="kb-t-num">500</span></div>
+                <div style="height:4px"></div>
+                <div id="termLogs"></div>
+                <div><span class="kb-t-cursor"></span></div>
+            </div>
+        </div>
+    </div>
+</section>
 
-            <div class="space-y-6 font-sans">
-                
-                <div class="bg-blue-50 border border-blue-100 p-4 rounded-2xl">
-                    <p class="text-[13px] text-kiro-navy font-medium leading-relaxed">
-                        <span class="font-bold text-kiro-blue block mb-1">Reminder:</span> 
-                        Being a paid user doesn’t mean you can’t get banned. Please respect the rules and the Terms of Service.
-                    </p>
+<!-- ══════════════════════════════════════════════════════════
+     STATS STRIP
+══════════════════════════════════════════════════════════ -->
+<div class="kb-stats-strip reveal">
+    <div class="kb-stats-grid">
+        <div class="kb-stat">
+            <div class="kb-stat-n" data-count="0" data-suffix="ms">0ms</div>
+            <div class="kb-stat-l">Instant mode delay</div>
+        </div>
+        <div class="kb-stat">
+            <div class="kb-stat-n" data-count="50" data-suffix="+">50+</div>
+            <div class="kb-stat-l">Concurrent accounts</div>
+        </div>
+        <div class="kb-stat">
+            <div class="kb-stat-n" data-count="3" data-suffix="">3</div>
+            <div class="kb-stat-l">Share speed modes</div>
+        </div>
+        <div class="kb-stat">
+            <div class="kb-stat-n" data-count="0" data-suffix="Free">Free</div>
+            <div class="kb-stat-l">Always — no plans</div>
+        </div>
+    </div>
+</div>
+
+<!-- ══════════════════════════════════════════════════════════
+     FEATURES
+══════════════════════════════════════════════════════════ -->
+<section id="features">
+    <div class="kb-section">
+        <div class="reveal">
+            <div class="kb-section-eyebrow">Features</div>
+            <h2 class="kb-section-h2">Everything you need<br>to run a boost campaign.</h2>
+            <p class="kb-section-p">From cookie validation to live share logs — KiroBoost handles the full pipeline in one clean dashboard.</p>
+        </div>
+
+        <div class="kb-grid-9 reveal reveal-delay-1">
+
+            <div class="kb-feat">
+                <div class="kb-feat-icon">
+                    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
+                        <path d="M13 2L3 14h9l-1 8 10-12h-9l1-8z"/>
+                    </svg>
                 </div>
-
-                <div class="border-t border-gray-100 my-4"></div>
-
-                <ul class="rules-list">
-                    <li>No promoting or advertising other tools or services.</li>
-                    <li>Don’t badmouth the tool or compare it negatively to others.</li>
-                    <li>Don’t post, leak, or share anything without permission.</li>
-                    <li>Don’t sell, resell, or redistribute the tool in any way.</li>
-                    <li>Don’t impersonate staff or claim ownership of the tool.</li>
-                    <li>Don’t try to modify, crack, or reverse-engineer the tool.</li>
-                    <li>Don’t use the tool for scams, fraud, or any illegal activity.</li>
-                    <li>Don’t spam, harass, or disrespect other users or the team.</li>
-                    <li>Follow instructions properly and report issues responsibly.</li>
-                </ul>
-
-                <p class="font-medium text-kiro-navy text-center text-sm pt-2">
-                    Let’s keep the community clean and respectful. Thanks!
-                </p>
-
+                <div class="kb-feat-h">Instant Share Engine</div>
+                <div class="kb-feat-p">All accounts share simultaneously in parallel — zero sequential bottlenecks. True concurrency, not a queue.</div>
             </div>
 
-            <div class="mt-12 space-y-3 pb-6">
-                <p class="text-center text-xs text-gray-400 mb-2">By tapping below, you accept these terms.</p>
-                
-                <a href="/login" class="block w-full bg-kiro-blue text-white font-bold py-3.5 rounded-full text-center text-base shadow-lg shadow-blue-100 tap-effect transition-all hover:shadow-xl">
-                    I Agree & Log In
-                </a>
-                
-                <a href="/register" class="block w-full bg-white border-2 border-gray-100 text-gray-500 font-bold py-3.5 rounded-full text-center text-base tap-effect transition-all hover:bg-gray-50 hover:border-gray-200">
-                    Create Account
-                </a>
+            <div class="kb-feat">
+                <div class="kb-feat-icon">
+                    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
+                        <rect x="2" y="7" width="20" height="14" rx="2"/>
+                        <path d="M16 7V5a2 2 0 0 0-2-2h-4a2 2 0 0 0-2 2v2"/>
+                    </svg>
+                </div>
+                <div class="kb-feat-h">Cookie Manager</div>
+                <div class="kb-feat-p">Add unlimited Facebook cookies. Each one is auto-validated via the Graph API the moment you save it.</div>
             </div>
 
-            <div class="text-center mt-2 mb-4">
-                <span class="text-[10px] text-gray-300 font-mono tracking-wider">v1.0 • Secure SMM</span>
+            <div class="kb-feat">
+                <div class="kb-feat-icon">
+                    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
+                        <polyline points="22 12 18 12 15 21 9 3 6 12 2 12"/>
+                    </svg>
+                </div>
+                <div class="kb-feat-h">Live Session Logs</div>
+                <div class="kb-feat-p">Monitor success/fail counts and per-account log lines as they stream in — no page refresh needed.</div>
+            </div>
+
+            <div class="kb-feat">
+                <div class="kb-feat-icon">
+                    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
+                        <circle cx="12" cy="12" r="10"/>
+                        <polyline points="12 6 12 12 16 14"/>
+                    </svg>
+                </div>
+                <div class="kb-feat-h">3 Speed Modes</div>
+                <div class="kb-feat-p">Instant (0ms), Fast (2s), or Slow (3s) cooldown between shares. Tune aggression per campaign.</div>
+            </div>
+
+            <div class="kb-feat">
+                <div class="kb-feat-icon">
+                    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
+                        <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/>
+                        <circle cx="12" cy="7" r="4"/>
+                    </svg>
+                </div>
+                <div class="kb-feat-h">Custom Profiles</div>
+                <div class="kb-feat-p">GIF banner upload, avatar borders, bio, sticker, accent colour, and status badge — a Discord-level profile system.</div>
+            </div>
+
+            <div class="kb-feat">
+                <div class="kb-feat-icon">
+                    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
+                        <path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"/>
+                        <polyline points="22,6 12,13 2,6"/>
+                    </svg>
+                </div>
+                <div class="kb-feat-h">Inbox & Broadcasts</div>
+                <div class="kb-feat-p">Admin-to-user messaging, announcements, and promos. Read receipts, unread badges, and per-message deletion.</div>
+            </div>
+
+            <div class="kb-feat">
+                <div class="kb-feat-icon">
+                    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
+                        <line x1="12" y1="1" x2="12" y2="23"/>
+                        <path d="M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6"/>
+                    </svg>
+                </div>
+                <div class="kb-feat-h">Order Tracking</div>
+                <div class="kb-feat-p">Create and manage SMM boost orders with status tracking, reference notes, progress counts, and bulk updates.</div>
+            </div>
+
+            <div class="kb-feat">
+                <div class="kb-feat-icon">
+                    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
+                        <rect x="3" y="3" width="7" height="7"/><rect x="14" y="3" width="7" height="7"/>
+                        <rect x="14" y="14" width="7" height="7"/><rect x="3" y="14" width="7" height="7"/>
+                    </svg>
+                </div>
+                <div class="kb-feat-h">Admin Dashboard</div>
+                <div class="kb-feat-p">Full user management, activation controls, share analytics, order oversight, and broadcast messaging — all in one place.</div>
+            </div>
+
+            <div class="kb-feat">
+                <div class="kb-feat-icon">
+                    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
+                        <path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/>
+                    </svg>
+                </div>
+                <div class="kb-feat-h">Secure by Default</div>
+                <div class="kb-feat-p">JWT auth with 30-day tokens, bcrypt password hashing, and instant account activation on registration.</div>
             </div>
 
         </div>
     </div>
+</section>
 
-    <script>
-        document.addEventListener("DOMContentLoaded", () => {
-            const overlay = document.getElementById('countdown-overlay');
-            const countText = document.getElementById('countdown-text');
-            const content = document.getElementById('main-content');
-            
-            let count = 3;
+<!-- ══════════════════════════════════════════════════════════
+     HOW IT WORKS
+══════════════════════════════════════════════════════════ -->
+<div class="kb-section-alt" id="how">
+    <div class="kb-section">
+        <div class="reveal">
+            <div class="kb-section-eyebrow">How it works</div>
+            <h2 class="kb-section-h2">Three steps to your<br>first share campaign.</h2>
+        </div>
 
-            // Countdown Timer Logic
-            const timer = setInterval(() => {
-                count--;
-                
-                if (count > 0) {
-                    // Reset animation trigger
-                    countText.style.animation = 'none';
-                    countText.offsetHeight; /* Trigger Reflow */
-                    countText.style.animation = 'popNumber 0.9s cubic-bezier(0.175, 0.885, 0.32, 1.275) forwards';
-                    countText.textContent = count;
-                } else {
-                    clearInterval(timer);
-                    // Animation Finish
-                    overlay.style.transform = 'translateY(-100%)';
-                    setTimeout(() => {
-                        content.classList.add('visible');
-                    }, 100);
-                }
-            }, 1000); // 1 Second per step
-        });
-    </script>
+        <div class="kb-steps reveal reveal-delay-1">
 
+            <div class="kb-step">
+                <div class="kb-step-n">STEP 01</div>
+                <div class="kb-step-icon-wrap">
+                    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
+                        <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/>
+                        <circle cx="12" cy="7" r="4"/>
+                    </svg>
+                </div>
+                <div class="kb-step-h">Create your account</div>
+                <div class="kb-step-p">Register with a username, password, and your Facebook profile URL. Your account is active the moment you submit — no wait, no approval gate.</div>
+            </div>
+
+            <div class="kb-step">
+                <div class="kb-step-n">STEP 02</div>
+                <div class="kb-step-icon-wrap">
+                    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
+                        <rect x="2" y="7" width="20" height="14" rx="2"/>
+                        <path d="M16 7V5a2 2 0 0 0-2-2h-4a2 2 0 0 0-2 2v2"/>
+                    </svg>
+                </div>
+                <div class="kb-step-h">Add your cookies</div>
+                <div class="kb-step-p">Paste Facebook account cookies into the manager. KiroBoost auto-extracts the EAAG token via the Graph API and validates each cookie before saving.</div>
+            </div>
+
+            <div class="kb-step">
+                <div class="kb-step-n">STEP 03</div>
+                <div class="kb-step-icon-wrap">
+                    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
+                        <path d="M13 2L3 14h9l-1 8 10-12h-9l1-8z"/>
+                    </svg>
+                </div>
+                <div class="kb-step-h">Launch &amp; track live</div>
+                <div class="kb-step-p">Paste your post link, pick a speed mode, set a target share count, and hit start. Every account runs in parallel — watch each share log in real time.</div>
+            </div>
+
+        </div>
+    </div>
+</div>
+
+<!-- ══════════════════════════════════════════════════════════
+     SPEED MODES
+══════════════════════════════════════════════════════════ -->
+<section id="speed">
+    <div class="kb-section">
+        <div class="reveal">
+            <div class="kb-section-eyebrow">Speed modes</div>
+            <h2 class="kb-section-h2">Choose the right pace<br>for every campaign.</h2>
+            <p class="kb-section-p">Speed controls the per-account delay between shares. All accounts still run in parallel — speed only changes the cooldown within a single account's loop.</p>
+        </div>
+
+        <div class="kb-tbl-wrap reveal reveal-delay-1">
+            <table class="kb-tbl">
+                <thead>
+                    <tr>
+                        <th>Mode</th>
+                        <th>Delay per share</th>
+                        <th>Best for</th>
+                        <th>Risk</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td>⚡ instant</td>
+                        <td>0 ms — no cooldown</td>
+                        <td>Maximum velocity, short bursts</td>
+                        <td><span class="chip chip-amber">Higher</span></td>
+                    </tr>
+                    <tr>
+                        <td>→ fast</td>
+                        <td>2 000 ms</td>
+                        <td>Balanced speed, longer campaigns</td>
+                        <td><span class="chip chip-green">Medium</span></td>
+                    </tr>
+                    <tr>
+                        <td>◌ slow</td>
+                        <td>3 000 ms</td>
+                        <td>Sustained runs, aged cookies</td>
+                        <td><span class="chip chip-neutral">Low</span></td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+    </div>
+</section>
+
+<!-- ══════════════════════════════════════════════════════════
+     ABOUT
+══════════════════════════════════════════════════════════ -->
+<div class="kb-section-alt" id="about">
+    <div class="kb-section">
+        <div class="kb-about-grid reveal">
+
+            <!-- Left col -->
+            <div>
+                <div class="kb-section-eyebrow">About</div>
+                <h2 class="kb-section-h2">Built for the serious SMM operator.</h2>
+                <p class="kb-section-p">KiroBoost replaces slow, overpriced, unreliable SMM tools with something purpose-built and completely free — no tiers, no hidden limits.</p>
+
+                <ul class="kb-check-list">
+                    <li>
+                        <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg>
+                        100% free — no plans, no paywalls, no credit card
+                    </li>
+                    <li>
+                        <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg>
+                        Auto-validates cookies against the Facebook Graph API
+                    </li>
+                    <li>
+                        <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg>
+                        GIF banner &amp; full profile customisation (no external links)
+                    </li>
+                    <li>
+                        <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg>
+                        Parallel execution — all accounts fire simultaneously
+                    </li>
+                    <li>
+                        <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg>
+                        Session stop control — cancel a running batch any time
+                    </li>
+                    <li>
+                        <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg>
+                        Full admin panel — users, orders, inbox, dashboard
+                    </li>
+                    <li>
+                        <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg>
+                        Philippines timezone (Asia/Manila) throughout the app
+                    </li>
+                </ul>
+            </div>
+
+            <!-- Right col — info card -->
+            <div>
+                <div class="kb-info-card">
+                    <div class="kb-info-card-header">
+                        <span class="kb-info-card-header-title">Platform details</span>
+                        <span class="badge-green">Operational</span>
+                    </div>
+                    <div class="kb-info-row">
+                        <span class="kb-info-key">Pricing</span>
+                        <span class="kb-info-val">Free — always</span>
+                    </div>
+                    <div class="kb-info-row">
+                        <span class="kb-info-key">Cookie limit</span>
+                        <span class="kb-info-val">Unlimited</span>
+                    </div>
+                    <div class="kb-info-row">
+                        <span class="kb-info-key">Share methods</span>
+                        <span class="kb-info-val">Normal &amp; SMM</span>
+                    </div>
+                    <div class="kb-info-row">
+                        <span class="kb-info-key">Speed modes</span>
+                        <span class="kb-info-val">Instant / Fast / Slow</span>
+                    </div>
+                    <div class="kb-info-row">
+                        <span class="kb-info-key">Session log cap</span>
+                        <span class="kb-info-val">500 entries</span>
+                    </div>
+                    <div class="kb-info-row">
+                        <span class="kb-info-key">Banner upload</span>
+                        <span class="kb-info-val">GIF · PNG · JPG · WEBP</span>
+                    </div>
+                    <div class="kb-info-row">
+                        <span class="kb-info-key">Max body size</span>
+                        <span class="kb-info-val">50 MB (GIF support)</span>
+                    </div>
+                    <div class="kb-info-row">
+                        <span class="kb-info-key">Account activation</span>
+                        <span class="badge-dim">Instant on register</span>
+                    </div>
+                    <div class="kb-info-row">
+                        <span class="kb-info-key">JWT token expiry</span>
+                        <span class="kb-info-val">30 days</span>
+                    </div>
+                </div>
+            </div>
+
+        </div>
+    </div>
+</div>
+
+<!-- ══════════════════════════════════════════════════════════
+     FAQ
+══════════════════════════════════════════════════════════ -->
+<section id="faq">
+    <div class="kb-section">
+        <div class="reveal">
+            <div class="kb-section-eyebrow">FAQ</div>
+            <h2 class="kb-section-h2">Common questions.</h2>
+        </div>
+
+        <div class="kb-faq reveal reveal-delay-1">
+
+            <div class="kb-faq-item">
+                <button class="kb-faq-q" onclick="toggleFaq(this)">
+                    Is KiroBoost really free?
+                    <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
+                </button>
+                <div class="kb-faq-a">Yes — completely. There are no plans, no trial limits, no credit card required. Every feature is available to all registered users from day one.</div>
+            </div>
+
+            <div class="kb-faq-item">
+                <button class="kb-faq-q" onclick="toggleFaq(this)">
+                    How do I get my Facebook cookie?
+                    <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
+                </button>
+                <div class="kb-faq-a">Use a browser extension like "EditThisCookie" or "Cookie-Editor" on Facebook. Export all cookies as a JSON string and paste it into the KiroBoost cookie manager. The system extracts the access token automatically.</div>
+            </div>
+
+            <div class="kb-faq-item">
+                <button class="kb-faq-q" onclick="toggleFaq(this)">
+                    What's the difference between Normal and SMM share methods?
+                    <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
+                </button>
+                <div class="kb-faq-a">Normal mode uses the standard content_management token extraction flow. SMM mode uses the business_locations endpoint with Android mobile headers — typically more resilient on business-linked accounts.</div>
+            </div>
+
+            <div class="kb-faq-item">
+                <button class="kb-faq-q" onclick="toggleFaq(this)">
+                    Can I stop a session mid-run?
+                    <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
+                </button>
+                <div class="kb-faq-a">Yes. Every session has a Stop button that sends a stop signal to the server. The session status changes to <code style="font-family:var(--mono);font-size:12px;color:var(--text-muted)">stopped</code> and all account loops exit cleanly after their current share completes.</div>
+            </div>
+
+            <div class="kb-faq-item">
+                <button class="kb-faq-q" onclick="toggleFaq(this)">
+                    How many accounts can I run at once?
+                    <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
+                </button>
+                <div class="kb-faq-a">There is no hard limit enforced by the panel. In practice, performance depends on your server resources and the health of your cookies. Users regularly run 50+ accounts simultaneously without issues.</div>
+            </div>
+
+            <div class="kb-faq-item">
+                <button class="kb-faq-q" onclick="toggleFaq(this)">
+                    Do I need admin approval to start using KiroBoost?
+                    <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
+                </button>
+                <div class="kb-faq-a">No. Accounts are activated automatically on registration. You can add cookies and start sharing the moment you sign up — no waiting for admin action.</div>
+            </div>
+
+        </div>
+    </div>
+</section>
+
+<!-- ══════════════════════════════════════════════════════════
+     CTA BANNER
+══════════════════════════════════════════════════════════ -->
+<div class="kb-cta-banner">
+    <div class="kb-cta-inner reveal">
+        <h2 class="kb-cta-h2">Start boosting today.<br><span style="color:var(--text-faint)">It's free.</span></h2>
+        <p class="kb-cta-p">No credit card. No approval. Create an account and your first<br>session is running in under sixty seconds.</p>
+        <div class="kb-hero-btns">
+            <a href="/register" class="kb-cta">
+                Create free account
+                <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+                    <line x1="5" y1="12" x2="19" y2="12"/><polyline points="12 5 19 12 12 19"/>
+                </svg>
+            </a>
+            <a href="/login" class="kb-cta-sec">Log in to your account</a>
+        </div>
+    </div>
+</div>
+
+<!-- ══════════════════════════════════════════════════════════
+     FOOTER
+══════════════════════════════════════════════════════════ -->
+<footer class="kb-footer">
+    <div class="kb-footer-grid">
+        <div>
+            <div class="kb-footer-brand-row">
+                <div class="kb-brand-icon" style="width:22px;height:22px;">
+                    <svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="#000" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+                        <path d="M13 2L3 14h9l-1 8 10-12h-9l1-8z"/>
+                    </svg>
+                </div>
+                KiroBoost
+            </div>
+            <p class="kb-footer-tagline">Professional SMM panel for Facebook share campaigns. Free, fast, and built for operators.</p>
+        </div>
+
+        <div>
+            <div class="kb-footer-col-h">Product</div>
+            <ul class="kb-footer-links">
+                <li><a href="#features">Features</a></li>
+                <li><a href="#how">How it works</a></li>
+                <li><a href="#speed">Speed modes</a></li>
+                <li><a href="#about">About</a></li>
+                <li><a href="#faq">FAQ</a></li>
+            </ul>
+        </div>
+
+        <div>
+            <div class="kb-footer-col-h">Account</div>
+            <ul class="kb-footer-links">
+                <li><a href="/login">Log in</a></li>
+                <li><a href="/register">Register</a></li>
+                <li><a href="/home">Dashboard</a></li>
+                <li><a href="/boost">Boost</a></li>
+                <li><a href="/profile">Profile</a></li>
+            </ul>
+        </div>
+
+        <div>
+            <div class="kb-footer-col-h">Legal</div>
+            <ul class="kb-footer-links">
+                <li><a href="#">Privacy Policy</a></li>
+                <li><a href="#">Terms of Service</a></li>
+                <li><a href="#">Cookie Policy</a></li>
+                <li><a href="#">Support</a></li>
+            </ul>
+        </div>
+    </div>
+
+    <div class="kb-footer-bottom">
+        <span class="kb-footer-copy">© 2025 KiroBoost. All rights reserved.</span>
+        <div class="kb-footer-bottom-links">
+            <a href="#">Privacy</a>
+            <a href="#">Terms</a>
+            <a href="#">Support</a>
+        </div>
+    </div>
+</footer>
+
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
+<script>
+/* ── Mobile nav ─────────────────────────────────────────── */
+const hamBtn  = document.getElementById('hamBtn');
+const drawer  = document.getElementById('drawer');
+const hamIcon = document.getElementById('hamIcon');
+
+const HAM  = `<line x1="3" y1="6" x2="21" y2="6"/><line x1="3" y1="12" x2="21" y2="12"/><line x1="3" y1="18" x2="21" y2="18"/>`;
+const CLOS = `<line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/>`;
+
+hamBtn.addEventListener('click', () => {
+    const open = drawer.classList.toggle('open');
+    hamIcon.innerHTML = open ? CLOS : HAM;
+    document.body.style.overflow = open ? 'hidden' : '';
+});
+
+function closeDrawer() {
+    drawer.classList.remove('open');
+    hamIcon.innerHTML = HAM;
+    document.body.style.overflow = '';
+}
+
+document.addEventListener('click', e => {
+    if (!drawer.contains(e.target) && !hamBtn.contains(e.target)) closeDrawer();
+});
+
+/* ── Smooth anchor scroll (offset for fixed nav) ────────── */
+document.querySelectorAll('a[href^="#"]').forEach(a => {
+    a.addEventListener('click', e => {
+        const id = a.getAttribute('href');
+        if (id === '#') return;
+        const el = document.querySelector(id);
+        if (!el) return;
+        e.preventDefault();
+        closeDrawer();
+        window.scrollTo({ top: el.getBoundingClientRect().top + scrollY - 72, behavior: 'smooth' });
+    });
+});
+
+/* ── Scroll reveal ──────────────────────────────────────── */
+const ro = new IntersectionObserver(entries => {
+    entries.forEach(e => { if (e.isIntersecting) { e.target.classList.add('in'); ro.unobserve(e.target); } });
+}, { threshold: 0.07 });
+document.querySelectorAll('.reveal').forEach(el => ro.observe(el));
+
+/* ── Stat counters ──────────────────────────────────────── */
+function runCounter(el) {
+    const target = parseInt(el.dataset.count);
+    const suffix = el.dataset.suffix;
+    if (isNaN(target) || target === 0) { el.textContent = suffix; return; }
+    const dur = 900, start = Date.now();
+    const tick = () => {
+        const p = Math.min((Date.now() - start) / dur, 1);
+        const ease = 1 - Math.pow(1 - p, 3);
+        el.textContent = Math.round(ease * target) + suffix;
+        if (p < 1) requestAnimationFrame(tick);
+    };
+    requestAnimationFrame(tick);
+}
+const statsObs = new IntersectionObserver(entries => {
+    entries.forEach(e => {
+        if (e.isIntersecting) {
+            e.target.querySelectorAll('.kb-stat-n').forEach(runCounter);
+            statsObs.unobserve(e.target);
+        }
+    });
+}, { threshold: 0.4 });
+const sg = document.querySelector('.kb-stats-grid');
+if (sg) statsObs.observe(sg);
+
+/* ── FAQ accordion ──────────────────────────────────────── */
+function toggleFaq(btn) {
+    const item = btn.closest('.kb-faq-item');
+    const isOpen = item.classList.contains('open');
+    document.querySelectorAll('.kb-faq-item.open').forEach(i => i.classList.remove('open'));
+    if (!isOpen) item.classList.add('open');
+}
+
+/* ── Terminal animation ─────────────────────────────────── */
+const logs = [
+    { t: 500,  html: `<span class="kb-t-dim">&nbsp;&nbsp;[acc:1]&nbsp;</span><span class="kb-t-success">✓ shared</span> <span class="kb-t-dim">— share #1</span>` },
+    { t: 900,  html: `<span class="kb-t-dim">&nbsp;&nbsp;[acc:2]&nbsp;</span><span class="kb-t-success">✓ shared</span> <span class="kb-t-dim">— share #1</span>` },
+    { t: 1200, html: `<span class="kb-t-dim">&nbsp;&nbsp;[acc:3]&nbsp;</span><span class="kb-t-success">✓ shared</span> <span class="kb-t-dim">— share #1</span>` },
+    { t: 1600, html: `<span class="kb-t-dim">&nbsp;&nbsp;[acc:1]&nbsp;</span><span class="kb-t-success">✓ shared</span> <span class="kb-t-dim">— share #2</span>` },
+    { t: 2000, html: `<span class="kb-t-dim">&nbsp;&nbsp;[acc:4]&nbsp;</span><span class="kb-t-warn">⚠ rate limited</span>` },
+    { t: 2400, html: `<span class="kb-t-dim">&nbsp;&nbsp;[acc:2]&nbsp;</span><span class="kb-t-success">✓ shared</span> <span class="kb-t-dim">— share #2</span>` },
+    { t: 2900, html: `<span class="kb-t-key">► total: <span class="kb-t-num">5</span> / 500 shares</span>` },
+];
+
+const termLogs = document.getElementById('termLogs');
+logs.forEach(({ t, html }) => {
+    setTimeout(() => {
+        const line = document.createElement('div');
+        line.innerHTML = html;
+        termLogs.insertBefore(line, termLogs.firstChild.nextSibling || null);
+        termLogs.appendChild(line);
+    }, t);
+});
+</script>
 </body>
 </html>
