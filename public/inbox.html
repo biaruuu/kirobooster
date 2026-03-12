@@ -2,311 +2,743 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>Kiroboost - Inbox</title>
-    <script src="https://cdn.tailwindcss.com"></script>
-    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700;800&family=Karla:wght@400;500;600;700&display=swap" rel="stylesheet">
-    <script>
-        tailwind.config = {
-            theme: {
-                extend: {
-                    colors: {
-                        primary: '#007DFE',
-                        primaryDark: '#0066CC',
-                        primaryLight: '#E8F4FF',
-                        navy: '#1A1F71',
-                        grayText: '#6B7280',
-                        grayBg: '#F5F7FA',
-                        success: '#22C55E',
-                        error: '#EF4444',
-                        warning: '#F59E0B'
-                    },
-                    fontFamily: {
-                        poppins: ['Poppins', 'sans-serif'],
-                        karla: ['Karla', 'sans-serif']
-                    }
-                }
-            }
-        }
-    </script>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>KiroBoost - Inbox</title>
+    <link rel="shortcut icon" href="img/fav-icon.png" type="image/x-icon">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet">
+
     <style>
-        * { -webkit-tap-highlight-color: transparent; box-sizing: border-box; }
-        body { font-family: 'Karla', sans-serif; padding-bottom: 80px; }
-        h1, h2, h3, h4, h5, h6, .font-poppins { font-family: 'Poppins', sans-serif; }
-        .animate-fade { animation: fadeIn 0.3s ease-out; }
-        @keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
-        .spinner { border: 3px solid rgba(0,125,254,0.2); border-top-color: #007DFE; border-radius: 50%; width: 24px; height: 24px; animation: spin 0.8s linear infinite; }
-        @keyframes spin { to { transform: rotate(360deg); } }
-        .nav-item.active { color: #007DFE; }
-        .message-card:active { transform: scale(0.98); transition: transform 0.1s; }
-        .filter-btn.active { background-color: #007DFE; color: white; }
+        *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; font-family: 'Outfit', sans-serif !important; }
+        *::selection { background: #4C4948 !important; color: #fff; }
+
+        :root {
+            --bg:      #000000;
+            --card:    #111111;
+            --card2:   #161616;
+            --border:  rgba(255,255,255,0.08);
+            --border2: rgba(255,255,255,0.13);
+            --muted:   #B4B4B4;
+            --muted2:  #555;
+            --blue:    #3b82f6;
+            --green:   #22c55e;
+            --yellow:  #eab308;
+            --purple:  #a855f7;
+            --red:     #ef4444;
+        }
+
+        html, body { min-height: 100vh; background: var(--bg); color: #fff; overflow-x: hidden; }
+        ::-webkit-scrollbar { width: 5px; } ::-webkit-scrollbar-track { background: #000; } ::-webkit-scrollbar-thumb { background: #2a2a2a; border-radius: 3px; }
+
+        /* ── Navbar ── */
+        #topnav {
+            position: sticky; top: 0; z-index: 200;
+            background: rgba(0,0,0,0.92);
+            border-bottom: 1px solid var(--border);
+            backdrop-filter: blur(12px);
+            display: flex; align-items: center; justify-content: space-between;
+            padding: 0 1.5rem; height: 60px; gap: 12px;
+        }
+        .kiro-logo { display: inline-flex; align-items: baseline; letter-spacing: -0.04em; user-select: none; text-decoration: none; }
+        .logo-kiro  { font-weight: 800; color: #fff; font-style: italic; font-size: 1.4rem; }
+        .logo-boost { font-weight: 300; color: rgba(255,255,255,0.4); font-size: 1.4rem; }
+        .nav-back {
+            display: flex; align-items: center; gap: 6px;
+            color: var(--muted); font-size: 0.82rem; font-weight: 600;
+            text-decoration: none; transition: color .2s; flex-shrink: 0;
+        }
+        .nav-back:hover { color: #fff; }
+        .nav-title {
+            font-size: 0.9rem; font-weight: 700;
+            display: flex; align-items: center; gap: 8px;
+        }
+
+        /* ── Layout: sidebar + reader ── */
+        #layout {
+            display: grid;
+            grid-template-columns: 340px 1fr;
+            height: calc(100vh - 60px);
+            overflow: hidden;
+        }
+
+        /* ── LEFT PANEL (message list) ── */
+        #leftPanel {
+            border-right: 1px solid var(--border);
+            display: flex; flex-direction: column;
+            overflow: hidden;
+            background: var(--bg);
+        }
+
+        /* Filter + actions bar */
+        .list-header {
+            padding: .85rem 1rem;
+            border-bottom: 1px solid var(--border);
+            display: flex; flex-direction: column; gap: 8px;
+            flex-shrink: 0;
+        }
+
+        .list-title-row {
+            display: flex; align-items: center; justify-content: space-between;
+        }
+        .list-title {
+            font-size: 1rem; font-weight: 800; letter-spacing: -0.02em;
+            display: flex; align-items: center; gap: 8px;
+        }
+        .unread-count-badge {
+            background: var(--blue);
+            color: #fff;
+            font-size: 0.65rem;
+            font-weight: 700;
+            padding: 2px 6px;
+            border-radius: 10px;
+            display: none;
+        }
+        .unread-count-badge.show { display: inline-block; }
+
+        .read-all-btn {
+            background: none; border: none;
+            color: var(--muted2); font-size: 0.72rem; font-weight: 600;
+            cursor: pointer; transition: color .2s; white-space: nowrap;
+            display: flex; align-items: center; gap: 4px;
+        }
+        .read-all-btn:hover { color: #fff; }
+
+        /* Filter tabs */
+        .filter-tabs {
+            display: flex; gap: 4px;
+            overflow-x: auto; scrollbar-width: none;
+        }
+        .filter-tabs::-webkit-scrollbar { display: none; }
+
+        .ftab {
+            padding: 4px 12px;
+            border-radius: 20px;
+            font-size: 0.72rem; font-weight: 700;
+            cursor: pointer;
+            white-space: nowrap;
+            border: 1px solid transparent;
+            transition: all .15s;
+            color: var(--muted2);
+            background: none;
+        }
+        .ftab:hover { color: var(--muted); background: rgba(255,255,255,.04); }
+        .ftab.active {
+            background: rgba(255,255,255,.1);
+            border-color: var(--border2);
+            color: #fff;
+        }
+
+        /* Message list */
+        #msgList {
+            flex: 1; overflow-y: auto;
+        }
+
+        .msg-row {
+            display: flex; align-items: flex-start; gap: 10px;
+            padding: .85rem 1rem;
+            border-bottom: 1px solid var(--border);
+            cursor: pointer;
+            transition: background .15s;
+            position: relative;
+        }
+        .msg-row:hover { background: rgba(255,255,255,.03); }
+        .msg-row.active { background: rgba(255,255,255,.06); }
+        .msg-row.active::before {
+            content: '';
+            position: absolute; left: 0; top: 0; bottom: 0;
+            width: 3px;
+            background: #fff;
+            border-radius: 0 2px 2px 0;
+        }
+
+        /* Unread dot */
+        .unread-dot {
+            width: 7px; height: 7px; border-radius: 50%;
+            background: var(--blue);
+            flex-shrink: 0; margin-top: 5px;
+            opacity: 0;
+        }
+        .msg-row.unread .unread-dot { opacity: 1; }
+
+        /* Type icon */
+        .type-icon {
+            width: 36px; height: 36px; border-radius: 9px;
+            display: flex; align-items: center; justify-content: center;
+            flex-shrink: 0; font-size: 0.8rem;
+        }
+        .type-icon.announcement { background: rgba(168,85,247,.15); color: #d8b4fe; }
+        .type-icon.promo        { background: rgba(234,179,8,.15);   color: #fde68a; }
+        .type-icon.general      { background: rgba(59,130,246,.15);  color: #93c5fd; }
+        .type-icon.system       { background: rgba(255,255,255,.07); color: var(--muted); }
+
+        .msg-body { flex: 1; min-width: 0; }
+        .msg-title {
+            font-size: 0.82rem; font-weight: 500;
+            white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
+            color: var(--muted);
+        }
+        .msg-row.unread .msg-title { color: #fff; font-weight: 700; }
+        .msg-preview {
+            font-size: 0.72rem; color: var(--muted2);
+            white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
+            margin-top: 2px; line-height: 1.4;
+        }
+        .msg-meta { display: flex; align-items: center; gap: 6px; margin-top: 3px; }
+        .msg-time { font-size: 0.67rem; color: #3a3a3a; flex-shrink: 0; }
+        .msg-type-chip {
+            font-size: 0.6rem; font-weight: 700;
+            padding: 1px 6px; border-radius: 10px;
+            text-transform: uppercase; letter-spacing: .04em;
+        }
+        .chip-announcement { background: rgba(168,85,247,.12); color: #d8b4fe; }
+        .chip-promo        { background: rgba(234,179,8,.12);   color: #fde68a; }
+        .chip-general      { background: rgba(59,130,246,.12);  color: #93c5fd; }
+        .chip-system       { background: rgba(255,255,255,.07); color: #666; }
+
+        /* Delete hover btn on row */
+        .msg-delete-btn {
+            position: absolute; right: 10px; top: 50%; transform: translateY(-50%);
+            background: rgba(239,68,68,.1); border: none;
+            color: #fca5a5; border-radius: 6px;
+            width: 26px; height: 26px;
+            display: flex; align-items: center; justify-content: center;
+            cursor: pointer; opacity: 0; transition: opacity .2s, background .2s;
+            flex-shrink: 0;
+        }
+        .msg-row:hover .msg-delete-btn { opacity: 1; }
+        .msg-delete-btn:hover { background: rgba(239,68,68,.22); }
+
+        /* ── RIGHT PANEL (reader) ── */
+        #rightPanel {
+            display: flex; flex-direction: column;
+            overflow: hidden;
+            background: var(--bg);
+        }
+
+        /* Empty reader state */
+        #readerEmpty {
+            flex: 1; display: flex; flex-direction: column;
+            align-items: center; justify-content: center;
+            color: var(--muted2); gap: 10px;
+            text-align: center; padding: 2rem;
+        }
+        #readerEmpty svg { opacity: .2; }
+        #readerEmpty .empty-title { font-size: 0.9rem; font-weight: 600; color: #333; }
+        #readerEmpty .empty-sub   { font-size: 0.78rem; }
+
+        /* Message reader */
+        #reader {
+            flex: 1; overflow-y: auto;
+            padding: 2rem;
+            display: none;
+        }
+        #reader.open { display: block; }
+
+        .reader-header {
+            display: flex; align-items: flex-start; justify-content: space-between; gap: 1rem;
+            margin-bottom: 1.25rem;
+        }
+        .reader-title {
+            font-size: 1.35rem; font-weight: 800;
+            letter-spacing: -0.03em; line-height: 1.3;
+        }
+        .reader-actions { display: flex; gap: 8px; flex-shrink: 0; }
+        .reader-action-btn {
+            background: rgba(255,255,255,.06);
+            border: 1px solid var(--border);
+            color: var(--muted); border-radius: 8px;
+            width: 34px; height: 34px;
+            display: flex; align-items: center; justify-content: center;
+            cursor: pointer; transition: all .2s;
+        }
+        .reader-action-btn:hover { background: rgba(255,255,255,.1); color: #fff; border-color: var(--border2); }
+        .reader-action-btn.delete:hover { background: rgba(239,68,68,.12); color: #fca5a5; border-color: rgba(239,68,68,.25); }
+
+        .reader-meta {
+            display: flex; align-items: center; gap: 10px; flex-wrap: wrap;
+            margin-bottom: 1.5rem; padding-bottom: 1rem;
+            border-bottom: 1px solid var(--border);
+        }
+        .reader-from {
+            display: flex; align-items: center; gap: 6px;
+            font-size: 0.78rem; color: var(--muted2);
+        }
+        .reader-from-avatar {
+            width: 22px; height: 22px; border-radius: 50%;
+            background: rgba(255,255,255,.08);
+            display: flex; align-items: center; justify-content: center;
+            font-size: 0.6rem; font-weight: 700; color: var(--muted);
+        }
+        .reader-datetime { font-size: 0.72rem; color: #3a3a3a; }
+
+        /* Type badge */
+        .reader-type-badge {
+            display: inline-flex; align-items: center; gap: 5px;
+            padding: 3px 10px; border-radius: 20px;
+            font-size: 0.7rem; font-weight: 700;
+        }
+        .rtb-announcement { background: rgba(168,85,247,.12); color: #d8b4fe; border: 1px solid rgba(168,85,247,.2); }
+        .rtb-promo        { background: rgba(234,179,8,.12);   color: #fde68a; border: 1px solid rgba(234,179,8,.2); }
+        .rtb-general      { background: rgba(59,130,246,.12);  color: #93c5fd; border: 1px solid rgba(59,130,246,.2); }
+        .rtb-system       { background: rgba(255,255,255,.06); color: #666;    border: 1px solid var(--border); }
+
+        /* Banner image */
+        .reader-image {
+            width: 100%; max-height: 260px;
+            object-fit: cover; border-radius: 10px;
+            margin-bottom: 1.25rem;
+            display: block;
+        }
+
+        /* Content */
+        .reader-content {
+            font-size: 0.9rem; color: #ccc;
+            line-height: 1.75; white-space: pre-wrap;
+            word-break: break-word;
+        }
+
+        /* ── Skeleton ── */
+        .skeleton {
+            background: linear-gradient(90deg, #141414 25%, #1c1c1c 50%, #141414 75%);
+            background-size: 200% 100%;
+            animation: shimmer 1.5s infinite;
+            border-radius: 5px;
+        }
+        @keyframes shimmer { 0% { background-position: 200% 0; } 100% { background-position: -200% 0; } }
+
+        /* ── Empty state ── */
+        .list-empty {
+            padding: 3rem 1rem; text-align: center;
+            color: var(--muted2); font-size: 0.82rem;
+            display: flex; flex-direction: column; align-items: center; gap: 8px;
+        }
+        .list-empty svg { opacity: .2; }
+
+        /* ── Toast ── */
+        #toast {
+            position: fixed; bottom: 1.5rem; right: 1.5rem;
+            background: #111; border: 1px solid var(--border);
+            border-radius: 10px; padding: .65rem 1rem;
+            font-size: 0.82rem; font-weight: 500;
+            display: flex; align-items: center; gap: 8px;
+            z-index: 9999; max-width: 300px;
+            transform: translateY(20px); opacity: 0;
+            transition: transform .3s, opacity .3s;
+            pointer-events: none;
+        }
+        #toast.show { transform: translateY(0); opacity: 1; }
+        #toast.success { border-color: rgba(34,197,94,.3); color: #86efac; }
+        #toast.error   { border-color: rgba(239,68,68,.3);  color: #fca5a5; }
+
+        /* ── Mobile ── */
+        @media (max-width: 700px) {
+            #layout {
+                grid-template-columns: 1fr;
+                grid-template-rows: auto 1fr;
+            }
+            #leftPanel {
+                border-right: none;
+                border-bottom: 1px solid var(--border);
+                max-height: 45vh;
+            }
+            #rightPanel { min-height: 0; }
+            #reader { padding: 1.25rem 1rem; }
+            .reader-title { font-size: 1.1rem; }
+        }
     </style>
-    <link rel="stylesheet" href="/christmas.css">
 </head>
-<body class="page-transition bg-grayBg min-h-screen">
-    <!-- Christmas Lights -->
-    <div class="christmas-lights">
-        <div class="light"></div>
-        <div class="light"></div>
-        <div class="light"></div>
-        <div class="light"></div>
-        <div class="light"></div>
-        <div class="light"></div>
-        <div class="light"></div>
-        <div class="light"></div>
-        <div class="light"></div>
-        <div class="light"></div>
-        <div class="light"></div>
-        <div class="light"></div>
-        <div class="light"></div>
-        <div class="light"></div>
+<body>
+
+<!-- ═══ NAVBAR ═══ -->
+<nav id="topnav">
+    <a href="/home" class="kiro-logo">
+        <span class="logo-kiro">Kiro</span><span class="logo-boost">Boost</span>
+    </a>
+    <div class="nav-title">
+        <svg data-testid="geist-icon" height="16" stroke-linejoin="round" viewBox="0 0 16 16" width="16" style="color:currentcolor"><path fill-rule="evenodd" clip-rule="evenodd" d="M14.5 3C14.5 3.82843 13.8284 4.5 13 4.5C12.1716 4.5 11.5 3.82843 11.5 3C11.5 2.17157 12.1716 1.5 13 1.5C13.8284 1.5 14.5 2.17157 14.5 3ZM13.5 5.95852C13.3374 5.9858 13.1704 6 13 6C11.3431 6 10 4.65685 10 3C10 2.82964 10.0142 2.6626 10.0415 2.5H4.75C3.50736 2.5 2.5 3.50736 2.5 4.75V11.25C2.5 12.4926 3.50736 13.5 4.75 13.5H11.25C12.4926 13.5 13.5 12.4926 13.5 11.25V5.95852ZM15 5.23611V11.25C15 13.3211 13.3211 15 11.25 15H4.75C2.67893 15 1 13.3211 1 11.25V4.75C1 2.67893 2.67893 1 4.75 1H10.7639C11.3132 0.386251 12.1115 0 13 0C14.6569 0 16 1.34315 16 3C16 3.8885 15.6137 4.68679 15 5.23611Z" fill="currentColor"></path></svg>
+        Inbox
     </div>
+    <a href="/home" class="nav-back">
+        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="15 18 9 12 15 6"/></svg>
+        Home
+    </a>
+</nav>
 
-    <!-- Falling Snowflakes -->
-    <div class="snowflake">❄</div>
-    <div class="snowflake">❅</div>
-    <div class="snowflake">❆</div>
-    <div class="snowflake">❄</div>
-    <div class="snowflake">❅</div>
-    <div class="snowflake">❆</div>
-    <div class="snowflake">❄</div>
-    <div class="snowflake">❅</div>
-    <div class="snowflake">❆</div>
-    <div class="snowflake">❄</div>
-    <div class="snowflake">❅</div>
-    <div class="snowflake">❆</div>
-    <div class="snowflake">❄</div>
-    <div class="snowflake">❅</div>
-    <div class="snowflake">❆</div>
-    <div class="snowflake">❄</div>
-    <div class="snowflake">❅</div>
-    <div class="snowflake">❆</div>
-    <div class="snowflake">❄</div>
-    <div class="snowflake">❅</div>
+<!-- ═══ LAYOUT ═══ -->
+<div id="layout">
 
-    <!-- Header -->
-    <div class="bg-primary px-5 pt-12 pb-4" style="margin-top: 50px;">
-        <div class="flex items-center justify-between">
-            <h1 class="text-white text-xl font-poppins font-bold">Inbox</h1>
-        </div>
-    </div>
+    <!-- ── LEFT: Message List ── -->
+    <div id="leftPanel">
 
-    <!-- Filters -->
-    <div class="bg-primary px-5 pb-4">
-        <div class="flex items-center gap-2 overflow-x-auto pb-2">
-            <span class="text-blue-100 text-sm font-karla mr-2">Filter</span>
-            <button onclick="setFilter('all')" class="filter-btn active px-4 py-2 bg-white/20 text-white rounded-full text-sm font-karla font-medium whitespace-nowrap transition-colors">All</button>
-            <button onclick="setFilter('unread')" class="filter-btn px-4 py-2 bg-white/20 text-white rounded-full text-sm font-karla font-medium whitespace-nowrap transition-colors">Unread</button>
-            <button onclick="setFilter('announcements')" class="filter-btn px-4 py-2 bg-white/20 text-white rounded-full text-sm font-karla font-medium whitespace-nowrap transition-colors">Announcements</button>
-            <button onclick="setFilter('promos')" class="filter-btn px-4 py-2 bg-white/20 text-white rounded-full text-sm font-karla font-medium whitespace-nowrap transition-colors">Promos</button>
-        </div>
-    </div>
-
-    <!-- Messages List -->
-    <div class="px-5 py-6">
-        <p class="text-grayText text-sm font-karla mb-4">Latest</p>
-        
-        <div id="messagesList" class="space-y-3">
-            <div class="flex items-center justify-center py-8">
-                <div class="spinner"></div>
+        <div class="list-header">
+            <div class="list-title-row">
+                <div class="list-title">
+                    Messages
+                    <span class="unread-count-badge" id="unreadBadge">0</span>
+                </div>
+                <button class="read-all-btn" onclick="markAllRead()" id="readAllBtn" title="Mark all as read">
+                    <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="20 6 9 17 4 12"/><polyline points="20 12 9 23 4 18"/></svg>
+                    Mark all read
+                </button>
+            </div>
+            <div class="filter-tabs">
+                <button class="ftab active" data-filter="all"          onclick="switchFilter(this)">All</button>
+                <button class="ftab"        data-filter="unread"       onclick="switchFilter(this)">Unread</button>
+                <button class="ftab"        data-filter="announcements" onclick="switchFilter(this)">Announcements</button>
+                <button class="ftab"        data-filter="promos"       onclick="switchFilter(this)">Promos</button>
             </div>
         </div>
+
+        <div id="msgList">
+            <!-- Skeleton loaders -->
+            <div id="listSkeleton">
+                ${Array(5).fill(0).map(() => `
+                <div style="display:flex;align-items:flex-start;gap:10px;padding:.85rem 1rem;border-bottom:1px solid rgba(255,255,255,.06);">
+                    <div class="skeleton" style="width:36px;height:36px;border-radius:9px;flex-shrink:0;"></div>
+                    <div style="flex:1;display:flex;flex-direction:column;gap:6px;">
+                        <div class="skeleton" style="height:11px;width:70%;"></div>
+                        <div class="skeleton" style="height:9px;width:90%;"></div>
+                        <div class="skeleton" style="height:8px;width:40%;"></div>
+                    </div>
+                </div>`).join('')}
+            </div>
+        </div>
+
     </div>
 
-    <!-- Message Detail Modal -->
-    <div id="messageModal" class="hidden fixed inset-0 bg-black/50 z-50">
-        <div class="bg-white h-full overflow-y-auto animate-fade">
-            <!-- Modal Header -->
-            <div class="bg-primary px-5 pt-12 pb-6 sticky top-0">
-                <div class="flex items-center justify-between">
-                    <button onclick="closeMessage()" class="p-2 -ml-2 text-white">
-                        <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7"/>
-                        </svg>
+    <!-- ── RIGHT: Reader ── -->
+    <div id="rightPanel">
+
+        <!-- Empty state -->
+        <div id="readerEmpty">
+            <svg width="52" height="52" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.2">
+                <path d="M18 8A6 6 0 006 8c0 7-3 9-3 9h18s-3-2-3-9"/>
+                <path d="M13.73 21a2 2 0 01-3.46 0"/>
+            </svg>
+            <div class="empty-title">No message selected</div>
+            <div class="empty-sub">Click a message to read it</div>
+        </div>
+
+        <!-- Reader -->
+        <div id="reader">
+            <div class="reader-header">
+                <div class="reader-title" id="readerTitle">—</div>
+                <div class="reader-actions">
+                    <button class="reader-action-btn" onclick="markCurrentRead()" id="markReadBtn" title="Mark as read">
+                        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="20 6 9 17 4 12"/></svg>
                     </button>
-                    <h1 class="text-white text-lg font-poppins font-semibold">Inbox</h1>
-                    <button onclick="deleteMessage()" class="p-2 text-white">
-                        <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"/>
-                        </svg>
+                    <button class="reader-action-btn delete" onclick="deleteCurrentMsg()" title="Delete">
+                        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="3 6 5 6 21 6"/><path d="M19 6l-1 14a2 2 0 01-2 2H8a2 2 0 01-2-2L5 6"/><path d="M10 11v6M14 11v6"/><path d="M9 6V4h6v2"/></svg>
                     </button>
                 </div>
             </div>
 
-            <!-- Modal Content -->
-            <div class="px-5 py-6">
-                <div class="bg-white rounded-2xl shadow-sm p-5">
-                    <div class="flex flex-col items-center mb-6">
-                        <div class="w-16 h-16 bg-primaryLight rounded-full flex items-center justify-center mb-4">
-                            <svg class="w-8 h-8 text-primary" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 8l7.89 5.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z"/>
-                            </svg>
-                        </div>
-                        <p id="messageDate" class="text-grayText text-sm font-karla mb-2">--</p>
-                        <h2 id="messageTitle" class="text-xl text-primary font-poppins font-bold text-center">--</h2>
-                    </div>
-
-                    <div class="border-t border-gray-100 pt-6">
-                        <div id="messageImage" class="hidden mb-4 rounded-xl overflow-hidden">
-                            <img id="messageImg" class="w-full" src="" alt="">
-                        </div>
-                        <p id="messageContent" class="text-navy font-karla leading-relaxed whitespace-pre-wrap">--</p>
-                    </div>
+            <div class="reader-meta">
+                <span class="reader-type-badge" id="readerTypeBadge"></span>
+                <div class="reader-from">
+                    <div class="reader-from-avatar" id="readerFromAvatar">K</div>
+                    <span id="readerFrom">KiroBoost</span>
                 </div>
+                <div class="reader-datetime" id="readerDatetime">—</div>
             </div>
+
+            <img id="readerImage" class="reader-image" src="" alt="" style="display:none;">
+            <div class="reader-content" id="readerContent"></div>
         </div>
+
     </div>
 
-    <!-- Bottom Navigation -->
-    <nav class="fixed bottom-0 left-0 right-0 bg-white border-t border-gray-100 px-2 py-2 z-40">
-        <div class="max-w-lg mx-auto flex items-center justify-around">
-            <a href="/home" class="nav-item flex flex-col items-center py-1 px-3 text-grayText">
-                <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 12l2-2m0 0l7-7 7 7M5 10v10a1 1 0 001 1h3m10-11l2 2m-2-2v10a1 1 0 01-1 1h-3m-6 0a1 1 0 001-1v-4a1 1 0 011-1h2a1 1 0 011 1v4a1 1 0 001 1m-6 0h6"/>
-                </svg>
-                <span class="text-xs mt-1 font-karla">Home</span>
-            </a>
-            <a href="/inbox" class="nav-item active flex flex-col items-center py-1 px-3">
-                <svg class="w-6 h-6" fill="currentColor" viewBox="0 0 24 24">
-                    <path d="M3 8l7.89 5.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z"/>
-                </svg>
-                <span class="text-xs mt-1 font-karla font-medium">Inbox</span>
-            </a>
-            <a href="/boost" class="flex flex-col items-center -mt-5">
-                <div class="w-14 h-14 bg-primary rounded-full flex items-center justify-center shadow-lg border-4 border-white">
-                    <svg class="w-7 h-7 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M13 10V3L4 14h7v7l9-11h-7z"/>
-                    </svg>
+</div><!-- /layout -->
+
+<div id="toast"></div>
+
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
+<script>
+'use strict';
+
+/* ── Auth ── */
+const TOKEN    = localStorage.getItem('token') || localStorage.getItem('kb_token');
+const USERNAME = localStorage.getItem('username');
+if (!TOKEN) { window.location.href = '/login'; }
+
+function authHeaders() {
+    return { 'Authorization': `Bearer ${TOKEN}`, 'Content-Type': 'application/json' };
+}
+async function apiFetch(url, opts = {}) {
+    const res = await fetch(url, { ...opts, headers: { ...authHeaders(), ...(opts.headers||{}) } });
+    if (res.status === 401) { logout(); return null; }
+    return res.json();
+}
+
+/* ── State ── */
+let messages       = [];
+let activeFilter   = 'all';
+let activeMsgId    = null;
+let unreadTotal    = 0;
+
+/* ── Toast ── */
+function toast(msg, type = 'success') {
+    const el = document.getElementById('toast');
+    const icon = type === 'success'
+        ? `<svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="20 6 9 17 4 12"/></svg>`
+        : `<svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/></svg>`;
+    el.className = `show ${type}`;
+    el.innerHTML = icon + msg;
+    clearTimeout(el._t);
+    el._t = setTimeout(() => el.className = '', 3000);
+}
+
+/* ── Type helpers ── */
+function typeIcon(type) {
+    const icons = {
+        announcement: `<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M18 8h1a4 4 0 010 8h-1"/><path d="M2 8h16v9a4 4 0 01-4 4H6a4 4 0 01-4-4V8z"/><line x1="6" y1="1" x2="6" y2="4"/><line x1="10" y1="1" x2="10" y2="4"/><line x1="14" y1="1" x2="14" y2="4"/></svg>`,
+        promo:        `<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg>`,
+        general:      `<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15a2 2 0 01-2 2H7l-4 4V5a2 2 0 012-2h14a2 2 0 012 2z"/></svg>`,
+        system:       `<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/></svg>`,
+    };
+    return icons[type] || icons.general;
+}
+
+function typeClass(type) {
+    return { announcement: 'announcement', promo: 'promo', general: 'general', system: 'system' }[type] || 'general';
+}
+
+function typeBadgeHtml(type) {
+    const labels = { announcement: '📢 Announcement', promo: '⭐ Promo', general: '💬 Message', system: '🔔 System' };
+    const cls    = { announcement: 'rtb-announcement', promo: 'rtb-promo', general: 'rtb-general', system: 'rtb-system' };
+    return `<span class="reader-type-badge ${cls[type]||cls.general}">${labels[type]||labels.general}</span>`;
+}
+
+function chipHtml(type) {
+    const labels = { announcement: 'Announce', promo: 'Promo', general: 'Message', system: 'System' };
+    const cls    = { announcement: 'chip-announcement', promo: 'chip-promo', general: 'chip-general', system: 'chip-system' };
+    return `<span class="msg-type-chip ${cls[type]||cls.general}">${labels[type]||'Message'}</span>`;
+}
+
+/* ── Render list ── */
+function renderList() {
+    const list = document.getElementById('msgList');
+    document.getElementById('listSkeleton')?.remove();
+
+    if (!messages.length) {
+        list.innerHTML = `<div class="list-empty">
+            <svg width="36" height="36" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M18 8A6 6 0 006 8c0 7-3 9-3 9h18s-3-2-3-9"/><path d="M13.73 21a2 2 0 01-3.46 0"/></svg>
+            <span>No messages here</span>
+        </div>`;
+        return;
+    }
+
+    list.innerHTML = messages.map(m => `
+        <div class="msg-row ${m.isRead ? '' : 'unread'} ${m.messageId === activeMsgId ? 'active' : ''}"
+             id="row-${m.messageId}"
+             onclick="openMessage('${m.messageId}')">
+            <div class="unread-dot"></div>
+            <div class="type-icon ${typeClass(m.type)}">${typeIcon(m.type)}</div>
+            <div class="msg-body">
+                <div class="msg-title">${escHtml(m.title)}</div>
+                <div class="msg-preview">${escHtml(m.content)}</div>
+                <div class="msg-meta">
+                    ${chipHtml(m.type)}
+                    <span class="msg-time">${m.date} · ${m.time}</span>
                 </div>
-                <span class="text-xs mt-1 font-karla text-grayText">Boost</span>
-            </a>
-            <a href="/transactions" class="nav-item flex flex-col items-center py-1 px-3 text-grayText">
-                <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2"/>
-                </svg>
-                <span class="text-xs mt-1 font-karla">Orders</span>
-            </a>
-            <a href="/profile" class="nav-item flex flex-col items-center py-1 px-3 text-grayText">
-                <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z"/>
-                </svg>
-                <span class="text-xs mt-1 font-karla">Profile</span>
-            </a>
+            </div>
+            <button class="msg-delete-btn" onclick="deleteMsg(event,'${m.messageId}')" title="Delete">
+                <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
+            </button>
         </div>
-    </nav>
+    `).join('');
+}
 
-    <script>
-        const token = localStorage.getItem('kb_token');
-        if (!token) window.location.href = '/login';
+/* ── Open / read message ── */
+async function openMessage(msgId) {
+    // Mark active row immediately
+    document.querySelectorAll('.msg-row').forEach(r => r.classList.remove('active'));
+    const row = document.getElementById(`row-${msgId}`);
+    if (row) row.classList.add('active');
 
-        let currentFilter = 'all';
-        let currentMessageId = null;
+    activeMsgId = msgId;
 
-        async function loadMessages() {
-            const container = document.getElementById('messagesList');
-            container.innerHTML = '<div class="flex items-center justify-center py-8"><div class="spinner"></div></div>';
+    // Fetch full content — server auto-marks as read
+    const data = await apiFetch(`/api/user/inbox/${msgId}`);
+    if (!data || !data.success) { toast('Failed to load message.', 'error'); return; }
 
-            try {
-                const res = await fetch(`/api/user/inbox?filter=${currentFilter}&limit=50`, {
-                    headers: { 'Authorization': `Bearer ${token}` }
-                });
-                const data = await res.json();
-                
-                if (data.success) {
-                    if (data.messages.length === 0) {
-                        container.innerHTML = `
-                            <div class="text-center py-12">
-                                <svg class="w-16 h-16 text-gray-200 mx-auto mb-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M3 8l7.89 5.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z"/>
-                                </svg>
-                                <p class="text-grayText font-karla">No messages</p>
-                            </div>`;
-                        return;
-                    }
+    const m = data.message;
 
-                    container.innerHTML = data.messages.map(m => `
-                        <div onclick="openMessage('${m.messageId}')" class="message-card bg-white rounded-2xl p-4 shadow-sm cursor-pointer hover:shadow-md transition-shadow">
-                            <div class="flex items-start gap-4">
-                                <div class="w-12 h-12 ${m.isRead ? 'bg-gray-100' : 'bg-primaryLight'} rounded-full flex items-center justify-center flex-shrink-0">
-                                    <svg class="w-6 h-6 ${m.isRead ? 'text-grayText' : 'text-primary'}" fill="${m.isRead ? 'none' : 'currentColor'}" stroke="currentColor" viewBox="0 0 24 24">
-                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 8l7.89 5.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z"/>
-                                    </svg>
-                                </div>
-                                <div class="flex-1 min-w-0">
-                                    <div class="flex items-center justify-between mb-1">
-                                        <h3 class="text-navy ${m.isRead ? 'font-medium' : 'font-bold'} font-karla truncate pr-2">${m.title}</h3>
-                                        <span class="text-grayText text-xs font-karla whitespace-nowrap">${m.date}</span>
-                                    </div>
-                                    <p class="text-grayText text-sm font-karla line-clamp-2">${m.content}</p>
-                                </div>
-                            </div>
-                        </div>
-                    `).join('');
-                }
-            } catch (err) {
-                container.innerHTML = '<p class="text-error text-sm text-center py-4">Failed to load messages</p>';
-            }
+    // Update local unread state
+    const local = messages.find(x => x.messageId === msgId);
+    if (local && !local.isRead) {
+        local.isRead = true;
+        unreadTotal  = Math.max(0, unreadTotal - 1);
+        updateUnreadBadge();
+        // Remove unread class from row
+        if (row) row.classList.remove('unread');
+    }
+
+    // Render reader
+    document.getElementById('readerEmpty').style.display = 'none';
+    const reader = document.getElementById('reader');
+    reader.classList.add('open');
+
+    document.getElementById('readerTitle').textContent    = m.title;
+    document.getElementById('readerTypeBadge').outerHTML  = typeBadgeHtml(m.type) + `<span id="readerTypeBadge"></span>`;
+    // Re-render badge properly
+    const metaDiv = document.querySelector('.reader-meta');
+    metaDiv.querySelector('.reader-type-badge').outerHTML = typeBadgeHtml(m.type);
+
+    const fromEl = document.getElementById('readerFrom');
+    fromEl.textContent = m.sentBy || 'KiroBoost';
+    document.getElementById('readerFromAvatar').textContent = (m.sentBy || 'K').charAt(0).toUpperCase();
+    document.getElementById('readerDatetime').textContent   = `${m.date} at ${m.time}`;
+
+    // Banner image
+    const imgEl = document.getElementById('readerImage');
+    if (m.imageUrl) {
+        imgEl.src = m.imageUrl;
+        imgEl.style.display = 'block';
+        imgEl.onerror = () => { imgEl.style.display = 'none'; };
+    } else {
+        imgEl.style.display = 'none';
+    }
+
+    document.getElementById('readerContent').textContent = m.content;
+
+    // Mark read button — dim if already read
+    document.getElementById('markReadBtn').style.opacity = m.isRead ? '0.3' : '1';
+}
+
+/* ── Mark current as read ── */
+async function markCurrentRead() {
+    if (!activeMsgId) return;
+    const data = await apiFetch(`/api/user/inbox/${activeMsgId}/read`, { method: 'PUT' });
+    if (data?.success) {
+        const local = messages.find(x => x.messageId === activeMsgId);
+        if (local && !local.isRead) {
+            local.isRead = true;
+            unreadTotal  = Math.max(0, unreadTotal - 1);
+            updateUnreadBadge();
         }
+        document.getElementById(`row-${activeMsgId}`)?.classList.remove('unread');
+        document.getElementById('markReadBtn').style.opacity = '0.3';
+        toast('Marked as read.');
+    }
+}
 
-        function setFilter(filter) {
-            currentFilter = filter;
-            document.querySelectorAll('.filter-btn').forEach(btn => {
-                btn.classList.toggle('active', btn.textContent.toLowerCase().includes(filter === 'all' ? 'all' : filter));
-            });
-            loadMessages();
-        }
+/* ── Delete from reader ── */
+async function deleteCurrentMsg() {
+    if (!activeMsgId) return;
+    await deleteMsg(null, activeMsgId);
+}
 
-        async function openMessage(messageId) {
-            currentMessageId = messageId;
-            document.getElementById('messageModal').classList.remove('hidden');
+/* ── Delete from list ── */
+async function deleteMsg(e, msgId) {
+    if (e) { e.stopPropagation(); }
+    const data = await apiFetch(`/api/user/inbox/${msgId}`, { method: 'DELETE' });
+    if (!data?.success) { toast('Failed to delete.', 'error'); return; }
 
-            try {
-                const res = await fetch(`/api/user/inbox/${messageId}`, {
-                    headers: { 'Authorization': `Bearer ${token}` }
-                });
-                const data = await res.json();
-                
-                if (data.success) {
-                    const m = data.message;
-                    document.getElementById('messageDate').textContent = `${m.date}, ${m.time}`;
-                    document.getElementById('messageTitle').textContent = m.title;
-                    document.getElementById('messageContent').textContent = m.content;
-                    
-                    if (m.imageUrl) {
-                        document.getElementById('messageImg').src = m.imageUrl;
-                        document.getElementById('messageImage').classList.remove('hidden');
-                    } else {
-                        document.getElementById('messageImage').classList.add('hidden');
-                    }
+    // Remove from local list
+    const idx = messages.findIndex(x => x.messageId === msgId);
+    if (idx !== -1) {
+        if (!messages[idx].isRead) unreadTotal = Math.max(0, unreadTotal - 1);
+        messages.splice(idx, 1);
+    }
+    updateUnreadBadge();
+    renderList();
 
-                    loadMessages(); // Refresh to update read status
-                }
-            } catch (err) {
-                console.error('Error loading message:', err);
-            }
-        }
+    // If deleted the open one, reset reader
+    if (msgId === activeMsgId) {
+        activeMsgId = null;
+        document.getElementById('reader').classList.remove('open');
+        document.getElementById('readerEmpty').style.display = 'flex';
+    }
 
-        function closeMessage() {
-            document.getElementById('messageModal').classList.add('hidden');
-            currentMessageId = null;
-        }
+    toast('Message deleted.');
+}
 
-        async function deleteMessage() {
-            if (!currentMessageId) return;
-            
-            try {
-                await fetch(`/api/user/inbox/${currentMessageId}`, {
-                    method: 'DELETE',
-                    headers: { 'Authorization': `Bearer ${token}` }
-                });
-                closeMessage();
-                loadMessages();
-            } catch (err) {
-                console.error('Error deleting message:', err);
-            }
-        }
+/* ── Mark all read ── */
+async function markAllRead() {
+    const data = await apiFetch('/api/user/inbox/read-all', { method: 'PUT' });
+    if (!data?.success) { toast('Failed.', 'error'); return; }
+    messages.forEach(m => m.isRead = true);
+    unreadTotal = 0;
+    updateUnreadBadge();
+    renderList();
+    // Re-open current if open
+    if (activeMsgId) document.getElementById('markReadBtn').style.opacity = '0.3';
+    toast('All messages marked as read.');
+}
 
-        loadMessages();
-    </script>
+/* ── Filter switch ── */
+async function switchFilter(el) {
+    document.querySelectorAll('.ftab').forEach(t => t.classList.remove('active'));
+    el.classList.add('active');
+    activeFilter = el.dataset.filter;
+    activeMsgId  = null;
+    document.getElementById('reader').classList.remove('open');
+    document.getElementById('readerEmpty').style.display = 'flex';
+    await loadMessages();
+}
+
+/* ── Update unread badge ── */
+function updateUnreadBadge() {
+    const badge = document.getElementById('unreadBadge');
+    if (unreadTotal > 0) {
+        badge.textContent = unreadTotal > 99 ? '99+' : unreadTotal;
+        badge.classList.add('show');
+    } else {
+        badge.classList.remove('show');
+    }
+    // Show/hide read-all btn
+    document.getElementById('readAllBtn').style.opacity = unreadTotal > 0 ? '1' : '0.3';
+    document.getElementById('readAllBtn').style.pointerEvents = unreadTotal > 0 ? 'auto' : 'none';
+}
+
+/* ── Escape html ── */
+function escHtml(s) {
+    return (s||'').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');
+}
+
+/* ── Logout ── */
+function logout() {
+    ['token','kb_token','userRole','username','kb_user'].forEach(k => localStorage.removeItem(k));
+    window.location.href = '/login';
+}
+
+/* ── Load messages (GET /api/user/inbox) ── */
+async function loadMessages() {
+    // Show skeleton
+    const list = document.getElementById('msgList');
+    if (!list.querySelector('#listSkeleton')) {
+        list.innerHTML = `<div id="listSkeleton">${Array(4).fill(0).map(() => `
+            <div style="display:flex;align-items:flex-start;gap:10px;padding:.85rem 1rem;border-bottom:1px solid rgba(255,255,255,.05);">
+                <div class="skeleton" style="width:36px;height:36px;border-radius:9px;flex-shrink:0;"></div>
+                <div style="flex:1;display:flex;flex-direction:column;gap:6px;">
+                    <div class="skeleton" style="height:11px;width:65%;"></div>
+                    <div class="skeleton" style="height:9px;width:85%;"></div>
+                    <div class="skeleton" style="height:8px;width:35%;"></div>
+                </div>
+            </div>`).join('')}</div>`;
+    }
+
+    const data = await apiFetch(`/api/user/inbox?filter=${activeFilter}&limit=100`);
+    document.getElementById('listSkeleton')?.remove();
+
+    if (!data || !data.success) {
+        toast('Failed to load inbox.', 'error');
+        list.innerHTML = `<div class="list-empty"><span>Failed to load messages.</span></div>`;
+        return;
+    }
+
+    messages    = data.messages || [];
+    unreadTotal = data.unreadCount || 0;
+    updateUnreadBadge();
+    renderList();
+}
+
+/* ── Init ── */
+loadMessages();
+</script>
+
 </body>
 </html>
