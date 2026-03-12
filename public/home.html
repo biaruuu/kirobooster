@@ -3,936 +3,1012 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>KiroBoost — Dashboard</title>
+    <title>KiroBoost - Dashboard</title>
+
+    <link rel="shortcut icon" href="img/fav-icon.png" type="image/x-icon">
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Geist:wght@300;400;500;600;700;800&family=Geist+Mono:wght@400;500&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet">
+
     <style>
-        /* =========================================================
-           DESIGN TOKENS — identical to login / register / index
-        ========================================================= */
-        :root {
-            --bg:            #000000;
-            --surface:       #0a0a0a;
-            --surface-2:     #111111;
-            --surface-3:     #161616;
-            --border:        #1f1f1f;
-            --border-strong: #2e2e2e;
-            --text:          #ededed;
-            --text-muted:    #888888;
-            --text-faint:    #444444;
-            --accent:        #ffffff;
-            --accent-dim:    #e8e8e8;
-            --green:         #22c55e;
-            --amber:         #f59e0b;
-            --red:           #ef4444;
-            --r-sm:  6px;
-            --r-md:  10px;
-            --r-lg:  14px;
-            --font:  'Geist', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
-            --mono:  'Geist Mono', 'SF Mono', 'Fira Code', monospace;
-            --ease:  0.15s ease;
-            --nav-h: 56px;
-            --bot-h: 60px;
-        }
-        *, *::before, *::after { box-sizing: border-box; }
-        body {
-            font-family: var(--font);
-            background: var(--bg);
-            color: var(--text);
+        /* ─── Reset ─── */
+        *, *::before, *::after {
+            box-sizing: border-box;
             margin: 0; padding: 0;
-            -webkit-font-smoothing: antialiased;
+            font-family: 'Outfit', sans-serif !important;
+        }
+
+        *::selection { background: #4C4948 !important; color: #fff; }
+
+        html, body {
+            min-height: 100vh;
+            background: #000;
+            color: #fff;
             overflow-x: hidden;
         }
-        ::selection { background: #fff; color: #000; }
 
-        /* grid overlay */
-        #grid-bg {
-            position: fixed; inset: 0;
-            background-image:
-                linear-gradient(rgba(255,255,255,0.02) 1px, transparent 1px),
-                linear-gradient(90deg, rgba(255,255,255,0.02) 1px, transparent 1px);
-            background-size: 48px 48px;
-            pointer-events: none;
-            z-index: 0;
+        /* ─── CSS Variables ─── */
+        :root {
+            --bg:        #000000;
+            --surface:   #0d0d0d;
+            --card:      #111111;
+            --border:    rgba(255,255,255,0.08);
+            --muted:     #B4B4B4;
+            --accent:    #ffffff;
+            --green:     #22c55e;
+            --red:       #ef4444;
+            --yellow:    #eab308;
+            --blue:      #3b82f6;
         }
 
-        /* =========================================================
-           TOP NAV
-        ========================================================= */
-        .kb-nav {
-            position: fixed; inset: 0 0 auto;
-            z-index: 300;
-            background: rgba(0,0,0,0.85);
-            backdrop-filter: blur(20px);
-            -webkit-backdrop-filter: blur(20px);
+        /* ─── Scrollbar ─── */
+        ::-webkit-scrollbar { width: 5px; height: 5px; }
+        ::-webkit-scrollbar-track { background: #000; }
+        ::-webkit-scrollbar-thumb { background: #333; border-radius: 3px; }
+
+        /* ─── Layout ─── */
+        #app { display: flex; flex-direction: column; min-height: 100vh; }
+
+        /* ─── Navbar ─── */
+        #topnav {
+            position: sticky;
+            top: 0;
+            z-index: 100;
+            background: rgba(0,0,0,0.92);
             border-bottom: 1px solid var(--border);
-            height: var(--nav-h);
+            backdrop-filter: blur(12px);
+            -webkit-backdrop-filter: blur(12px);
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 0 1.5rem;
+            height: 60px;
         }
-        .kb-nav-inner {
-            max-width: 1160px; margin: 0 auto; padding: 0 20px;
-            height: 100%; display: flex; align-items: center; gap: 8px;
-        }
-        .kb-brand {
-            display: flex; align-items: center; gap: 8px;
-            text-decoration: none; color: var(--text);
-            font-size: 14px; font-weight: 600; letter-spacing: -0.025em;
-            flex-shrink: 0; margin-right: 4px;
-        }
-        .kb-brand:hover { opacity: 0.7; color: var(--text); }
-        .kb-brand-icon {
-            width: 25px; height: 25px; background: #fff;
-            border-radius: 5px; display: flex; align-items: center; justify-content: center;
-        }
-        .kb-nav-links { display: flex; align-items: center; gap: 2px; flex: 1; }
-        .kb-nav-a {
-            font-size: 13px; color: var(--text-muted); text-decoration: none;
-            padding: 5px 10px; border-radius: var(--r-sm); font-weight: 500;
-            white-space: nowrap; transition: color var(--ease), background var(--ease);
-        }
-        .kb-nav-a:hover, .kb-nav-a.active { color: var(--text); background: var(--surface-2); }
-        .kb-nav-right { display: flex; align-items: center; gap: 6px; margin-left: auto; }
 
-        /* icon btn (inbox bell) */
-        .kb-icon-btn {
-            position: relative; width: 32px; height: 32px;
+        /* Logo */
+        .kiro-logo { display: inline-flex; align-items: baseline; letter-spacing: -0.04em; user-select: none; }
+        .logo-kiro  { font-weight: 800; color: #fff; font-style: italic; font-size: 1.4rem; }
+        .logo-boost { font-weight: 300; color: rgba(255,255,255,0.4); font-size: 1.4rem; letter-spacing: -0.02em; }
+
+        /* Nav right */
+        .nav-right { display: flex; align-items: center; gap: 12px; }
+
+        .nav-icon-btn {
+            position: relative;
+            background: none;
+            border: none;
+            color: var(--muted);
+            cursor: pointer;
+            padding: 6px;
+            border-radius: 8px;
+            transition: color .2s, background .2s;
             display: flex; align-items: center; justify-content: center;
-            background: none; border: 1px solid var(--border); border-radius: var(--r-sm);
-            color: var(--text-muted); cursor: pointer; text-decoration: none;
-            transition: color var(--ease), border-color var(--ease), background var(--ease); flex-shrink: 0;
         }
-        .kb-icon-btn:hover { color: var(--text); border-color: var(--border-strong); background: var(--surface-2); }
-        .kb-icon-btn .bdot {
-            position: absolute; top: 5px; right: 5px;
-            width: 6px; height: 6px; border-radius: 50%;
-            background: var(--red); border: 1.5px solid #000; display: none;
-        }
-        .kb-icon-btn .bdot.show { display: block; }
+        .nav-icon-btn:hover { color: #fff; background: rgba(255,255,255,0.06); }
 
-        /* avatar chip */
-        .kb-avatar-chip {
-            display: flex; align-items: center; gap: 7px;
-            padding: 4px 10px 4px 5px; border: 1px solid var(--border);
-            border-radius: 99px; background: var(--surface-2); cursor: pointer;
-            transition: border-color var(--ease), background var(--ease); text-decoration: none;
-        }
-        .kb-avatar-chip:hover { border-color: var(--border-strong); background: var(--surface-3); }
-        .kb-avatar {
-            width: 22px; height: 22px; background: var(--border-strong);
-            border-radius: 50%; display: flex; align-items: center; justify-content: center;
-            font-size: 10px; font-weight: 700; color: var(--text); flex-shrink: 0; overflow: hidden;
-        }
-        .kb-avatar img { width: 100%; height: 100%; object-fit: cover; border-radius: 50%; }
-        .kb-avatar-name {
-            font-size: 12px; font-weight: 500; color: var(--text-muted);
-            max-width: 90px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap;
-        }
-
-        /* logout */
-        .kb-logout {
-            font-size: 12px; font-family: var(--font); font-weight: 500;
-            color: var(--text-faint); background: none; border: 1px solid var(--border);
-            padding: 5px 10px; border-radius: var(--r-sm); cursor: pointer;
-            transition: color var(--ease), border-color var(--ease);
-        }
-        .kb-logout:hover { color: var(--red); border-color: var(--red); }
-
-        /* hamburger */
-        .kb-ham {
-            display: none; align-items: center; background: none; border: none;
-            padding: 6px; color: var(--text-muted); cursor: pointer; border-radius: var(--r-sm);
-        }
-        .kb-ham:hover { background: var(--surface-2); color: var(--text); }
-
-        /* mobile drawer */
-        .kb-drawer {
-            display: none; position: fixed; top: var(--nav-h); left: 0; right: 0;
-            background: rgba(0,0,0,0.97); backdrop-filter: blur(24px);
-            border-bottom: 1px solid var(--border); padding: 10px 20px 18px;
-            z-index: 299; flex-direction: column; gap: 2px;
-        }
-        .kb-drawer.open { display: flex; }
-        .kb-drawer a, .kb-drawer button {
-            font-size: 14px; color: var(--text-muted); text-decoration: none;
-            padding: 9px 10px; border-radius: var(--r-sm); font-weight: 500;
-            background: none; border: none; cursor: pointer; font-family: var(--font);
-            text-align: left; transition: color var(--ease), background var(--ease);
-        }
-        .kb-drawer a:hover, .kb-drawer button:hover { color: var(--text); background: var(--surface-2); }
-        .kb-drawer hr { border-color: var(--border); margin: 6px 0; }
-        .kb-drawer .danger { color: #ff6b6b; }
-        .kb-drawer .danger:hover { color: var(--red); }
-
-        /* =========================================================
-           MAIN
-        ========================================================= */
-        .kb-main {
-            position: relative; z-index: 1; max-width: 1160px; margin: 0 auto;
-            padding: calc(var(--nav-h) + 32px) 20px calc(var(--bot-h) + 32px);
-        }
-
-        /* hero header */
-        .kb-hero-hdr {
-            display: flex; align-items: flex-start; justify-content: space-between;
-            gap: 20px; margin-bottom: 28px; flex-wrap: wrap;
-        }
-        .kb-greeting { font-size: 12px; color: var(--text-faint); font-weight: 500; margin-bottom: 4px; }
-        .kb-hero-name {
-            font-size: clamp(22px, 4vw, 32px); font-weight: 700;
-            letter-spacing: -0.035em; color: var(--text); line-height: 1.1; margin-bottom: 8px;
-        }
-        .kb-schip {
-            display: inline-flex; align-items: center; gap: 6px;
-            font-size: 11px; font-weight: 500; padding: 3px 10px 3px 7px;
-            border-radius: 99px; border: 1px solid;
-        }
-        .kb-schip::before { content: ''; width: 5px; height: 5px; border-radius: 50%; background: currentColor; flex-shrink: 0; }
-        .kb-schip.on  { color: var(--green); border-color: rgba(34,197,94,.2); background: rgba(34,197,94,.07); }
-        .kb-schip.off { color: var(--red);   border-color: rgba(239,68,68,.2); background: rgba(239,68,68,.07); }
-        .kb-schip.on::before { box-shadow: 0 0 6px var(--green); }
-        .kb-hero-cta {
-            display: inline-flex; align-items: center; gap: 7px;
-            font-size: 13px; font-family: var(--font); font-weight: 600;
-            color: #000; background: #fff; border: none; padding: 8px 16px;
-            border-radius: var(--r-sm); text-decoration: none; cursor: pointer;
-            transition: background var(--ease);
-        }
-        .kb-hero-cta:hover { background: var(--accent-dim); color: #000; }
-
-        /* stat cards */
-        .kb-stats-row {
-            display: grid; grid-template-columns: repeat(4, 1fr); gap: 10px; margin-bottom: 16px;
-        }
-        .kb-sc {
-            background: var(--surface); border: 1px solid var(--border);
-            border-radius: var(--r-md); padding: 18px 18px 16px;
-            transition: border-color var(--ease), background var(--ease);
-        }
-        .kb-sc:hover { border-color: var(--border-strong); background: var(--surface-2); }
-        .kb-sc-lbl {
-            font-size: 11px; font-weight: 500; color: var(--text-faint);
-            letter-spacing: .04em; text-transform: uppercase; margin-bottom: 8px;
-            display: flex; align-items: center; gap: 6px;
-        }
-        .kb-sc-val {
-            font-size: 26px; font-weight: 700; letter-spacing: -0.04em;
-            color: var(--text); line-height: 1; margin-bottom: 4px; font-variant-numeric: tabular-nums;
-        }
-        .kb-sc-sub { font-size: 11px; color: var(--text-faint); }
-        .kb-pbar  { width: 100%; height: 4px; background: var(--surface-3); border-radius: 99px; overflow: hidden; margin-top: 8px; }
-        .kb-pfill { height: 100%; background: #fff; border-radius: 99px; transition: width 0.6s cubic-bezier(.16,1,.3,1); width: 0; }
-        .kb-pfill.warn   { background: var(--amber); }
-        .kb-pfill.danger { background: var(--red);   }
-
-        /* layout helpers */
-        .kb-card {
-            background: var(--surface); border: 1px solid var(--border);
-            border-radius: var(--r-lg); overflow: hidden; margin-bottom: 16px;
-        }
-        .kb-card-hdr {
-            display: flex; align-items: center; justify-content: space-between;
-            padding: 14px 18px; border-bottom: 1px solid var(--border);
-        }
-        .kb-card-ttl { font-size: 13px; font-weight: 600; color: var(--text); letter-spacing: -.015em; }
-        .kb-card-lnk { font-size: 12px; color: var(--text-faint); text-decoration: none; transition: color var(--ease); }
-        .kb-card-lnk:hover { color: var(--text-muted); }
-        .kb-card-body { padding: 16px 18px; }
-
-        /* two-col */
-        .kb-two { display: grid; grid-template-columns: 2fr 1fr; gap: 16px; }
-
-        /* quick actions */
-        .kb-qgrid { display: grid; grid-template-columns: repeat(4,1fr); gap: 1px; background: var(--border); }
-        .kb-qa {
-            background: var(--surface); padding: 18px 12px;
-            display: flex; flex-direction: column; align-items: center; gap: 8px;
-            text-decoration: none; cursor: pointer; border: none;
-            transition: background var(--ease); position: relative;
-        }
-        .kb-qa:hover { background: var(--surface-2); }
-        .kb-qa-icon {
-            width: 36px; height: 36px; background: var(--surface-2);
-            border: 1px solid var(--border-strong); border-radius: var(--r-sm);
-            display: flex; align-items: center; justify-content: center; color: var(--text-faint);
-            transition: border-color var(--ease), color var(--ease); position: relative;
-        }
-        .kb-qa:hover .kb-qa-icon { border-color: var(--text-faint); color: var(--text-muted); }
-        .kb-qa-lbl { font-size: 11px; font-weight: 500; color: var(--text-faint); text-align: center; transition: color var(--ease); }
-        .kb-qa:hover .kb-qa-lbl { color: var(--text-muted); }
-        .kb-qa-bdg {
-            position: absolute; top: -4px; right: -4px;
-            width: 14px; height: 14px; background: var(--red); border-radius: 50%;
-            border: 2px solid var(--surface); display: none; align-items: center;
-            justify-content: center; font-size: 8px; font-weight: 700; color: #fff;
-        }
-        .kb-qa-bdg.show { display: flex; }
-
-        /* chart */
-        .kb-chart { width: 100%; height: 80px; overflow: hidden; }
-        .kb-chart svg { width: 100%; height: 100%; }
-        .kb-chart-lbls { display: flex; justify-content: space-between; margin-top: 6px; }
-        .kb-chart-lbls span { font-size: 10px; color: var(--text-faint); font-family: var(--mono); }
-
-        /* info rows */
-        .kb-irow {
-            display: flex; align-items: center; justify-content: space-between;
-            padding: 11px 0; border-bottom: 1px solid var(--border);
-        }
-        .kb-irow:last-child { border-bottom: none; }
-        .kb-ikey { font-size: 12px; color: var(--text-faint); font-weight: 500; }
-        .kb-ival { font-size: 12px; color: var(--text-muted); font-weight: 500; }
-
-        /* sessions */
-        .kb-srow {
-            display: flex; align-items: center; gap: 12px;
-            padding: 10px 0; border-bottom: 1px solid var(--border);
-        }
-        .kb-srow:last-child { border-bottom: none; }
-        .kb-sicon {
-            width: 32px; height: 32px; border-radius: var(--r-sm);
-            background: var(--surface-2); border: 1px solid var(--border);
+        .notif-badge {
+            position: absolute;
+            top: 2px; right: 2px;
+            min-width: 16px; height: 16px;
+            background: var(--red);
+            border-radius: 8px;
+            font-size: 0.6rem;
+            font-weight: 700;
             display: flex; align-items: center; justify-content: center;
-            color: var(--text-faint); flex-shrink: 0;
+            padding: 0 3px;
+            display: none;
         }
-        .kb-sinfo { flex: 1; min-width: 0; }
-        .kb-stitle { font-size: 12.5px; font-weight: 500; color: var(--text); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; margin-bottom: 2px; }
-        .kb-smeta  { font-size: 11px; color: var(--text-faint); font-family: var(--mono); }
-        .kb-scnt   { font-size: 13px; font-weight: 600; color: var(--text); font-family: var(--mono); flex-shrink: 0; }
+        .notif-badge.show { display: flex; }
 
-        /* empty */
-        .kb-empty { padding: 32px 0; text-align: center; }
-        .kb-empty-icon {
-            width: 40px; height: 40px; background: var(--surface-2); border: 1px solid var(--border);
-            border-radius: var(--r-md); display: flex; align-items: center; justify-content: center;
-            color: var(--text-faint); margin: 0 auto 12px;
+        /* Avatar small */
+        .nav-avatar {
+            width: 32px; height: 32px;
+            border-radius: 50%;
+            background: #222;
+            border: 1.5px solid var(--border);
+            overflow: hidden;
+            cursor: pointer;
+            display: flex; align-items: center; justify-content: center;
+            font-size: 0.75rem;
+            font-weight: 700;
+            color: var(--muted);
+            transition: border-color .2s;
+            flex-shrink: 0;
         }
-        .kb-empty p { font-size: 12.5px; color: var(--text-faint); margin: 0; }
+        .nav-avatar:hover { border-color: rgba(255,255,255,0.3); }
+        .nav-avatar img { width: 100%; height: 100%; object-fit: cover; }
 
-        /* skeleton */
-        @keyframes shimmer {
-            0%   { background-position: -200% 0; }
-            100% { background-position:  200% 0; }
+        /* ─── Main ─── */
+        #main { flex: 1; padding: 1.5rem; max-width: 1100px; margin: 0 auto; width: 100%; }
+
+        /* ─── Profile Hero ─── */
+        .profile-hero {
+            background: var(--card);
+            border: 1px solid var(--border);
+            border-radius: 14px;
+            overflow: hidden;
+            margin-bottom: 1.25rem;
         }
-        .skel {
-            background: linear-gradient(90deg, var(--surface) 25%, var(--surface-2) 50%, var(--surface) 75%);
-            background-size: 200% 100%;
-            animation: shimmer 1.6s infinite;
-            border-radius: var(--r-sm);
+
+        .hero-banner {
+            height: 90px;
+            background: #111;
+            position: relative;
+        }
+
+        .hero-body {
+            padding: 0 1.5rem 1.25rem;
+            position: relative;
+        }
+
+        .hero-avatar {
+            width: 72px; height: 72px;
+            border-radius: 50%;
+            border: 3px solid #000;
+            background: #222;
+            margin-top: -36px;
+            overflow: hidden;
+            display: flex; align-items: center; justify-content: center;
+            font-size: 1.6rem;
+            font-weight: 800;
+            color: #fff;
+            position: relative;
+            flex-shrink: 0;
+        }
+        .hero-avatar img { width: 100%; height: 100%; object-fit: cover; }
+
+        .hero-info { margin-top: .6rem; }
+
+        .hero-username {
+            font-size: 1.2rem;
+            font-weight: 700;
+            letter-spacing: -0.02em;
+            display: flex;
+            align-items: center;
+            gap: 6px;
+            flex-wrap: wrap;
+        }
+
+        .status-dot {
+            width: 8px; height: 8px;
+            border-radius: 50%;
+            background: var(--green);
+            flex-shrink: 0;
+        }
+        .status-dot.offline { background: #555; }
+
+        .hero-bio {
+            color: var(--muted);
+            font-size: 0.85rem;
+            margin-top: 3px;
+            line-height: 1.5;
+        }
+
+        .hero-status-text {
+            font-size: 0.78rem;
+            color: #666;
+            margin-top: 2px;
+        }
+
+        .badge-pill {
+            display: inline-flex;
+            align-items: center;
+            padding: 2px 8px;
+            border-radius: 20px;
+            font-size: 0.7rem;
+            font-weight: 600;
+            background: rgba(255,255,255,0.08);
+            color: var(--muted);
+            border: 1px solid var(--border);
+        }
+        .badge-pill.active { background: rgba(34,197,94,0.12); color: #86efac; border-color: rgba(34,197,94,0.25); }
+        .badge-pill.admin  { background: rgba(59,130,246,0.12); color: #93c5fd; border-color: rgba(59,130,246,0.25); }
+
+        /* ─── Stats Grid ─── */
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: .85rem;
+            margin-bottom: 1.25rem;
+        }
+
+        .stat-card {
+            background: var(--card);
+            border: 1px solid var(--border);
+            border-radius: 12px;
+            padding: 1.1rem 1.1rem 1rem;
+            display: flex;
+            flex-direction: column;
+            gap: 6px;
+            transition: border-color .2s;
+        }
+        .stat-card:hover { border-color: rgba(255,255,255,0.15); }
+
+        .stat-icon {
+            width: 34px; height: 34px;
+            border-radius: 8px;
+            display: flex; align-items: center; justify-content: center;
+        }
+        .stat-icon.green { background: rgba(34,197,94,0.12); color: #86efac; }
+        .stat-icon.blue  { background: rgba(59,130,246,0.12); color: #93c5fd; }
+        .stat-icon.orange{ background: rgba(249,115,22,0.12); color: #fdba74; }
+        .stat-icon.purple{ background: rgba(168,85,247,0.12); color: #d8b4fe; }
+
+        .stat-value {
+            font-size: 1.65rem;
+            font-weight: 800;
+            letter-spacing: -0.04em;
+            line-height: 1;
+        }
+
+        .stat-label {
+            font-size: 0.75rem;
+            color: var(--muted);
+            font-weight: 500;
+        }
+
+        /* ─── Grid 2-col ─── */
+        .grid-2 {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 1.25rem;
+            margin-bottom: 1.25rem;
+        }
+
+        /* ─── Section Card ─── */
+        .section-card {
+            background: var(--card);
+            border: 1px solid var(--border);
+            border-radius: 12px;
+            overflow: hidden;
+        }
+
+        .section-head {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: .9rem 1.1rem;
+            border-bottom: 1px solid var(--border);
+        }
+
+        .section-title {
+            font-size: 0.82rem;
+            font-weight: 700;
+            letter-spacing: 0.04em;
+            text-transform: uppercase;
+            color: var(--muted);
+        }
+
+        .section-link {
+            font-size: 0.75rem;
+            color: var(--muted);
+            text-decoration: none;
+            font-weight: 500;
+            transition: color .2s;
+        }
+        .section-link:hover { color: #fff; }
+
+        /* ─── Chart ─── */
+        .chart-wrap {
+            padding: 1rem 1.1rem;
+            height: 150px;
+        }
+
+        canvas { display: block; }
+
+        /* ─── Orders table ─── */
+        .order-list { padding: 0; }
+
+        .order-row {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            padding: .75rem 1.1rem;
+            border-bottom: 1px solid var(--border);
+            transition: background .15s;
+        }
+        .order-row:last-child { border-bottom: none; }
+        .order-row:hover { background: rgba(255,255,255,0.02); }
+
+        .order-icon {
+            width: 32px; height: 32px;
+            border-radius: 8px;
+            background: rgba(255,255,255,0.05);
+            display: flex; align-items: center; justify-content: center;
+            flex-shrink: 0;
+            color: var(--muted);
+        }
+
+        .order-main { flex: 1; min-width: 0; }
+        .order-ref  { font-size: 0.82rem; font-weight: 600; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+        .order-meta { font-size: 0.72rem; color: var(--muted); }
+
+        .order-right { text-align: right; flex-shrink: 0; }
+        .order-qty   { font-size: 0.82rem; font-weight: 700; }
+        .order-date  { font-size: 0.7rem; color: var(--muted); }
+
+        /* Status chips */
+        .chip {
             display: inline-block;
+            padding: 2px 7px;
+            border-radius: 20px;
+            font-size: 0.68rem;
+            font-weight: 600;
+        }
+        .chip.pending    { background: rgba(234,179,8,0.12);   color: #fde047; }
+        .chip.processing { background: rgba(59,130,246,0.12);  color: #93c5fd; }
+        .chip.completed  { background: rgba(34,197,94,0.12);   color: #86efac; }
+        .chip.cancelled  { background: rgba(239,68,68,0.12);   color: #fca5a5; }
+        .chip.refunded   { background: rgba(168,85,247,0.12);  color: #d8b4fe; }
+        .chip.partial    { background: rgba(249,115,22,0.12);  color: #fdba74; }
+
+        /* ─── Inbox ─── */
+        .inbox-row {
+            display: flex;
+            align-items: flex-start;
+            gap: 10px;
+            padding: .75rem 1.1rem;
+            border-bottom: 1px solid var(--border);
+            transition: background .15s;
+            cursor: pointer;
+        }
+        .inbox-row:last-child { border-bottom: none; }
+        .inbox-row:hover { background: rgba(255,255,255,0.02); }
+        .inbox-row.unread .inbox-title { color: #fff; font-weight: 700; }
+        .inbox-row.unread .inbox-dot { opacity: 1; }
+
+        .inbox-dot {
+            width: 7px; height: 7px;
+            border-radius: 50%;
+            background: var(--blue);
+            flex-shrink: 0;
+            margin-top: 5px;
+            opacity: 0;
         }
 
-        /* bottom nav */
-        .kb-bnav {
-            display: none; position: fixed; bottom: 0; left: 0; right: 0; z-index: 250;
-            background: rgba(0,0,0,0.96); backdrop-filter: blur(20px);
-            border-top: 1px solid var(--border); height: var(--bot-h); padding: 0 4px;
+        .inbox-body { flex: 1; min-width: 0; }
+        .inbox-title { font-size: 0.82rem; font-weight: 500; color: var(--muted); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+        .inbox-preview { font-size: 0.72rem; color: #555; margin-top: 2px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+        .inbox-time { font-size: 0.68rem; color: #444; flex-shrink: 0; }
+
+        /* ─── Quick Actions ─── */
+        .quick-grid {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            gap: .85rem;
+            margin-bottom: 1.25rem;
         }
-        .kb-bnav-inner { display: flex; align-items: stretch; height: 100%; }
-        .kb-bn {
-            flex: 1; display: flex; flex-direction: column; align-items: center; justify-content: center;
-            gap: 3px; text-decoration: none; color: var(--text-faint); font-size: 9.5px; font-weight: 500;
-            transition: color var(--ease); position: relative; cursor: pointer;
-            background: none; border: none; font-family: var(--font); padding: 0;
+
+        .quick-btn {
+            background: var(--card);
+            border: 1px solid var(--border);
+            border-radius: 12px;
+            padding: 1.1rem .8rem;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 8px;
+            cursor: pointer;
+            text-decoration: none;
+            transition: border-color .2s, background .2s, transform .15s;
+            color: #fff;
         }
-        .kb-bn:hover { color: var(--text-muted); }
-        .kb-bn.active { color: var(--text); }
-        .kb-bn-fab {
-            flex: 1; display: flex; flex-direction: column; align-items: center; justify-content: center;
-            gap: 3px; text-decoration: none; cursor: pointer;
+        .quick-btn:hover {
+            border-color: rgba(255,255,255,0.2);
+            background: rgba(255,255,255,0.04);
+            transform: translateY(-2px);
+            color: #fff;
         }
-        .kb-fab-icon {
-            width: 40px; height: 40px; background: #fff; border-radius: var(--r-sm);
+        .quick-btn:active { transform: translateY(0); }
+
+        .quick-icon {
+            width: 40px; height: 40px;
+            border-radius: 10px;
             display: flex; align-items: center; justify-content: center;
-            margin-top: -16px; border: 3px solid #000; color: #000;
-            transition: background var(--ease), transform 0.1s;
         }
-        .kb-bn-fab:hover .kb-fab-icon { background: var(--accent-dim); }
-        .kb-bn-fab:active .kb-fab-icon { transform: scale(0.95); }
-        .kb-fab-lbl { color: var(--text-faint); font-size: 9.5px; font-weight: 500; font-family: var(--font); }
-        .kb-bn-bdg {
-            position: absolute; top: 6px; right: calc(50% - 14px);
-            width: 7px; height: 7px; border-radius: 50%; background: var(--red);
-            border: 1.5px solid #000; display: none;
-        }
-        .kb-bn-bdg.show { display: block; }
 
-        /* toast */
+        .quick-label { font-size: 0.78rem; font-weight: 600; text-align: center; }
+
+        /* ─── Empty states ─── */
+        .empty-state {
+            padding: 2rem 1rem;
+            text-align: center;
+            color: #444;
+            font-size: 0.82rem;
+        }
+        .empty-state svg { margin-bottom: .5rem; opacity: .3; }
+
+        /* ─── Skeleton loader ─── */
+        .skeleton {
+            background: linear-gradient(90deg, #1a1a1a 25%, #222 50%, #1a1a1a 75%);
+            background-size: 200% 100%;
+            animation: shimmer 1.4s infinite;
+            border-radius: 6px;
+        }
+
+        @keyframes shimmer {
+            0%   { background-position: 200% 0; }
+            100% { background-position: -200% 0; }
+        }
+
+        /* ─── Toast ─── */
         #toast {
-            position: fixed; bottom: calc(var(--bot-h) + 16px); left: 50%;
-            transform: translateX(-50%) translateY(16px);
-            background: var(--surface-2); border: 1px solid var(--border-strong);
-            border-radius: var(--r-md); padding: 10px 18px;
-            font-size: 13px; color: var(--text-muted); z-index: 500;
-            pointer-events: none; opacity: 0;
-            transition: opacity 0.2s, transform 0.2s; white-space: nowrap;
+            position: fixed;
+            bottom: 1.5rem;
+            right: 1.5rem;
+            background: #111;
+            border: 1px solid var(--border);
+            border-radius: 10px;
+            padding: .7rem 1rem;
+            font-size: 0.82rem;
+            font-weight: 500;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            z-index: 9999;
+            transform: translateY(20px);
+            opacity: 0;
+            transition: transform .3s, opacity .3s;
+            pointer-events: none;
+            max-width: 300px;
         }
-        #toast.show { opacity: 1; transform: translateX(-50%) translateY(0); }
+        #toast.show { transform: translateY(0); opacity: 1; }
+        #toast.success { border-color: rgba(34,197,94,.3); color: #86efac; }
+        #toast.error   { border-color: rgba(239,68,68,.3);  color: #fca5a5; }
 
-        /* page fade */
-        .page-fade { opacity: 0; animation: pgFade 0.35s 0.05s ease both; }
-        @keyframes pgFade { from{opacity:0;transform:translateY(8px);} to{opacity:1;transform:none;} }
+        /* ─── Footer ─── */
+        footer {
+            border-top: 1px solid var(--border);
+            padding: 1rem;
+            text-align: center;
+            color: #333;
+            font-size: 0.75rem;
+        }
+        footer span { color: #555; font-weight: 600; }
 
-        /* responsive */
-        @media(max-width:1024px) {
-            .kb-stats-row { grid-template-columns: repeat(2,1fr); }
-            .kb-two { grid-template-columns: 1fr; }
+        /* ─── Responsive ─── */
+        @media (max-width: 768px) {
+            #main { padding: 1rem .75rem; }
+            .stats-grid { grid-template-columns: repeat(2, 1fr); }
+            .grid-2 { grid-template-columns: 1fr; }
+            .quick-grid { grid-template-columns: repeat(2, 1fr); }
+            .stat-value { font-size: 1.35rem; }
         }
-        @media(max-width:768px) {
-            .kb-nav-links, .kb-logout { display: none; }
-            .kb-ham { display: flex; }
-            .kb-bnav { display: flex; }
-            .kb-main { padding-left: 14px; padding-right: 14px; padding-bottom: calc(var(--bot-h) + 20px); }
+
+        @media (max-width: 480px) {
+            .stats-grid { grid-template-columns: repeat(2, 1fr); }
+            .quick-grid { grid-template-columns: repeat(2, 1fr); }
+            #topnav { padding: 0 1rem; }
+            .hero-body { padding: 0 1rem 1rem; }
         }
-        @media(max-width:480px) {
-            .kb-stats-row { grid-template-columns: repeat(2,1fr); gap: 8px; }
-            .kb-hero-name { font-size: 24px; }
-            .kb-sc-val { font-size: 22px; }
+
+        /* Dropdown */
+        .dropdown-menu-dark {
+            background: #111 !important;
+            border: 1px solid var(--border) !important;
+            border-radius: 10px !important;
         }
+        .dropdown-item {
+            color: var(--muted) !important;
+            font-size: 0.82rem !important;
+            font-weight: 500 !important;
+            padding: .45rem .9rem !important;
+            display: flex !important;
+            align-items: center !important;
+            gap: 8px !important;
+        }
+        .dropdown-item:hover { background: rgba(255,255,255,0.06) !important; color: #fff !important; }
+        .dropdown-item.text-danger-soft { color: #fca5a5 !important; }
+        .dropdown-divider { border-color: var(--border) !important; }
     </style>
 </head>
 <body>
-<div id="grid-bg"></div>
 
-<!-- TOP NAV -->
-<nav class="kb-nav">
-    <div class="kb-nav-inner">
-        <a href="/home" class="kb-brand">
-            <div class="kb-brand-icon">
-                <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="#000" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
-                    <path d="M13 2L3 14h9l-1 8 10-12h-9l1-8z"/>
-                </svg>
-            </div>
-            KiroBoost
+<div id="app">
+
+    <!-- ═══ NAVBAR ═══ -->
+    <nav id="topnav">
+        <!-- Logo -->
+        <a href="/home" class="text-decoration-none">
+            <span class="kiro-logo">
+                <span class="logo-kiro">Kiro</span><span class="logo-boost">Boost</span>
+            </span>
         </a>
-        <div class="kb-nav-links">
-            <a href="/home"         class="kb-nav-a active">Home</a>
-            <a href="/boost"        class="kb-nav-a">Boost</a>
-            <a href="/cookies"      class="kb-nav-a">Accounts</a>
-            <a href="/transactions" class="kb-nav-a">Orders</a>
-            <a href="/limits"       class="kb-nav-a">Limits</a>
-            <a href="/profile"      class="kb-nav-a">Profile</a>
-            <a href="/admin" id="navAdmin" class="kb-nav-a" style="display:none">Admin</a>
-        </div>
-        <div class="kb-nav-right">
-            <a href="/inbox" class="kb-icon-btn" title="Inbox">
-                <div class="bdot" id="navBell"></div>
-                <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
-                    <path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"/>
-                    <polyline points="22,6 12,13 2,6"/>
+
+        <!-- Right side -->
+        <div class="nav-right">
+            <!-- Inbox bell -->
+            <a href="/inbox" class="nav-icon-btn" id="inboxBtn" title="Inbox">
+                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                    <path d="M18 8A6 6 0 006 8c0 7-3 9-3 9h18s-3-2-3-9"/>
+                    <path d="M13.73 21a2 2 0 01-3.46 0"/>
                 </svg>
+                <span class="notif-badge" id="inboxBadge">0</span>
             </a>
-            <a href="/profile" class="kb-avatar-chip">
-                <div class="kb-avatar" id="navAv">—</div>
-                <span class="kb-avatar-name" id="navUser">Loading…</span>
-            </a>
-            <button class="kb-logout" onclick="logout()">Log out</button>
-            <button class="kb-ham" id="hamBtn" aria-label="Menu">
-                <svg id="hamIco" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                    <line x1="3" y1="6" x2="21" y2="6"/>
-                    <line x1="3" y1="12" x2="21" y2="12"/>
-                    <line x1="3" y1="18" x2="21" y2="18"/>
-                </svg>
-            </button>
-        </div>
-    </div>
-</nav>
 
-<!-- MOBILE DRAWER -->
-<div class="kb-drawer" id="drawer">
-    <a href="/home">Home</a>
-    <a href="/boost">Boost</a>
-    <a href="/cookies">Accounts</a>
-    <a href="/transactions">Orders</a>
-    <a href="/inbox">Inbox</a>
-    <a href="/limits">Limits</a>
-    <a href="/profile">Profile</a>
-    <a href="/admin" id="drawerAdmin" style="display:none">Admin</a>
-    <hr>
-    <button class="danger" onclick="logout()">Log out</button>
-</div>
-
-<!-- MAIN CONTENT -->
-<main class="kb-main page-fade" id="mainWrap">
-
-    <!-- Hero header -->
-    <div class="kb-hero-hdr">
-        <div>
-            <div class="kb-greeting">Welcome back</div>
-            <div class="kb-hero-name" id="heroName"><span class="skel" style="width:160px;height:28px;">&nbsp;</span></div>
-            <span class="kb-schip off" id="statusChip" style="display:none">Inactive</span>
-        </div>
-        <div style="display:flex;align-items:center;gap:8px;">
-            <a href="/boost" class="kb-hero-cta">
-                <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
-                    <path d="M13 2L3 14h9l-1 8 10-12h-9l1-8z"/>
-                </svg>
-                New Boost
-            </a>
-        </div>
-    </div>
-
-    <!-- Stat cards -->
-    <div class="kb-stats-row">
-
-        <div class="kb-sc">
-            <div class="kb-sc-lbl">
-                <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                    <rect x="2" y="7" width="20" height="14" rx="2"/><path d="M16 7V5a2 2 0 0 0-2-2h-4a2 2 0 0 0-2 2v2"/>
-                </svg>
-                Accounts
+            <!-- User avatar dropdown -->
+            <div class="dropdown">
+                <div class="nav-avatar" id="navAvatar" data-bs-toggle="dropdown" aria-expanded="false">
+                    <span id="navAvatarInitial">?</span>
+                </div>
+                <ul class="dropdown-menu dropdown-menu-end dropdown-menu-dark">
+                    <li>
+                        <div class="px-3 py-2" style="border-bottom:1px solid var(--border);margin-bottom:4px;">
+                            <div style="font-size:.82rem;font-weight:700;color:#fff;" id="dropUsername">—</div>
+                            <div style="font-size:.72rem;color:#555;" id="dropRole">User</div>
+                        </div>
+                    </li>
+                    <li><a class="dropdown-item" href="/profile">
+                        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M20 21v-2a4 4 0 00-4-4H8a4 4 0 00-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>
+                        Profile
+                    </a></li>
+                    <li><a class="dropdown-item" href="/cookies">
+                        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="3" width="18" height="18" rx="2"/><path d="M3 9h18M9 21V9"/></svg>
+                        My Cookies
+                    </a></li>
+                    <li><a class="dropdown-item" href="/transactions">
+                        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M9 14l-4-4 4-4"/><path d="M5 10h11a4 4 0 010 8h-1"/></svg>
+                        Transactions
+                    </a></li>
+                    <li><hr class="dropdown-divider"></li>
+                    <li><a class="dropdown-item text-danger-soft" href="#" onclick="logout()">
+                        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M9 21H5a2 2 0 01-2-2V5a2 2 0 012-2h4"/><polyline points="16 17 21 12 16 7"/><line x1="21" y1="12" x2="9" y2="12"/></svg>
+                        Sign Out
+                    </a></li>
+                </ul>
             </div>
-            <div class="kb-sc-val" id="scCookies"><span class="skel" style="width:50px;height:24px;">&nbsp;</span></div>
-            <div class="kb-sc-sub">of <span id="scLimit">—</span> slots used</div>
-            <div class="kb-pbar"><div class="kb-pfill" id="pbar"></div></div>
         </div>
+    </nav>
 
-        <div class="kb-sc">
-            <div class="kb-sc-lbl">
-                <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                    <circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/>
-                </svg>
-                Today
+    <!-- ═══ MAIN ═══ -->
+    <main id="main">
+
+        <!-- ── Profile Hero ── -->
+        <div class="profile-hero">
+            <div class="hero-banner" id="heroBanner">
+                <!-- Banner filled by JS -->
             </div>
-            <div class="kb-sc-val" id="scToday"><span class="skel" style="width:50px;height:24px;">&nbsp;</span></div>
-            <div class="kb-sc-sub">shares today</div>
-        </div>
-
-        <div class="kb-sc">
-            <div class="kb-sc-lbl">
-                <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                    <polyline points="22 12 18 12 15 21 9 3 6 12 2 12"/>
-                </svg>
-                Total Shares
-            </div>
-            <div class="kb-sc-val" id="scTotal"><span class="skel" style="width:50px;height:24px;">&nbsp;</span></div>
-            <div class="kb-sc-sub">all time</div>
-        </div>
-
-        <div class="kb-sc">
-            <div class="kb-sc-lbl">
-                <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                    <polyline points="20 6 9 17 4 12"/>
-                </svg>
-                Success Rate
-            </div>
-            <div class="kb-sc-val" id="scRate"><span class="skel" style="width:50px;height:24px;">&nbsp;</span></div>
-            <div class="kb-sc-sub">of shares succeeded</div>
-        </div>
-    </div>
-
-    <!-- Quick actions -->
-    <div class="kb-card">
-        <div class="kb-card-hdr"><span class="kb-card-ttl">Quick actions</span></div>
-        <div class="kb-qgrid">
-
-            <a href="/boost" class="kb-qa">
-                <div class="kb-qa-icon">
-                    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M13 2L3 14h9l-1 8 10-12h-9l1-8z"/></svg>
-                </div>
-                <span class="kb-qa-lbl">Boost</span>
-            </a>
-
-            <a href="/cookies" class="kb-qa">
-                <div class="kb-qa-icon">
-                    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><rect x="2" y="7" width="20" height="14" rx="2"/><path d="M16 7V5a2 2 0 0 0-2-2h-4a2 2 0 0 0-2 2v2"/></svg>
-                </div>
-                <span class="kb-qa-lbl">Accounts</span>
-            </a>
-
-            <a href="/transactions" class="kb-qa">
-                <div class="kb-qa-icon">
-                    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M9 5H7a2 2 0 0 0-2 2v12a2 2 0 0 0 2 2h10a2 2 0 0 0 2-2V7a2 2 0 0 0-2-2h-2M9 5a2 2 0 0 0 2 2h2a2 2 0 0 0 2-2M9 5a2 2 0 0 1 2-2h2a2 2 0 0 1 2 2"/></svg>
-                </div>
-                <span class="kb-qa-lbl">Orders</span>
-            </a>
-
-            <a href="/inbox" class="kb-qa" id="qaInbox">
-                <div class="kb-qa-icon">
-                    <div class="kb-qa-bdg" id="qaInboxBdg"></div>
-                    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"/><polyline points="22,6 12,13 2,6"/></svg>
-                </div>
-                <span class="kb-qa-lbl">Inbox</span>
-            </a>
-
-            <a href="/limits" class="kb-qa">
-                <div class="kb-qa-icon">
-                    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><line x1="18" y1="20" x2="18" y2="10"/><line x1="12" y1="20" x2="12" y2="4"/><line x1="6" y1="20" x2="6" y2="14"/></svg>
-                </div>
-                <span class="kb-qa-lbl">Limits</span>
-            </a>
-
-            <a href="/profile" class="kb-qa">
-                <div class="kb-qa-icon">
-                    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>
-                </div>
-                <span class="kb-qa-lbl">Profile</span>
-            </a>
-
-            <a href="/admin" class="kb-qa" id="qaAdmin" style="display:none">
-                <div class="kb-qa-icon">
-                    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg>
-                </div>
-                <span class="kb-qa-lbl">Admin</span>
-            </a>
-
-            <a href="/" class="kb-qa">
-                <div class="kb-qa-icon">
-                    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/><polyline points="9 22 9 12 15 12 15 22"/></svg>
-                </div>
-                <span class="kb-qa-lbl">Landing</span>
-            </a>
-
-        </div>
-    </div>
-
-    <!-- Two col: chart + account info -->
-    <div class="kb-two">
-
-        <div class="kb-card">
-            <div class="kb-card-hdr">
-                <span class="kb-card-ttl">Share activity — last 30 days</span>
-                <a href="/boost" class="kb-card-lnk">New session →</a>
-            </div>
-            <div class="kb-card-body">
-                <div id="chartEmpty" class="kb-empty" style="display:none">
-                    <div class="kb-empty-icon">
-                        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><polyline points="22 12 18 12 15 21 9 3 6 12 2 12"/></svg>
+            <div class="hero-body">
+                <div class="d-flex align-items-end justify-content-between flex-wrap gap-2">
+                    <div class="d-flex align-items-end gap-3">
+                        <div class="hero-avatar" id="heroAvatar">
+                            <span id="heroAvatarInitial">?</span>
+                        </div>
+                        <div class="hero-info">
+                            <div class="hero-username">
+                                <span id="heroUsername">Loading...</span>
+                                <span class="status-dot" id="statusDot"></span>
+                                <span class="badge-pill active" id="activeChip" style="display:none;">Active</span>
+                                <span class="badge-pill admin" id="adminChip" style="display:none;">Admin</span>
+                            </div>
+                            <div class="hero-bio" id="heroBio"></div>
+                            <div class="hero-status-text" id="heroStatusText"></div>
+                        </div>
                     </div>
-                    <p>No activity yet — <a href="/boost" style="color:var(--text-muted)">start your first boost</a></p>
+                    <a href="/boost" class="btn btn-sm rounded-2 fw-bold"
+                       style="background:#fff;color:#000;font-size:.8rem;padding:.4rem .9rem;">
+                        + New Boost
+                    </a>
                 </div>
-                <div id="chartWrap">
-                    <div class="kb-chart"><svg id="chartSvg" viewBox="0 0 400 80" preserveAspectRatio="none"></svg></div>
-                    <div class="kb-chart-lbls" id="chartLbls"></div>
+            </div>
+        </div>
+
+        <!-- ── Stats Cards ── -->
+        <div class="stats-grid">
+            <div class="stat-card">
+                <div class="stat-icon green">
+                    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M22 12h-4l-3 9L9 3l-3 9H2"/></svg>
                 </div>
-                <div style="display:flex;gap:24px;margin-top:16px;padding-top:14px;border-top:1px solid var(--border);">
-                    <div>
-                        <div style="font-size:11px;color:var(--text-faint);margin-bottom:2px;">Successful</div>
-                        <div style="font-size:16px;font-weight:700;color:var(--green);letter-spacing:-.03em;font-variant-numeric:tabular-nums;" id="sumOk">—</div>
-                    </div>
-                    <div>
-                        <div style="font-size:11px;color:var(--text-faint);margin-bottom:2px;">Failed</div>
-                        <div style="font-size:16px;font-weight:700;color:var(--red);letter-spacing:-.03em;font-variant-numeric:tabular-nums;" id="sumFail">—</div>
-                    </div>
-                    <div>
-                        <div style="font-size:11px;color:var(--text-faint);margin-bottom:2px;">Rate</div>
-                        <div style="font-size:16px;font-weight:700;color:var(--text);letter-spacing:-.03em;font-variant-numeric:tabular-nums;" id="sumRate">—</div>
+                <div class="stat-value" id="statShares">—</div>
+                <div class="stat-label">Total Shares</div>
+            </div>
+
+            <div class="stat-card">
+                <div class="stat-icon blue">
+                    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><rect x="3" y="3" width="18" height="18" rx="2"/><path d="M3 9h18M9 21V9"/></svg>
+                </div>
+                <div class="stat-value" id="statCookies">—</div>
+                <div class="stat-label">Cookies</div>
+            </div>
+
+            <div class="stat-card">
+                <div class="stat-icon orange">
+                    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M9 14l-4-4 4-4"/><path d="M5 10h11a4 4 0 010 8h-1"/></svg>
+                </div>
+                <div class="stat-value" id="statOrders">—</div>
+                <div class="stat-label">Total Orders</div>
+            </div>
+        </div>
+
+        <!-- ── Quick Actions ── -->
+        <div class="quick-grid">
+            <a href="/boost" class="quick-btn">
+                <div class="quick-icon" style="background:rgba(34,197,94,.12);color:#86efac;">
+                    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M13 2L3 14h9l-1 8 10-12h-9l1-8z"/></svg>
+                </div>
+                <span class="quick-label">Boost</span>
+            </a>
+            <a href="/cookies" class="quick-btn">
+                <div class="quick-icon" style="background:rgba(59,130,246,.12);color:#93c5fd;">
+                    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="3" width="18" height="18" rx="2"/><path d="M3 9h18M9 21V9"/></svg>
+                </div>
+                <span class="quick-label">Cookies</span>
+            </a>
+            <a href="/inbox" class="quick-btn" id="qInbox">
+                <div class="quick-icon" style="background:rgba(168,85,247,.12);color:#d8b4fe;">
+                    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M18 8A6 6 0 006 8c0 7-3 9-3 9h18s-3-2-3-9"/><path d="M13.73 21a2 2 0 01-3.46 0"/></svg>
+                </div>
+                <span class="quick-label">Inbox</span>
+            </a>
+            <a href="/profile" class="quick-btn">
+                <div class="quick-icon" style="background:rgba(249,115,22,.12);color:#fdba74;">
+                    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M20 21v-2a4 4 0 00-4-4H8a4 4 0 00-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>
+                </div>
+                <span class="quick-label">Profile</span>
+            </a>
+        </div>
+
+        <!-- ── 2-col grid: Chart + Inbox ── -->
+        <div class="grid-2">
+
+            <!-- Share History Chart -->
+            <div class="section-card">
+                <div class="section-head">
+                    <span class="section-title">Share Activity</span>
+                    <span class="section-link" style="font-size:.7rem;color:#444;">Last 30 days</span>
+                </div>
+                <div class="chart-wrap">
+                    <canvas id="shareChart"></canvas>
+                </div>
+            </div>
+
+            <!-- Inbox Preview -->
+            <div class="section-card">
+                <div class="section-head">
+                    <span class="section-title">Inbox</span>
+                    <a href="/inbox" class="section-link">View all →</a>
+                </div>
+                <div id="inboxList">
+                    <div class="empty-state">
+                        <div class="skeleton" style="height:12px;width:60%;margin:.5rem auto;"></div>
+                        <div class="skeleton" style="height:12px;width:40%;margin:.5rem auto;"></div>
                     </div>
                 </div>
             </div>
+
         </div>
 
-        <div class="kb-card">
-            <div class="kb-card-hdr">
-                <span class="kb-card-ttl">Account</span>
-                <a href="/profile" class="kb-card-lnk">Edit →</a>
+        <!-- ── Recent Orders ── -->
+        <div class="section-card" style="margin-bottom:1.25rem;">
+            <div class="section-head">
+                <span class="section-title">Recent Orders</span>
+                <a href="/transactions" class="section-link">View all →</a>
             </div>
-            <div class="kb-card-body" style="padding-top:8px;">
-                <div class="kb-irow"><span class="kb-ikey">Username</span><span class="kb-ival" id="iUser">—</span></div>
-                <div class="kb-irow"><span class="kb-ikey">Facebook</span><span class="kb-ival" id="iFb" style="max-width:140px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;">—</span></div>
-                <div class="kb-irow"><span class="kb-ikey">Country</span><span class="kb-ival" id="iCountry">—</span></div>
-                <div class="kb-irow"><span class="kb-ikey">Status</span><span class="kb-ival" id="iStatus">—</span></div>
-                <div class="kb-irow"><span class="kb-ikey">Cookies</span><span class="kb-ival" id="iCookies">—</span></div>
-                <div class="kb-irow"><span class="kb-ikey">Role</span><span class="kb-ival" id="iRole">—</span></div>
-            </div>
-        </div>
-
-    </div>
-
-    <!-- Recent sessions -->
-    <div class="kb-card" style="margin-bottom:0;">
-        <div class="kb-card-hdr">
-            <span class="kb-card-ttl">Recent sessions</span>
-            <a href="/boost" class="kb-card-lnk">View all →</a>
-        </div>
-        <div class="kb-card-body" id="sessBody">
-            <!-- skeleton -->
-            <div class="kb-srow">
-                <div class="kb-sicon skel" style="width:32px;height:32px;"></div>
-                <div class="kb-sinfo">
-                    <div class="skel" style="width:55%;height:12px;margin-bottom:5px;">&nbsp;</div>
-                    <div class="skel" style="width:30%;height:10px;">&nbsp;</div>
+            <div id="orderList">
+                <div class="empty-state">
+                    <div class="skeleton" style="height:12px;width:55%;margin:.5rem auto;"></div>
+                    <div class="skeleton" style="height:12px;width:35%;margin:.5rem auto;"></div>
                 </div>
-                <div class="skel" style="width:32px;height:14px;">&nbsp;</div>
-            </div>
-            <div class="kb-srow">
-                <div class="kb-sicon skel" style="width:32px;height:32px;"></div>
-                <div class="kb-sinfo">
-                    <div class="skel" style="width:45%;height:12px;margin-bottom:5px;">&nbsp;</div>
-                    <div class="skel" style="width:25%;height:10px;">&nbsp;</div>
-                </div>
-                <div class="skel" style="width:32px;height:14px;">&nbsp;</div>
             </div>
         </div>
-    </div>
 
-</main>
+    </main>
 
-<!-- BOTTOM NAV -->
-<nav class="kb-bnav">
-    <div class="kb-bnav-inner">
-        <a href="/home" class="kb-bn active">
-            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/><polyline points="9 22 9 12 15 12 15 22"/></svg>
-            Home
-        </a>
-        <a href="/cookies" class="kb-bn">
-            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="2" y="7" width="20" height="14" rx="2"/><path d="M16 7V5a2 2 0 0 0-2-2h-4a2 2 0 0 0-2 2v2"/></svg>
-            Accts
-        </a>
-        <a href="/boost" class="kb-bn-fab">
-            <div class="kb-fab-icon">
-                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M13 2L3 14h9l-1 8 10-12h-9l1-8z"/></svg>
-            </div>
-            <span class="kb-fab-lbl">Boost</span>
-        </a>
-        <a href="/inbox" class="kb-bn" style="position:relative;">
-            <div class="kb-bn-bdg" id="bnBdg"></div>
-            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"/><polyline points="22,6 12,13 2,6"/></svg>
-            Inbox
-        </a>
-        <a href="/profile" class="kb-bn">
-            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>
-            Profile
-        </a>
-    </div>
-</nav>
+    <!-- Footer -->
+    <footer>
+        © 2026 Developed by <span>Kiro Takashi</span>
+    </footer>
 
+</div><!-- /app -->
+
+<!-- Toast -->
 <div id="toast"></div>
 
+<!-- Chart.js -->
+<script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
+
 <script>
-/* ====================================================
+'use strict';
+
+/* ═══════════════════════════════════════════
    AUTH GUARD
-==================================================== */
-const token = localStorage.getItem('kb_token');
-if (!token) { window.location.replace('/login'); throw 0; }
+═══════════════════════════════════════════ */
+const TOKEN    = localStorage.getItem('token') || localStorage.getItem('kb_token');
+const USERNAME = localStorage.getItem('username');
+const ROLE     = localStorage.getItem('userRole');
+
+if (!TOKEN) {
+    window.location.href = '/login';
+}
+
+/* ═══════════════════════════════════════════
+   HELPERS
+═══════════════════════════════════════════ */
+function authHeaders() {
+    return { 'Authorization': `Bearer ${TOKEN}`, 'Content-Type': 'application/json' };
+}
+
+async function apiFetch(url, opts = {}) {
+    const res = await fetch(url, {
+        ...opts,
+        headers: { ...authHeaders(), ...(opts.headers || {}) }
+    });
+    if (res.status === 401) { logout(); return null; }
+    return res.json();
+}
+
+function toast(msg, type = 'success') {
+    const el = document.getElementById('toast');
+    const icon = type === 'success'
+        ? `<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="20 6 9 17 4 12"/></svg>`
+        : `<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/></svg>`;
+    el.className = `show ${type}`;
+    el.innerHTML = icon + msg;
+    clearTimeout(el._t);
+    el._t = setTimeout(() => { el.className = ''; }, 3000);
+}
+
+function fmt(n) {
+    if (n >= 1_000_000) return (n / 1_000_000).toFixed(1) + 'M';
+    if (n >= 1_000)     return (n / 1_000).toFixed(1) + 'k';
+    return String(n);
+}
 
 function logout() {
-    localStorage.removeItem('kb_token');
-    localStorage.removeItem('kb_user');
-    window.location.replace('/login');
+    ['token','kb_token','userRole','username','kb_user'].forEach(k => localStorage.removeItem(k));
+    window.location.href = '/login';
 }
 
-/* ====================================================
-   MOBILE NAV
-==================================================== */
-const hamBtn = document.getElementById('hamBtn');
-const drawer = document.getElementById('drawer');
-const hamIco = document.getElementById('hamIco');
-const HAM  = '<line x1="3" y1="6" x2="21" y2="6"/><line x1="3" y1="12" x2="21" y2="12"/><line x1="3" y1="18" x2="21" y2="18"/>';
-const CLOS = '<line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/>';
-hamBtn.addEventListener('click', () => {
-    const o = drawer.classList.toggle('open');
-    hamIco.innerHTML = o ? CLOS : HAM;
-    document.body.style.overflow = o ? 'hidden' : '';
-});
-document.addEventListener('click', e => {
-    if (!drawer.contains(e.target) && !hamBtn.contains(e.target)) {
-        drawer.classList.remove('open');
-        hamIco.innerHTML = HAM;
-        document.body.style.overflow = '';
-    }
-});
-
-/* ====================================================
-   TOAST
-==================================================== */
-function toast(msg) {
-    const t = document.getElementById('toast');
-    t.textContent = msg;
-    t.classList.add('show');
-    setTimeout(() => t.classList.remove('show'), 2800);
+/* ═══════════════════════════════════════════
+   RENDER HELPERS
+═══════════════════════════════════════════ */
+function statusChip(s) {
+    return `<span class="chip ${s}">${s.charAt(0).toUpperCase() + s.slice(1)}</span>`;
 }
 
-/* ====================================================
-   SVG SPARKLINE CHART
-==================================================== */
-function drawChart(data) {
-    if (!data || !data.length) {
-        document.getElementById('chartWrap').style.display  = 'none';
-        document.getElementById('chartEmpty').style.display = '';
-        return;
-    }
-    const vals  = data.map(d => (typeof d === 'object' ? (d.count || d.shares || 0) : d));
-    const dates = data.map(d => (typeof d === 'object' ? (d.date || d._id || '') : ''));
-    const W = 400, H = 80, P = 2;
-    const max  = Math.max(...vals, 1);
-    const step = (W - P*2) / Math.max(vals.length - 1, 1);
-    const pts  = vals.map((v, i) => {
-        const x = P + i * step;
-        const y = H - P - (v / max) * (H - P*2);
-        return x.toFixed(1) + ',' + y.toFixed(1);
-    });
-    const area = P + ',' + H + ' ' + pts.join(' ') + ' ' + (P + (vals.length-1)*step).toFixed(1) + ',' + H;
-    document.getElementById('chartSvg').innerHTML =
-        '<defs><linearGradient id="cg" x1="0" y1="0" x2="0" y2="1">' +
-        '<stop offset="0%" stop-color="#fff" stop-opacity=".08"/>' +
-        '<stop offset="100%" stop-color="#fff" stop-opacity="0"/>' +
-        '</linearGradient></defs>' +
-        '<polygon points="' + area + '" fill="url(#cg)"/>' +
-        '<polyline points="' + pts.join(' ') + '" fill="none" stroke="#fff" stroke-width="1.2" stroke-opacity=".5" stroke-linejoin="round" stroke-linecap="round"/>';
-    const fmt = s => { if (!s) return ''; const d = new Date(s); return isNaN(d) ? s : d.toLocaleDateString('en',{month:'short',day:'numeric'}); };
-    const mid  = Math.floor(dates.length / 2);
-    if (dates[0]) {
-        document.getElementById('chartLbls').innerHTML =
-            '<span>' + fmt(dates[0]) + '</span>' +
-            '<span>' + fmt(dates[mid]) + '</span>' +
-            '<span>' + fmt(dates[dates.length-1]) + '</span>';
-    }
+function initials(name) {
+    return (name || '?').substring(0,2).toUpperCase();
 }
 
-/* ====================================================
-   RENDER RECENT SESSIONS
-==================================================== */
-function renderSessions(sessions) {
-    const body = document.getElementById('sessBody');
-    if (!sessions || !sessions.length) {
-        body.innerHTML = '<div class="kb-empty"><div class="kb-empty-icon"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M13 2L3 14h9l-1 8 10-12h-9l1-8z"/></svg></div><p>No sessions yet — <a href="/boost" style="color:var(--text-muted)">start your first boost</a></p></div>';
-        return;
-    }
-    const spd  = { instant: '⚡ Instant', fast: '→ Fast', slow: '◌ Slow' };
-    const col  = { completed: 'var(--green)', running: 'var(--amber)', stopped: 'var(--text-faint)', failed: 'var(--red)' };
-    body.innerHTML = sessions.slice(0,5).map(s => {
-        const link  = s.postLink || s.link || '—';
-        const short = link.length > 42 ? link.slice(0,42)+'…' : link;
-        const cnt   = (s.successCount || s.shares || 0).toLocaleString();
-        const speed = s.speed || 'instant';
-        const stat  = s.status || 'completed';
-        const when  = s.createdAt ? new Date(s.createdAt).toLocaleDateString('en',{month:'short',day:'numeric',hour:'2-digit',minute:'2-digit'}) : '—';
-        return '<div class="kb-srow">' +
-            '<div class="kb-sicon"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M13 2L3 14h9l-1 8 10-12h-9l1-8z"/></svg></div>' +
-            '<div class="kb-sinfo"><div class="kb-stitle" title="' + link + '">' + short + '</div>' +
-            '<div class="kb-smeta">' + when + ' &nbsp;·&nbsp; <span style="color:' + (col[stat]||'var(--text-faint)') + '">' + stat + '</span> &nbsp;·&nbsp; ' + (spd[speed]||speed) + '</div></div>' +
-            '<div class="kb-scnt">' + cnt + '</div></div>';
-    }).join('');
-}
-
-/* ====================================================
-   LOAD STATS  — GET /api/user/stats
-==================================================== */
+/* ═══════════════════════════════════════════
+   LOAD USER STATS  →  GET /api/user/stats
+═══════════════════════════════════════════ */
 async function loadStats() {
-    try {
-        const res = await fetch('/api/user/stats', {
-            headers: { 'Authorization': 'Bearer ' + token }
-        });
-        if (res.status === 401) {
-            localStorage.removeItem('kb_token');
-            localStorage.removeItem('kb_user');
-            window.location.replace('/login');
-            return;
-        }
-        const data = await res.json();
-        if (!data.success) throw new Error(data.message || 'Stats load failed');
-        const s = data.stats;
-        localStorage.setItem('kb_user', JSON.stringify(s));
+    const data = await apiFetch('/api/user/stats');
+    if (!data || !data.success) return;
 
-        /* hero */
-        document.getElementById('heroName').textContent = s.username || 'User';
-        document.getElementById('navUser').textContent  = s.username || '';
-        document.getElementById('navAv').textContent    = (s.username || 'U').charAt(0).toUpperCase();
+    const s = data.stats;
 
-        /* status chip */
-        const chip = document.getElementById('statusChip');
-        chip.style.display = 'inline-flex';
-        if (s.isActive) {
-            chip.textContent = 'Active';
-            chip.className   = 'kb-schip on';
-        } else {
-            chip.textContent = 'Inactive — contact admin';
-            chip.className   = 'kb-schip off';
-        }
+    // Navbar
+    document.getElementById('navAvatarInitial').textContent = initials(s.username);
+    document.getElementById('dropUsername').textContent = s.username;
+    document.getElementById('dropRole').textContent = ROLE === 'admin' ? 'Administrator' : 'Member';
 
-        /* cookie card */
-        const cc = s.cookieCount ?? 0;
-        const cl = s.cookieLimit ?? 10;
-        document.getElementById('scCookies').textContent = cc;
-        document.getElementById('scLimit').textContent   = cl;
-        const pct = cl > 0 ? (cc / cl) * 100 : 0;
-        const bar = document.getElementById('pbar');
-        bar.style.width = Math.min(pct,100) + '%';
-        bar.className   = 'kb-pfill' + (pct >= 90 ? ' danger' : pct >= 70 ? ' warn' : '');
-
-        /* share cards */
-        const today   = s.todayShares   ?? 0;
-        const total   = s.totalShares   ?? 0;
-        const ok      = s.successShares ?? 0;
-        const fail    = s.failShares    ?? 0;
-        const rate    = total > 0 ? Math.round((ok/total)*100) : 0;
-        document.getElementById('scToday').textContent = today.toLocaleString();
-        document.getElementById('scTotal').textContent = total.toLocaleString();
-        document.getElementById('scRate').textContent  = rate + '%';
-        document.getElementById('sumOk').textContent   = ok.toLocaleString();
-        document.getElementById('sumFail').textContent = fail.toLocaleString();
-        document.getElementById('sumRate').textContent = rate + '%';
-
-        /* admin */
-        if (s.isAdmin) {
-            ['navAdmin','drawerAdmin','qaAdmin'].forEach(id => {
-                const el = document.getElementById(id);
-                if (el) el.style.display = '';
-            });
-        }
-
-        /* account card */
-        document.getElementById('iUser').textContent    = s.username || '—';
-        document.getElementById('iFb').textContent      = s.facebook  || '—';
-        document.getElementById('iCountry').textContent = s.country   || '—';
-        document.getElementById('iStatus').innerHTML    = s.isActive
-            ? '<span style="color:var(--green)">Active</span>'
-            : '<span style="color:var(--red)">Inactive</span>';
-        document.getElementById('iCookies').textContent = cc + ' / ' + cl;
-        document.getElementById('iRole').textContent    = s.isAdmin ? 'Administrator' : 'User';
-
-        /* chart */
-        const hist = s.shareHistory || s.history || [];
-        drawChart(hist);
-
-        /* sessions */
-        renderSessions(s.recentSessions || s.sessions || []);
-
-    } catch (err) {
-        console.error('loadStats:', err);
-        const cached = JSON.parse(localStorage.getItem('kb_user') || 'null');
-        if (cached) {
-            document.getElementById('heroName').textContent = cached.username || 'User';
-            document.getElementById('navUser').textContent  = cached.username || '';
-            document.getElementById('navAv').textContent    = (cached.username || 'U').charAt(0).toUpperCase();
-            document.getElementById('scCookies').textContent = cached.cookieCount ?? 0;
-            document.getElementById('scLimit').textContent   = cached.cookieLimit ?? 10;
-            document.getElementById('scToday').textContent   = cached.todayShares ?? 0;
-            document.getElementById('scTotal').textContent   = cached.totalShares ?? 0;
-            document.getElementById('scRate').textContent    = '—';
-            renderSessions([]);
-            toast('Using cached data — check your connection');
-        } else {
-            document.getElementById('heroName').textContent = 'Error loading';
-        }
+    // Set nav avatar image if exists
+    const navAv = document.getElementById('navAvatar');
+    if (s.profileImage || s.profileImageUrl) {
+        const src = s.profileImage || s.profileImageUrl;
+        navAv.innerHTML = `<img src="${src}" alt="">`;
     }
+
+    // Hero
+    document.getElementById('heroUsername').textContent = s.username;
+
+    const heroAv = document.getElementById('heroAvatar');
+    if (s.profileImage || s.profileImageUrl) {
+        const src = s.profileImage || s.profileImageUrl;
+        heroAv.innerHTML = `<img src="${src}" alt="">`;
+    } else {
+        document.getElementById('heroAvatarInitial').textContent = initials(s.username);
+    }
+
+    // Banner
+    const banner = document.getElementById('heroBanner');
+    if (s.bannerImage) {
+        banner.style.backgroundImage = `url(${s.bannerImage})`;
+        banner.style.backgroundSize = 'cover';
+        banner.style.backgroundPosition = 'center';
+    } else {
+        banner.style.background = s.bannerColor || '#111';
+    }
+
+    // Apply accent color to avatar border
+    if (s.accentColor && s.accentColor !== '#ffffff') {
+        heroAv.style.borderColor = s.accentColor;
+    }
+
+    // Bio / status
+    if (s.bio) document.getElementById('heroBio').textContent = s.bio;
+    if (s.status && s.status !== 'online') {
+        document.getElementById('heroStatusText').textContent = s.status;
+    }
+
+    // Status dot
+    const dot = document.getElementById('statusDot');
+    if (!s.isActive) { dot.classList.add('offline'); }
+
+    // Chips
+    if (s.isActive) document.getElementById('activeChip').style.display = 'inline-flex';
+    if (ROLE === 'admin') document.getElementById('adminChip').style.display = 'inline-flex';
+
+    // Stat cards
+    document.getElementById('statShares').textContent  = fmt(s.totalShares || 0);
+    document.getElementById('statCookies').textContent = s.cookieCount || 0;
+
+    // Share chart
+    buildChart(s.shareHistory || []);
 }
 
-/* ====================================================
-   LOAD INBOX — GET /api/user/inbox?filter=unread&limit=1
-==================================================== */
+/* ═══════════════════════════════════════════
+   LOAD ORDERS  →  GET /api/user/orders/history
+═══════════════════════════════════════════ */
+async function loadOrders() {
+    const data = await apiFetch('/api/user/orders/history?limit=5');
+    if (!data || !data.success) return;
+
+    // Update orders stat card
+    document.getElementById('statOrders').textContent = fmt(data.summary?.total || 0);
+
+    const list = document.getElementById('orderList');
+
+    if (!data.orders || data.orders.length === 0) {
+        list.innerHTML = `
+            <div class="empty-state">
+                <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M9 14l-4-4 4-4"/><path d="M5 10h11a4 4 0 010 8h-1"/></svg>
+                <div>No orders yet</div>
+            </div>`;
+        return;
+    }
+
+    list.innerHTML = data.orders.map(o => `
+        <div class="order-row">
+            <div class="order-icon">
+                <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M13 2L3 14h9l-1 8 10-12h-9l1-8z"/></svg>
+            </div>
+            <div class="order-main">
+                <div class="order-ref">${o.referenceNote || o.orderId}</div>
+                <div class="order-meta">${o.customerName || '—'} · ${o.date}</div>
+            </div>
+            <div class="order-right">
+                <div class="order-qty">×${fmt(o.quantity)}</div>
+                ${statusChip(o.status)}
+            </div>
+        </div>
+    `).join('');
+}
+
+/* ═══════════════════════════════════════════
+   LOAD INBOX  →  GET /api/user/inbox
+═══════════════════════════════════════════ */
 async function loadInbox() {
-    try {
-        const res  = await fetch('/api/user/inbox?filter=unread&limit=1', {
-            headers: { 'Authorization': 'Bearer ' + token }
-        });
-        const data = await res.json();
-        const hasUnread = data.success && (data.unreadCount > 0 || (data.messages && data.messages.length > 0));
-        if (hasUnread) {
-            document.getElementById('navBell').classList.add('show');
-            document.getElementById('qaInboxBdg').classList.add('show');
-            document.getElementById('bnBdg').classList.add('show');
-        }
-    } catch(e) { /* non-critical */ }
+    const data = await apiFetch('/api/user/inbox?limit=5');
+    if (!data || !data.success) return;
+
+    // Badge
+    const unread = data.unreadCount || 0;
+    const badge  = document.getElementById('inboxBadge');
+    if (unread > 0) {
+        badge.textContent = unread > 9 ? '9+' : unread;
+        badge.classList.add('show');
+    }
+
+    const list = document.getElementById('inboxList');
+
+    if (!data.messages || data.messages.length === 0) {
+        list.innerHTML = `
+            <div class="empty-state">
+                <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M18 8A6 6 0 006 8c0 7-3 9-3 9h18s-3-2-3-9"/><path d="M13.73 21a2 2 0 01-3.46 0"/></svg>
+                <div>No messages</div>
+            </div>`;
+        return;
+    }
+
+    list.innerHTML = data.messages.map(m => `
+        <div class="inbox-row ${m.isRead ? '' : 'unread'}" onclick="window.location.href='/inbox'">
+            <div class="inbox-dot"></div>
+            <div class="inbox-body">
+                <div class="inbox-title">${m.title}</div>
+                <div class="inbox-preview">${m.content}</div>
+            </div>
+            <div class="inbox-time">${m.time}</div>
+        </div>
+    `).join('');
 }
 
-/* ====================================================
+/* ═══════════════════════════════════════════
+   SHARE HISTORY CHART
+═══════════════════════════════════════════ */
+let chartInstance = null;
+
+function buildChart(history) {
+    const ctx = document.getElementById('shareChart');
+    if (!ctx) return;
+
+    // Fill up to 30 labels, last 30 days
+    const today = new Date();
+    const labels = [], values = [];
+
+    for (let i = 29; i >= 0; i--) {
+        const d = new Date(today);
+        d.setDate(d.getDate() - i);
+        const key = d.toISOString().split('T')[0];
+        labels.push(i === 0 ? 'Today' : d.toLocaleDateString('en', { month:'short', day:'numeric' }));
+        const entry = history.find(h => h.date === key);
+        values.push(entry ? entry.count : 0);
+    }
+
+    if (chartInstance) chartInstance.destroy();
+
+    chartInstance = new Chart(ctx, {
+        type: 'bar',
+        data: {
+            labels,
+            datasets: [{
+                data: values,
+                backgroundColor: 'rgba(255,255,255,0.1)',
+                hoverBackgroundColor: 'rgba(255,255,255,0.25)',
+                borderRadius: 4,
+                borderSkipped: false
+            }]
+        },
+        options: {
+            responsive: true,
+            maintainAspectRatio: false,
+            plugins: { legend: { display: false }, tooltip: {
+                backgroundColor: '#111',
+                borderColor: 'rgba(255,255,255,0.1)',
+                borderWidth: 1,
+                titleColor: '#fff',
+                bodyColor: '#B4B4B4',
+                padding: 8,
+                callbacks: {
+                    title: items => items[0].label,
+                    label: item => ` ${item.raw} shares`
+                }
+            }},
+            scales: {
+                x: {
+                    grid: { display: false },
+                    ticks: { color: '#444', font: { size: 9, family: 'Outfit' },
+                        maxTicksLimit: 7,
+                        maxRotation: 0
+                    },
+                    border: { display: false }
+                },
+                y: {
+                    grid: { color: 'rgba(255,255,255,0.04)', drawBorder: false },
+                    ticks: { color: '#444', font: { size: 9, family: 'Outfit' }, maxTicksLimit: 4 },
+                    border: { display: false },
+                    beginAtZero: true
+                }
+            }
+        }
+    });
+}
+
+/* ═══════════════════════════════════════════
    INIT
-==================================================== */
-loadStats();
-loadInbox();
+═══════════════════════════════════════════ */
+(async function init() {
+    // Set initial navbar from localStorage while API loads
+    if (USERNAME) {
+        document.getElementById('navAvatarInitial').textContent = initials(USERNAME);
+        document.getElementById('dropUsername').textContent = USERNAME;
+        document.getElementById('dropRole').textContent = ROLE === 'admin' ? 'Administrator' : 'Member';
+        document.getElementById('heroUsername').textContent = USERNAME;
+        document.getElementById('heroAvatarInitial').textContent = initials(USERNAME);
+    }
+
+    // Load all data in parallel
+    await Promise.all([
+        loadStats(),
+        loadOrders(),
+        loadInbox()
+    ]);
+})();
 </script>
+
 </body>
 </html>
