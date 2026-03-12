@@ -4,1136 +4,935 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>KiroBoost — Dashboard</title>
-
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Geist:wght@300;400;500;600;700;800&family=Geist+Mono:wght@400;500&display=swap" rel="stylesheet">
-
     <style>
-        /* ══════════════════════════════════════════════════════
+        /* =========================================================
            DESIGN TOKENS — identical to login / register / index
-        ══════════════════════════════════════════════════════ */
+        ========================================================= */
         :root {
-            --bg:        #000;
-            --surface:   #0a0a0a;
-            --s2:        #111;
-            --s3:        #161616;
-            --border:    #1f1f1f;
-            --bstrong:   #2e2e2e;
-            --text:      #ededed;
-            --muted:     #888;
-            --faint:     #444;
-            --accent:    #fff;
-            --adim:      #e8e8e8;
-            --green:     #22c55e;
-            --gbg:       rgba(34,197,94,.09);
-            --gb:        rgba(34,197,94,.2);
-            --red:       #ef4444;
-            --rbg:       rgba(239,68,68,.09);
-            --rb:        rgba(239,68,68,.2);
-            --amber:     #f59e0b;
-            --abg:       rgba(245,158,11,.09);
-            --ab:        rgba(245,158,11,.2);
-            --r-sm: 6px;
-            --r-md: 10px;
-            --r-lg: 14px;
-            --font: 'Geist', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
-            --mono: 'Geist Mono', 'SF Mono', monospace;
-            --ease: 0.15s ease;
-            --nav:  56px;
-            --bot:  62px;
+            --bg:            #000000;
+            --surface:       #0a0a0a;
+            --surface-2:     #111111;
+            --surface-3:     #161616;
+            --border:        #1f1f1f;
+            --border-strong: #2e2e2e;
+            --text:          #ededed;
+            --text-muted:    #888888;
+            --text-faint:    #444444;
+            --accent:        #ffffff;
+            --accent-dim:    #e8e8e8;
+            --green:         #22c55e;
+            --amber:         #f59e0b;
+            --red:           #ef4444;
+            --r-sm:  6px;
+            --r-md:  10px;
+            --r-lg:  14px;
+            --font:  'Geist', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+            --mono:  'Geist Mono', 'SF Mono', 'Fira Code', monospace;
+            --ease:  0.15s ease;
+            --nav-h: 56px;
+            --bot-h: 60px;
         }
-
         *, *::before, *::after { box-sizing: border-box; }
-        html { scroll-behavior: smooth; }
         body {
             font-family: var(--font);
             background: var(--bg);
             color: var(--text);
             margin: 0; padding: 0;
             -webkit-font-smoothing: antialiased;
-            min-height: 100svh;
             overflow-x: hidden;
         }
-        ::selection { background:#fff; color:#000; }
+        ::selection { background: #fff; color: #000; }
 
-        /* Grid overlay */
-        #go {
-            position: fixed; inset: 0; z-index: 0; pointer-events: none;
+        /* grid overlay */
+        #grid-bg {
+            position: fixed; inset: 0;
             background-image:
-                linear-gradient(rgba(255,255,255,.022) 1px, transparent 1px),
-                linear-gradient(90deg,rgba(255,255,255,.022) 1px, transparent 1px);
+                linear-gradient(rgba(255,255,255,0.02) 1px, transparent 1px),
+                linear-gradient(90deg, rgba(255,255,255,0.02) 1px, transparent 1px);
             background-size: 48px 48px;
+            pointer-events: none;
+            z-index: 0;
         }
 
-        /* ══════════════════════════════════════════════════════
+        /* =========================================================
            TOP NAV
-        ══════════════════════════════════════════════════════ */
-        .nav {
-            position: fixed; inset: 0 0 auto; z-index: 300;
-            height: var(--nav);
-            background: rgba(0,0,0,.88);
-            backdrop-filter: blur(20px); -webkit-backdrop-filter: blur(20px);
+        ========================================================= */
+        .kb-nav {
+            position: fixed; inset: 0 0 auto;
+            z-index: 300;
+            background: rgba(0,0,0,0.85);
+            backdrop-filter: blur(20px);
+            -webkit-backdrop-filter: blur(20px);
             border-bottom: 1px solid var(--border);
+            height: var(--nav-h);
         }
-        .nav-inner {
-            max-width: 1200px; margin: 0 auto;
-            padding: 0 24px; height: 100%;
-            display: flex; align-items: center; gap: 8px;
+        .kb-nav-inner {
+            max-width: 1160px; margin: 0 auto; padding: 0 20px;
+            height: 100%; display: flex; align-items: center; gap: 8px;
         }
-        .brand {
+        .kb-brand {
             display: flex; align-items: center; gap: 8px;
             text-decoration: none; color: var(--text);
-            font-size: 14.5px; font-weight: 600;
-            letter-spacing: -.025em; flex-shrink: 0;
+            font-size: 14px; font-weight: 600; letter-spacing: -0.025em;
+            flex-shrink: 0; margin-right: 4px;
         }
-        .brand:hover { opacity: .75; color: var(--text); }
-        .brand-icon {
-            width: 26px; height: 26px; background: #fff;
-            border-radius: 6px; flex-shrink: 0;
-            display: flex; align-items: center; justify-content: center;
+        .kb-brand:hover { opacity: 0.7; color: var(--text); }
+        .kb-brand-icon {
+            width: 25px; height: 25px; background: #fff;
+            border-radius: 5px; display: flex; align-items: center; justify-content: center;
         }
-        .nav-right { display:flex; align-items:center; gap:8px; margin-left:auto; }
+        .kb-nav-links { display: flex; align-items: center; gap: 2px; flex: 1; }
+        .kb-nav-a {
+            font-size: 13px; color: var(--text-muted); text-decoration: none;
+            padding: 5px 10px; border-radius: var(--r-sm); font-weight: 500;
+            white-space: nowrap; transition: color var(--ease), background var(--ease);
+        }
+        .kb-nav-a:hover, .kb-nav-a.active { color: var(--text); background: var(--surface-2); }
+        .kb-nav-right { display: flex; align-items: center; gap: 6px; margin-left: auto; }
 
-        .user-chip {
+        /* icon btn (inbox bell) */
+        .kb-icon-btn {
+            position: relative; width: 32px; height: 32px;
+            display: flex; align-items: center; justify-content: center;
+            background: none; border: 1px solid var(--border); border-radius: var(--r-sm);
+            color: var(--text-muted); cursor: pointer; text-decoration: none;
+            transition: color var(--ease), border-color var(--ease), background var(--ease); flex-shrink: 0;
+        }
+        .kb-icon-btn:hover { color: var(--text); border-color: var(--border-strong); background: var(--surface-2); }
+        .kb-icon-btn .bdot {
+            position: absolute; top: 5px; right: 5px;
+            width: 6px; height: 6px; border-radius: 50%;
+            background: var(--red); border: 1.5px solid #000; display: none;
+        }
+        .kb-icon-btn .bdot.show { display: block; }
+
+        /* avatar chip */
+        .kb-avatar-chip {
             display: flex; align-items: center; gap: 7px;
-            padding: 3px 10px 3px 3px;
-            background: var(--s2); border: 1px solid var(--border);
-            border-radius: 99px; text-decoration: none;
+            padding: 4px 10px 4px 5px; border: 1px solid var(--border);
+            border-radius: 99px; background: var(--surface-2); cursor: pointer;
+            transition: border-color var(--ease), background var(--ease); text-decoration: none;
+        }
+        .kb-avatar-chip:hover { border-color: var(--border-strong); background: var(--surface-3); }
+        .kb-avatar {
+            width: 22px; height: 22px; background: var(--border-strong);
+            border-radius: 50%; display: flex; align-items: center; justify-content: center;
+            font-size: 10px; font-weight: 700; color: var(--text); flex-shrink: 0; overflow: hidden;
+        }
+        .kb-avatar img { width: 100%; height: 100%; object-fit: cover; border-radius: 50%; }
+        .kb-avatar-name {
+            font-size: 12px; font-weight: 500; color: var(--text-muted);
+            max-width: 90px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap;
+        }
+
+        /* logout */
+        .kb-logout {
+            font-size: 12px; font-family: var(--font); font-weight: 500;
+            color: var(--text-faint); background: none; border: 1px solid var(--border);
+            padding: 5px 10px; border-radius: var(--r-sm); cursor: pointer;
+            transition: color var(--ease), border-color var(--ease);
+        }
+        .kb-logout:hover { color: var(--red); border-color: var(--red); }
+
+        /* hamburger */
+        .kb-ham {
+            display: none; align-items: center; background: none; border: none;
+            padding: 6px; color: var(--text-muted); cursor: pointer; border-radius: var(--r-sm);
+        }
+        .kb-ham:hover { background: var(--surface-2); color: var(--text); }
+
+        /* mobile drawer */
+        .kb-drawer {
+            display: none; position: fixed; top: var(--nav-h); left: 0; right: 0;
+            background: rgba(0,0,0,0.97); backdrop-filter: blur(24px);
+            border-bottom: 1px solid var(--border); padding: 10px 20px 18px;
+            z-index: 299; flex-direction: column; gap: 2px;
+        }
+        .kb-drawer.open { display: flex; }
+        .kb-drawer a, .kb-drawer button {
+            font-size: 14px; color: var(--text-muted); text-decoration: none;
+            padding: 9px 10px; border-radius: var(--r-sm); font-weight: 500;
+            background: none; border: none; cursor: pointer; font-family: var(--font);
+            text-align: left; transition: color var(--ease), background var(--ease);
+        }
+        .kb-drawer a:hover, .kb-drawer button:hover { color: var(--text); background: var(--surface-2); }
+        .kb-drawer hr { border-color: var(--border); margin: 6px 0; }
+        .kb-drawer .danger { color: #ff6b6b; }
+        .kb-drawer .danger:hover { color: var(--red); }
+
+        /* =========================================================
+           MAIN
+        ========================================================= */
+        .kb-main {
+            position: relative; z-index: 1; max-width: 1160px; margin: 0 auto;
+            padding: calc(var(--nav-h) + 32px) 20px calc(var(--bot-h) + 32px);
+        }
+
+        /* hero header */
+        .kb-hero-hdr {
+            display: flex; align-items: flex-start; justify-content: space-between;
+            gap: 20px; margin-bottom: 28px; flex-wrap: wrap;
+        }
+        .kb-greeting { font-size: 12px; color: var(--text-faint); font-weight: 500; margin-bottom: 4px; }
+        .kb-hero-name {
+            font-size: clamp(22px, 4vw, 32px); font-weight: 700;
+            letter-spacing: -0.035em; color: var(--text); line-height: 1.1; margin-bottom: 8px;
+        }
+        .kb-schip {
+            display: inline-flex; align-items: center; gap: 6px;
+            font-size: 11px; font-weight: 500; padding: 3px 10px 3px 7px;
+            border-radius: 99px; border: 1px solid;
+        }
+        .kb-schip::before { content: ''; width: 5px; height: 5px; border-radius: 50%; background: currentColor; flex-shrink: 0; }
+        .kb-schip.on  { color: var(--green); border-color: rgba(34,197,94,.2); background: rgba(34,197,94,.07); }
+        .kb-schip.off { color: var(--red);   border-color: rgba(239,68,68,.2); background: rgba(239,68,68,.07); }
+        .kb-schip.on::before { box-shadow: 0 0 6px var(--green); }
+        .kb-hero-cta {
+            display: inline-flex; align-items: center; gap: 7px;
+            font-size: 13px; font-family: var(--font); font-weight: 600;
+            color: #000; background: #fff; border: none; padding: 8px 16px;
+            border-radius: var(--r-sm); text-decoration: none; cursor: pointer;
+            transition: background var(--ease);
+        }
+        .kb-hero-cta:hover { background: var(--accent-dim); color: #000; }
+
+        /* stat cards */
+        .kb-stats-row {
+            display: grid; grid-template-columns: repeat(4, 1fr); gap: 10px; margin-bottom: 16px;
+        }
+        .kb-sc {
+            background: var(--surface); border: 1px solid var(--border);
+            border-radius: var(--r-md); padding: 18px 18px 16px;
             transition: border-color var(--ease), background var(--ease);
         }
-        .user-chip:hover { border-color: var(--bstrong); background: var(--s3); }
-
-        .av {
-            width: 28px; height: 28px;
-            background: var(--s3); border: 1px solid var(--bstrong);
-            border-radius: 50%; overflow: hidden;
-            display: flex; align-items: center; justify-content: center;
-            font-size: 11px; font-weight: 700; color: var(--text);
-            flex-shrink: 0;
-        }
-        .av img { width:100%; height:100%; object-fit:cover; border-radius:50%; }
-        .av.has-border { border: 2px solid var(--accent); }
-
-        .chip-name {
-            font-size: 12px; font-weight: 500; color: var(--muted);
-            max-width: 100px; overflow: hidden;
-            text-overflow: ellipsis; white-space: nowrap;
-        }
-
-        .logout-btn {
-            display: flex; align-items: center; gap: 5px;
-            font-size: 12px; font-family: var(--font); font-weight: 500;
-            color: var(--faint); background: none; border: none;
-            padding: 5px 9px; border-radius: var(--r-sm);
-            cursor: pointer;
-            transition: color var(--ease), background var(--ease);
-        }
-        .logout-btn:hover { color: var(--red); background: var(--rbg); }
-
-        /* ══════════════════════════════════════════════════════
-           LAYOUT SHELL
-        ══════════════════════════════════════════════════════ */
-        .layout {
-            display: flex; min-height: 100svh;
-            padding-top: var(--nav); position: relative; z-index: 1;
-        }
-
-        /* ── SIDEBAR ── */
-        .sidebar {
-            width: 218px; flex-shrink: 0;
-            position: sticky; top: var(--nav);
-            height: calc(100svh - var(--nav));
-            background: var(--surface);
-            border-right: 1px solid var(--border);
-            padding: 16px 0; overflow-y: auto;
-            display: flex; flex-direction: column;
-        }
-        .sb-sec { padding: 0 10px; margin-bottom: 2px; }
-        .sb-lbl {
-            font-size: 10px; font-weight: 600; letter-spacing: .09em;
-            text-transform: uppercase; color: var(--faint);
-            padding: 6px 8px 4px;
-        }
-        .sb-a {
-            display: flex; align-items: center; gap: 9px;
-            padding: 7px 9px; border-radius: var(--r-sm);
-            font-size: 13px; font-weight: 500; color: var(--muted);
-            text-decoration: none; background: none; border: none;
-            cursor: pointer; width: 100%;
-            transition: color var(--ease), background var(--ease);
-        }
-        .sb-a:hover  { color:var(--text); background:var(--s2); }
-        .sb-a.active { color:var(--text); background:var(--s3); }
-        .sb-a svg { flex-shrink: 0; }
-        .sb-badge {
-            margin-left: auto;
-            background: var(--red); color: #fff;
-            font-size: 10px; font-weight: 700;
-            min-width: 16px; height: 16px; padding: 0 4px;
-            border-radius: 99px;
-            display: flex; align-items: center; justify-content: center;
-            font-family: var(--mono);
-        }
-        .sb-div { height:1px; background:var(--border); margin: 8px 10px; }
-
-        /* ── MAIN ── */
-        .main { flex:1; min-width:0; padding: 28px 28px 100px; }
-
-        /* ══════════════════════════════════════════════════════
-           GREETING
-        ══════════════════════════════════════════════════════ */
-        .greeting { margin-bottom: 24px; }
-        .g-eye {
-            font-size: 11px; font-weight: 500; letter-spacing: .08em;
-            text-transform: uppercase; color: var(--faint); margin-bottom: 5px;
-        }
-        .g-h1 {
-            font-size: clamp(20px, 3vw, 28px);
-            font-weight: 700; letter-spacing: -.035em;
-            color: var(--text); margin-bottom: 3px;
-        }
-        .g-sub { font-size: 13px; color: var(--muted); }
-
-        /* ══════════════════════════════════════════════════════
-           BOOST CTA BANNER
-        ══════════════════════════════════════════════════════ */
-        .cta-banner {
-            display: flex; align-items: center;
-            justify-content: space-between; gap: 16px;
-            padding: 18px 20px;
-            background: var(--surface); border: 1px solid var(--border);
-            border-radius: var(--r-lg); margin-bottom: 20px;
-        }
-        .cta-txt h3 {
-            font-size: 14px; font-weight: 600;
-            letter-spacing: -.02em; color: var(--text); margin-bottom: 3px;
-        }
-        .cta-txt p { font-size: 12px; color: var(--muted); margin: 0; }
-        .btn-w {
-            display: inline-flex; align-items: center; gap: 6px;
-            font-size: 12.5px; font-family: var(--font); font-weight: 500;
-            color: #000; background: #fff; border: none;
-            padding: 7px 16px; border-radius: var(--r-sm);
-            text-decoration: none; white-space: nowrap;
-            cursor: pointer; flex-shrink: 0;
-            transition: background var(--ease);
-        }
-        .btn-w:hover { background: var(--adim); color: #000; }
-
-        /* ══════════════════════════════════════════════════════
-           STAT CARDS
-        ══════════════════════════════════════════════════════ */
-        .stats-row {
-            display: grid; grid-template-columns: repeat(4,1fr);
-            gap: 1px; background: var(--border);
-            border: 1px solid var(--border);
-            border-radius: var(--r-lg); overflow: hidden;
-            margin-bottom: 20px;
-        }
-        .sc {
-            background: var(--surface); padding: 18px 18px;
-            transition: background var(--ease);
-        }
-        .sc:hover { background: var(--s2); }
-        .sc-lbl {
-            font-size: 11px; font-weight: 500; color: var(--faint);
-            letter-spacing: .04em; margin-bottom: 7px;
+        .kb-sc:hover { border-color: var(--border-strong); background: var(--surface-2); }
+        .kb-sc-lbl {
+            font-size: 11px; font-weight: 500; color: var(--text-faint);
+            letter-spacing: .04em; text-transform: uppercase; margin-bottom: 8px;
             display: flex; align-items: center; gap: 6px;
         }
-        .sc-val {
-            font-size: 26px; font-weight: 700;
-            letter-spacing: -.04em; color: var(--text);
-            font-variant-numeric: tabular-nums; line-height: 1; margin-bottom: 3px;
+        .kb-sc-val {
+            font-size: 26px; font-weight: 700; letter-spacing: -0.04em;
+            color: var(--text); line-height: 1; margin-bottom: 4px; font-variant-numeric: tabular-nums;
         }
-        .sc-sub { font-size: 11px; color: var(--faint); }
-        .dot-g { width:6px;height:6px;border-radius:50%;background:var(--green);flex-shrink:0; }
-        .dot-r { width:6px;height:6px;border-radius:50%;background:var(--red);flex-shrink:0; }
+        .kb-sc-sub { font-size: 11px; color: var(--text-faint); }
+        .kb-pbar  { width: 100%; height: 4px; background: var(--surface-3); border-radius: 99px; overflow: hidden; margin-top: 8px; }
+        .kb-pfill { height: 100%; background: #fff; border-radius: 99px; transition: width 0.6s cubic-bezier(.16,1,.3,1); width: 0; }
+        .kb-pfill.warn   { background: var(--amber); }
+        .kb-pfill.danger { background: var(--red);   }
 
-        /* ══════════════════════════════════════════════════════
-           QUICK ACTIONS
-        ══════════════════════════════════════════════════════ */
-        .sec-hd {
-            font-size: 11px; font-weight: 600; color: var(--faint);
-            letter-spacing: .08em; text-transform: uppercase;
-            margin-bottom: 12px;
-            display: flex; align-items: center; gap: 10px;
-        }
-        .sec-hd::after { content:''; flex:1; height:1px; background:var(--border); }
-
-        .acts {
-            display: grid; grid-template-columns: repeat(4,1fr);
-            gap: 10px; margin-bottom: 20px;
-        }
-        .act {
-            display: flex; flex-direction: column;
-            align-items: center; gap: 8px; padding: 15px 8px;
+        /* layout helpers */
+        .kb-card {
             background: var(--surface); border: 1px solid var(--border);
-            border-radius: var(--r-md); text-decoration: none;
-            color: var(--muted); font-size: 11.5px; font-weight: 500;
-            text-align: center; cursor: pointer; position: relative;
-            transition: color var(--ease), background var(--ease), border-color var(--ease);
+            border-radius: var(--r-lg); overflow: hidden; margin-bottom: 16px;
         }
-        .act:hover { color:var(--text); background:var(--s2); border-color:var(--bstrong); }
-        .act-icon {
-            width: 33px; height: 33px;
-            background: var(--s2); border: 1px solid var(--bstrong);
-            border-radius: var(--r-sm);
-            display: flex; align-items: center; justify-content: center;
-            color: var(--faint);
-            transition: border-color var(--ease), color var(--ease);
+        .kb-card-hdr {
+            display: flex; align-items: center; justify-content: space-between;
+            padding: 14px 18px; border-bottom: 1px solid var(--border);
         }
-        .act:hover .act-icon { border-color:var(--faint); color:var(--muted); }
-        .act-badge {
-            position: absolute; top: 7px; right: 7px;
-            min-width: 14px; height: 14px; padding: 0 3px;
-            background: var(--red); border: 1.5px solid var(--bg);
-            border-radius: 99px; font-size: 9px; font-weight: 700;
-            color: #fff; display: flex; align-items: center; justify-content: center;
-            font-family: var(--mono);
-        }
+        .kb-card-ttl { font-size: 13px; font-weight: 600; color: var(--text); letter-spacing: -.015em; }
+        .kb-card-lnk { font-size: 12px; color: var(--text-faint); text-decoration: none; transition: color var(--ease); }
+        .kb-card-lnk:hover { color: var(--text-muted); }
+        .kb-card-body { padding: 16px 18px; }
 
-        /* ══════════════════════════════════════════════════════
-           CONTENT CARDS
-        ══════════════════════════════════════════════════════ */
-        .row2 { display:grid; grid-template-columns:1fr 1fr; gap:16px; margin-bottom:20px; }
+        /* two-col */
+        .kb-two { display: grid; grid-template-columns: 2fr 1fr; gap: 16px; }
 
-        .card {
-            background: var(--surface);
-            border: 1px solid var(--border);
-            border-radius: var(--r-lg); overflow: hidden;
+        /* quick actions */
+        .kb-qgrid { display: grid; grid-template-columns: repeat(4,1fr); gap: 1px; background: var(--border); }
+        .kb-qa {
+            background: var(--surface); padding: 18px 12px;
+            display: flex; flex-direction: column; align-items: center; gap: 8px;
+            text-decoration: none; cursor: pointer; border: none;
+            transition: background var(--ease); position: relative;
         }
-        .card-hd {
-            display: flex; align-items: center;
-            justify-content: space-between;
-            padding: 13px 18px; border-bottom: 1px solid var(--border);
+        .kb-qa:hover { background: var(--surface-2); }
+        .kb-qa-icon {
+            width: 36px; height: 36px; background: var(--surface-2);
+            border: 1px solid var(--border-strong); border-radius: var(--r-sm);
+            display: flex; align-items: center; justify-content: center; color: var(--text-faint);
+            transition: border-color var(--ease), color var(--ease); position: relative;
         }
-        .card-hd-t { font-size:13px; font-weight:600; color:var(--text); letter-spacing:-.015em; }
-        .card-hd-l {
-            font-size:11px; color:var(--faint);
-            text-decoration:none; font-weight:500;
-            transition: color var(--ease);
+        .kb-qa:hover .kb-qa-icon { border-color: var(--text-faint); color: var(--text-muted); }
+        .kb-qa-lbl { font-size: 11px; font-weight: 500; color: var(--text-faint); text-align: center; transition: color var(--ease); }
+        .kb-qa:hover .kb-qa-lbl { color: var(--text-muted); }
+        .kb-qa-bdg {
+            position: absolute; top: -4px; right: -4px;
+            width: 14px; height: 14px; background: var(--red); border-radius: 50%;
+            border: 2px solid var(--surface); display: none; align-items: center;
+            justify-content: center; font-size: 8px; font-weight: 700; color: #fff;
         }
-        .card-hd-l:hover { color:var(--muted); }
-        .card-body { padding: 16px 18px; }
+        .kb-qa-bdg.show { display: flex; }
 
-        /* Detail rows */
-        .dr {
-            display: flex; align-items: center;
-            justify-content: space-between;
-            padding: 10px 0; border-bottom: 1px solid var(--border);
-        }
-        .dr:first-child { padding-top:0; }
-        .dr:last-child  { border-bottom:none; padding-bottom:0; }
-        .dr-k { font-size:12px; color:var(--faint); font-weight:500; }
-        .dr-v {
-            font-size:12px; color:var(--text); font-weight:500;
-            font-family:var(--mono);
-            max-width:150px; overflow:hidden; text-overflow:ellipsis; white-space:nowrap;
-        }
+        /* chart */
+        .kb-chart { width: 100%; height: 80px; overflow: hidden; }
+        .kb-chart svg { width: 100%; height: 100%; }
+        .kb-chart-lbls { display: flex; justify-content: space-between; margin-top: 6px; }
+        .kb-chart-lbls span { font-size: 10px; color: var(--text-faint); font-family: var(--mono); }
 
-        /* Chips */
-        .chip {
-            display: inline-flex; align-items: center; gap:5px;
-            font-size:11px; font-weight:500;
-            padding:2px 9px; border-radius:99px;
-        }
-        .chip::before { content:''; width:5px;height:5px;border-radius:50%;flex-shrink:0; }
-        .chip-g  { background:var(--gbg); color:var(--green); border:1px solid var(--gb); }
-        .chip-g::before  { background:var(--green); }
-        .chip-r  { background:var(--rbg); color:var(--red);   border:1px solid var(--rb); }
-        .chip-r::before  { background:var(--red); }
-        .chip-am { background:var(--abg); color:var(--amber); border:1px solid var(--ab); }
-        .chip-am::before { background:var(--amber); }
-        .chip-n  { background:var(--s2);  color:var(--muted); border:1px solid var(--bstrong); }
-        .chip-n::before  { display:none; }
-
-        /* Share chart */
-        .bar-chart {
-            display: flex; align-items: flex-end; gap: 3px;
-            height: 64px; margin-top: 4px;
-        }
-        .bar {
-            flex: 1; background: var(--s3);
-            border-radius: 2px 2px 0 0; min-height: 3px;
-            transition: background var(--ease); cursor: default; position: relative;
-        }
-        .bar.lit { background: var(--bstrong); }
-        .bar.lit:hover { background: var(--faint); }
-        .chart-row {
-            display:flex; justify-content:space-between; margin-top:6px;
-        }
-        .chart-lbl { font-size:10px; color:var(--faint); font-family:var(--mono); }
-
-        /* Tooltip for bars */
-        .bar[data-tip]:hover::after {
-            content: attr(data-tip);
-            position: absolute; bottom: calc(100% + 5px); left: 50%;
-            transform: translateX(-50%);
-            background: var(--s2); border: 1px solid var(--border);
-            color: var(--text); font-size: 10px; font-family: var(--mono);
-            padding: 2px 6px; border-radius: 4px; white-space: nowrap;
-            pointer-events: none; z-index: 10;
-        }
-
-        /* Inbox items */
-        .msg {
-            display: flex; align-items: flex-start; gap: 10px;
+        /* info rows */
+        .kb-irow {
+            display: flex; align-items: center; justify-content: space-between;
             padding: 11px 0; border-bottom: 1px solid var(--border);
         }
-        .msg:first-child { padding-top:0; }
-        .msg:last-child  { border-bottom:none; padding-bottom:0; }
-        .msg-icon {
-            width: 28px; height: 28px;
-            background: var(--s2); border: 1px solid var(--bstrong);
-            border-radius: var(--r-sm); flex-shrink: 0; margin-top:1px;
+        .kb-irow:last-child { border-bottom: none; }
+        .kb-ikey { font-size: 12px; color: var(--text-faint); font-weight: 500; }
+        .kb-ival { font-size: 12px; color: var(--text-muted); font-weight: 500; }
+
+        /* sessions */
+        .kb-srow {
+            display: flex; align-items: center; gap: 12px;
+            padding: 10px 0; border-bottom: 1px solid var(--border);
+        }
+        .kb-srow:last-child { border-bottom: none; }
+        .kb-sicon {
+            width: 32px; height: 32px; border-radius: var(--r-sm);
+            background: var(--surface-2); border: 1px solid var(--border);
             display: flex; align-items: center; justify-content: center;
-            color: var(--faint);
+            color: var(--text-faint); flex-shrink: 0;
         }
-        .msg-t {
-            font-size:12.5px; font-weight:500; color:var(--text); margin-bottom:2px;
-            overflow:hidden; display:-webkit-box;
-            -webkit-line-clamp:1; -webkit-box-orient:vertical;
+        .kb-sinfo { flex: 1; min-width: 0; }
+        .kb-stitle { font-size: 12.5px; font-weight: 500; color: var(--text); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; margin-bottom: 2px; }
+        .kb-smeta  { font-size: 11px; color: var(--text-faint); font-family: var(--mono); }
+        .kb-scnt   { font-size: 13px; font-weight: 600; color: var(--text); font-family: var(--mono); flex-shrink: 0; }
+
+        /* empty */
+        .kb-empty { padding: 32px 0; text-align: center; }
+        .kb-empty-icon {
+            width: 40px; height: 40px; background: var(--surface-2); border: 1px solid var(--border);
+            border-radius: var(--r-md); display: flex; align-items: center; justify-content: center;
+            color: var(--text-faint); margin: 0 auto 12px;
         }
-        .msg-s { font-size:11px; color:var(--faint); }
-        .unread-dot {
-            width:6px;height:6px;background:var(--accent);
-            border-radius:50%;flex-shrink:0;margin-top:5px;
+        .kb-empty p { font-size: 12.5px; color: var(--text-faint); margin: 0; }
+
+        /* skeleton */
+        @keyframes shimmer {
+            0%   { background-position: -200% 0; }
+            100% { background-position:  200% 0; }
+        }
+        .skel {
+            background: linear-gradient(90deg, var(--surface) 25%, var(--surface-2) 50%, var(--surface) 75%);
+            background-size: 200% 100%;
+            animation: shimmer 1.6s infinite;
+            border-radius: var(--r-sm);
+            display: inline-block;
         }
 
-        /* Empty */
-        .empty {
-            display:flex; flex-direction:column;
-            align-items:center; justify-content:center;
-            padding:28px 16px; gap:6px;
+        /* bottom nav */
+        .kb-bnav {
+            display: none; position: fixed; bottom: 0; left: 0; right: 0; z-index: 250;
+            background: rgba(0,0,0,0.96); backdrop-filter: blur(20px);
+            border-top: 1px solid var(--border); height: var(--bot-h); padding: 0 4px;
         }
-        .empty svg { color:var(--faint); margin-bottom:4px; }
-        .empty p { font-size:12px; color:var(--faint); margin:0; text-align:center; }
+        .kb-bnav-inner { display: flex; align-items: stretch; height: 100%; }
+        .kb-bn {
+            flex: 1; display: flex; flex-direction: column; align-items: center; justify-content: center;
+            gap: 3px; text-decoration: none; color: var(--text-faint); font-size: 9.5px; font-weight: 500;
+            transition: color var(--ease); position: relative; cursor: pointer;
+            background: none; border: none; font-family: var(--font); padding: 0;
+        }
+        .kb-bn:hover { color: var(--text-muted); }
+        .kb-bn.active { color: var(--text); }
+        .kb-bn-fab {
+            flex: 1; display: flex; flex-direction: column; align-items: center; justify-content: center;
+            gap: 3px; text-decoration: none; cursor: pointer;
+        }
+        .kb-fab-icon {
+            width: 40px; height: 40px; background: #fff; border-radius: var(--r-sm);
+            display: flex; align-items: center; justify-content: center;
+            margin-top: -16px; border: 3px solid #000; color: #000;
+            transition: background var(--ease), transform 0.1s;
+        }
+        .kb-bn-fab:hover .kb-fab-icon { background: var(--accent-dim); }
+        .kb-bn-fab:active .kb-fab-icon { transform: scale(0.95); }
+        .kb-fab-lbl { color: var(--text-faint); font-size: 9.5px; font-weight: 500; font-family: var(--font); }
+        .kb-bn-bdg {
+            position: absolute; top: 6px; right: calc(50% - 14px);
+            width: 7px; height: 7px; border-radius: 50%; background: var(--red);
+            border: 1.5px solid #000; display: none;
+        }
+        .kb-bn-bdg.show { display: block; }
 
-        /* Skeleton */
-        .sk {
-            display:inline-block; background:var(--s2);
-            border-radius:4px; animation:skP 1.5s ease-in-out infinite;
+        /* toast */
+        #toast {
+            position: fixed; bottom: calc(var(--bot-h) + 16px); left: 50%;
+            transform: translateX(-50%) translateY(16px);
+            background: var(--surface-2); border: 1px solid var(--border-strong);
+            border-radius: var(--r-md); padding: 10px 18px;
+            font-size: 13px; color: var(--text-muted); z-index: 500;
+            pointer-events: none; opacity: 0;
+            transition: opacity 0.2s, transform 0.2s; white-space: nowrap;
         }
-        @keyframes skP { 0%,100%{opacity:1} 50%{opacity:.3} }
+        #toast.show { opacity: 1; transform: translateX(-50%) translateY(0); }
 
-        /* Badges row */
-        .badges-row {
-            display: flex; flex-wrap: wrap; gap: 4px; margin-top: 2px;
-        }
-        .badge-item {
-            font-size: 10px; font-weight: 500;
-            background: var(--s2); border: 1px solid var(--bstrong);
-            color: var(--muted); padding: 1px 7px; border-radius: 99px;
-        }
+        /* page fade */
+        .page-fade { opacity: 0; animation: pgFade 0.35s 0.05s ease both; }
+        @keyframes pgFade { from{opacity:0;transform:translateY(8px);} to{opacity:1;transform:none;} }
 
-        /* ══════════════════════════════════════════════════════
-           BOTTOM NAV (mobile)
-        ══════════════════════════════════════════════════════ */
-        .bot-nav {
-            display: none; position: fixed; bottom:0; left:0; right:0;
-            z-index: 200; height: var(--bot);
-            background: rgba(0,0,0,.92);
-            backdrop-filter: blur(20px); -webkit-backdrop-filter: blur(20px);
-            border-top: 1px solid var(--border);
+        /* responsive */
+        @media(max-width:1024px) {
+            .kb-stats-row { grid-template-columns: repeat(2,1fr); }
+            .kb-two { grid-template-columns: 1fr; }
         }
-        .bot-inner { display:flex; align-items:stretch; height:100%; }
-        .bot-a {
-            flex:1; display:flex; flex-direction:column;
-            align-items:center; justify-content:center; gap:3px;
-            text-decoration:none; color:var(--faint);
-            font-size:10px; font-weight:500;
-            transition:color var(--ease); position:relative;
-            padding-bottom: env(safe-area-inset-bottom, 0px);
+        @media(max-width:768px) {
+            .kb-nav-links, .kb-logout { display: none; }
+            .kb-ham { display: flex; }
+            .kb-bnav { display: flex; }
+            .kb-main { padding-left: 14px; padding-right: 14px; padding-bottom: calc(var(--bot-h) + 20px); }
         }
-        .bot-a:hover { color:var(--muted); }
-        .bot-a.active { color:var(--text); }
-        .bot-fab-wrap {
-            flex:1; display:flex; align-items:center; justify-content:center;
-            padding-bottom: env(safe-area-inset-bottom, 0px);
-        }
-        .bot-fab {
-            width:44px; height:44px; background:#fff;
-            border-radius:var(--r-md); display:flex;
-            align-items:center; justify-content:center;
-            color:#000; text-decoration:none;
-            transition:background var(--ease), transform .1s;
-            box-shadow: 0 0 0 1px rgba(255,255,255,.12);
-        }
-        .bot-fab:hover { background:var(--adim); }
-        .bot-fab:active { transform:scale(.93); }
-        .bot-unread {
-            position:absolute; top:8px; right:50%;
-            transform:translateX(10px);
-            width:7px; height:7px;
-            background:var(--red); border:1.5px solid var(--bg);
-            border-radius:50%;
-        }
-
-        /* ══════════════════════════════════════════════════════
-           FADE IN
-        ══════════════════════════════════════════════════════ */
-        .fd { opacity:0; transform:translateY(14px); animation:fdIn .38s cubic-bezier(.16,1,.3,1) forwards; }
-        .d1 { animation-delay:.07s; }
-        .d2 { animation-delay:.14s; }
-        .d3 { animation-delay:.21s; }
-        .d4 { animation-delay:.28s; }
-        @keyframes fdIn { to { opacity:1; transform:none; } }
-
-        /* ══════════════════════════════════════════════════════
-           RESPONSIVE
-        ══════════════════════════════════════════════════════ */
-        @media (max-width:1024px) {
-            .stats-row { grid-template-columns:repeat(2,1fr); }
-        }
-        @media (max-width:768px) {
-            .sidebar  { display:none; }
-            .bot-nav  { display:flex; }
-            .main     { padding:18px 16px 84px; }
-            .stats-row{ grid-template-columns:repeat(2,1fr); }
-            .row2     { grid-template-columns:1fr; }
-            .acts     { gap:8px; }
-            .act      { padding:12px 6px; font-size:11px; gap:6px; }
-            .act-icon { width:30px; height:30px; }
-            .nav-inner{ padding:0 16px; }
-            .chip-name{ max-width:72px; }
-            .logout-btn span { display:none; }
-            .cta-banner { flex-direction:column; align-items:flex-start; gap:10px; }
-            .btn-w    { width:100%; justify-content:center; }
-        }
-        @media (max-width:400px) {
-            .acts { grid-template-columns:repeat(4,1fr); gap:6px; }
-            .act  { padding:10px 3px; font-size:10px; }
-            .act-icon { width:28px; height:28px; }
-            .sc-val { font-size:22px; }
+        @media(max-width:480px) {
+            .kb-stats-row { grid-template-columns: repeat(2,1fr); gap: 8px; }
+            .kb-hero-name { font-size: 24px; }
+            .kb-sc-val { font-size: 22px; }
         }
     </style>
 </head>
 <body>
-<div id="go"></div>
+<div id="grid-bg"></div>
 
-<!-- ══════════════════════════════════════════════════════════
-     TOP NAV
-══════════════════════════════════════════════════════════ -->
-<nav class="nav">
-    <div class="nav-inner">
-        <a href="/" class="brand">
-            <div class="brand-icon">
-                <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="#000" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+<!-- TOP NAV -->
+<nav class="kb-nav">
+    <div class="kb-nav-inner">
+        <a href="/home" class="kb-brand">
+            <div class="kb-brand-icon">
+                <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="#000" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
                     <path d="M13 2L3 14h9l-1 8 10-12h-9l1-8z"/>
                 </svg>
             </div>
             KiroBoost
         </a>
-        <div class="nav-right">
-            <a href="/profile" class="user-chip">
-                <div class="av" id="navAv"><span id="navInit">—</span></div>
-                <span class="chip-name" id="navName">Loading</span>
-            </a>
-            <button class="logout-btn" onclick="doLogout()">
-                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                    <path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"/>
-                    <polyline points="16 17 21 12 16 7"/>
-                    <line x1="21" y1="12" x2="9" y2="12"/>
+        <div class="kb-nav-links">
+            <a href="/home"         class="kb-nav-a active">Home</a>
+            <a href="/boost"        class="kb-nav-a">Boost</a>
+            <a href="/cookies"      class="kb-nav-a">Accounts</a>
+            <a href="/transactions" class="kb-nav-a">Orders</a>
+            <a href="/limits"       class="kb-nav-a">Limits</a>
+            <a href="/profile"      class="kb-nav-a">Profile</a>
+            <a href="/admin" id="navAdmin" class="kb-nav-a" style="display:none">Admin</a>
+        </div>
+        <div class="kb-nav-right">
+            <a href="/inbox" class="kb-icon-btn" title="Inbox">
+                <div class="bdot" id="navBell"></div>
+                <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
+                    <path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"/>
+                    <polyline points="22,6 12,13 2,6"/>
                 </svg>
-                <span>Log out</span>
+            </a>
+            <a href="/profile" class="kb-avatar-chip">
+                <div class="kb-avatar" id="navAv">—</div>
+                <span class="kb-avatar-name" id="navUser">Loading…</span>
+            </a>
+            <button class="kb-logout" onclick="logout()">Log out</button>
+            <button class="kb-ham" id="hamBtn" aria-label="Menu">
+                <svg id="hamIco" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                    <line x1="3" y1="6" x2="21" y2="6"/>
+                    <line x1="3" y1="12" x2="21" y2="12"/>
+                    <line x1="3" y1="18" x2="21" y2="18"/>
+                </svg>
             </button>
         </div>
     </div>
 </nav>
 
-<!-- ══════════════════════════════════════════════════════════
-     LAYOUT
-══════════════════════════════════════════════════════════ -->
-<div class="layout">
-
-    <!-- SIDEBAR -->
-    <aside class="sidebar">
-        <div class="sb-sec">
-            <div class="sb-lbl">Main</div>
-            <a href="/home" class="sb-a active">
-                <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                    <path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/>
-                    <polyline points="9 22 9 12 15 12 15 22"/>
-                </svg>
-                Dashboard
-            </a>
-            <a href="/boost" class="sb-a">
-                <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                    <path d="M13 2L3 14h9l-1 8 10-12h-9l1-8z"/>
-                </svg>
-                Boost
-            </a>
-            <a href="/cookies" class="sb-a">
-                <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                    <rect x="2" y="7" width="20" height="14" rx="2"/>
-                    <path d="M16 7V5a2 2 0 0 0-2-2h-4a2 2 0 0 0-2 2v2"/>
-                </svg>
-                Accounts
-            </a>
-        </div>
-        <div class="sb-div"></div>
-        <div class="sb-sec">
-            <div class="sb-lbl">Activity</div>
-            <a href="/inbox" class="sb-a" id="sbInbox">
-                <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                    <path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"/>
-                    <polyline points="22,6 12,13 2,6"/>
-                </svg>
-                Inbox
-                <span class="sb-badge" id="sbBadge" style="display:none"></span>
-            </a>
-            <a href="/transactions" class="sb-a">
-                <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                    <path d="M9 5H7a2 2 0 0 0-2 2v12a2 2 0 0 0 2 2h10a2 2 0 0 0 2-2V7a2 2 0 0 0-2-2h-2"/>
-                    <rect x="9" y="3" width="6" height="4" rx="2"/>
-                </svg>
-                Orders
-            </a>
-            <a href="/limits" class="sb-a">
-                <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                    <line x1="18" y1="20" x2="18" y2="10"/>
-                    <line x1="12" y1="20" x2="12" y2="4"/>
-                    <line x1="6"  y1="20" x2="6"  y2="14"/>
-                </svg>
-                Limits
-            </a>
-        </div>
-        <div class="sb-div"></div>
-        <div class="sb-sec">
-            <div class="sb-lbl">Account</div>
-            <a href="/profile" class="sb-a">
-                <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                    <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/>
-                    <circle cx="12" cy="7" r="4"/>
-                </svg>
-                Profile
-            </a>
-            <a href="/admin" class="sb-a" id="sbAdmin" style="display:none">
-                <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                    <path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/>
-                </svg>
-                Admin
-            </a>
-        </div>
-        <div style="margin-top:auto;padding:12px 10px 0;">
-            <div class="sb-div" style="margin:0 0 8px;"></div>
-            <button class="sb-a" onclick="doLogout()" style="border:none;background:none;cursor:pointer;color:var(--faint);width:100%;">
-                <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                    <path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"/>
-                    <polyline points="16 17 21 12 16 7"/>
-                    <line x1="21" y1="12" x2="9" y2="12"/>
-                </svg>
-                Log out
-            </button>
-        </div>
-    </aside>
-
-    <!-- MAIN CONTENT -->
-    <main class="main">
-
-        <!-- Greeting -->
-        <div class="greeting fd">
-            <div class="g-eye">Dashboard</div>
-            <h1 class="g-h1">Good to see you, <span id="gName">—</span></h1>
-            <p class="g-sub" id="gSub">Loading your account…</p>
-        </div>
-
-        <!-- Boost CTA -->
-        <div class="cta-banner fd d1">
-            <div class="cta-txt">
-                <h3>Ready to run a share session?</h3>
-                <p>Drop a post link, pick a speed mode, and go.</p>
-            </div>
-            <a href="/boost" class="btn-w">
-                Launch Boost
-                <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
-                    <line x1="5" y1="12" x2="19" y2="12"/><polyline points="12 5 19 12 12 19"/>
-                </svg>
-            </a>
-        </div>
-
-        <!-- Stat cards — from GET /api/user/stats -->
-        <div class="stats-row fd d1">
-            <div class="sc">
-                <div class="sc-lbl"><span id="dotSt" class="dot-r"></span> Account Status</div>
-                <div class="sc-val" id="stSt"><span class="sk" style="width:60px;height:20px;"></span></div>
-                <div class="sc-sub" id="stStSub">—</div>
-            </div>
-            <div class="sc">
-                <div class="sc-lbl">Saved Cookies</div>
-                <div class="sc-val" id="stCk"><span class="sk" style="width:40px;height:26px;"></span></div>
-                <div class="sc-sub" id="stCkSub">accounts</div>
-            </div>
-            <div class="sc">
-                <div class="sc-lbl">Total Shares</div>
-                <div class="sc-val" id="stTot"><span class="sk" style="width:48px;height:26px;"></span></div>
-                <div class="sc-sub">all time</div>
-            </div>
-            <div class="sc">
-                <div class="sc-lbl">Last 30 Days</div>
-                <div class="sc-val" id="stRec"><span class="sk" style="width:40px;height:26px;"></span></div>
-                <div class="sc-sub">shares</div>
-            </div>
-        </div>
-
-        <!-- Quick Actions -->
-        <div class="fd d2">
-            <div class="sec-hd">Quick Actions</div>
-            <div class="acts">
-
-                <a href="/boost" class="act">
-                    <div class="act-icon">
-                        <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M13 2L3 14h9l-1 8 10-12h-9l1-8z"/></svg>
-                    </div>
-                    Boost
-                </a>
-
-                <a href="/cookies" class="act">
-                    <div class="act-icon">
-                        <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="2" y="7" width="20" height="14" rx="2"/><path d="M16 7V5a2 2 0 0 0-2-2h-4a2 2 0 0 0-2 2v2"/></svg>
-                    </div>
-                    Accounts
-                </a>
-
-                <a href="/transactions" class="act">
-                    <div class="act-icon">
-                        <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M9 5H7a2 2 0 0 0-2 2v12a2 2 0 0 0 2 2h10a2 2 0 0 0 2-2V7a2 2 0 0 0-2-2h-2"/><rect x="9" y="3" width="6" height="4" rx="2"/></svg>
-                    </div>
-                    Orders
-                </a>
-
-                <a href="/inbox" class="act" id="actInbox">
-                    <div class="act-icon">
-                        <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"/><polyline points="22,6 12,13 2,6"/></svg>
-                    </div>
-                    Inbox
-                </a>
-
-                <a href="/limits" class="act">
-                    <div class="act-icon">
-                        <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="18" y1="20" x2="18" y2="10"/><line x1="12" y1="20" x2="12" y2="4"/><line x1="6" y1="20" x2="6" y2="14"/></svg>
-                    </div>
-                    Limits
-                </a>
-
-                <a href="/profile" class="act">
-                    <div class="act-icon">
-                        <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>
-                    </div>
-                    Profile
-                </a>
-
-                <a href="/admin" class="act" id="actAdmin" style="display:none">
-                    <div class="act-icon">
-                        <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg>
-                    </div>
-                    Admin
-                </a>
-
-                <a href="/" class="act">
-                    <div class="act-icon">
-                        <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/></svg>
-                    </div>
-                    About
-                </a>
-
-            </div>
-        </div>
-
-        <!-- Two-col: Account details + Share chart -->
-        <div class="row2 fd d3">
-
-            <!-- Account details — data from stats + cached kb_user -->
-            <div class="card">
-                <div class="card-hd">
-                    <span class="card-hd-t">Account Details</span>
-                    <a href="/profile" class="card-hd-l">Edit profile →</a>
-                </div>
-                <div class="card-body">
-                    <div class="dr">
-                        <span class="dr-k">Username</span>
-                        <span class="dr-v" id="dUser">—</span>
-                    </div>
-                    <div class="dr">
-                        <span class="dr-k">Status</span>
-                        <span id="dSt"><span class="sk" style="width:58px;height:18px;border-radius:99px;"></span></span>
-                    </div>
-                    <div class="dr">
-                        <span class="dr-k">Cookies</span>
-                        <span class="dr-v" id="dCk">—</span>
-                    </div>
-                    <div class="dr">
-                        <span class="dr-k">Facebook</span>
-                        <span class="dr-v" id="dFb" title="">—</span>
-                    </div>
-                    <div class="dr">
-                        <span class="dr-k">Role</span>
-                        <span id="dRole"><span class="chip chip-n">user</span></span>
-                    </div>
-                    <div class="dr" id="dBadgesRow" style="display:none">
-                        <span class="dr-k">Badges</span>
-                        <div class="badges-row" id="dBadges"></div>
-                    </div>
-                </div>
-            </div>
-
-            <!-- Share chart — built from shareHistory[{date,count}] in stats -->
-            <div class="card">
-                <div class="card-hd">
-                    <span class="card-hd-t">Share Activity</span>
-                    <span class="card-hd-l">30-day history</span>
-                </div>
-                <div class="card-body">
-                    <div style="display:flex;align-items:baseline;gap:8px;margin-bottom:14px;">
-                        <span style="font-size:28px;font-weight:700;letter-spacing:-.04em;color:var(--text);font-variant-numeric:tabular-nums;" id="chartN">—</span>
-                        <span style="font-size:12px;color:var(--faint);">shares in 30 days</span>
-                    </div>
-                    <div class="bar-chart" id="barChart"></div>
-                    <div class="chart-row">
-                        <span class="chart-lbl" id="chartStart">30d ago</span>
-                        <span class="chart-lbl">today</span>
-                    </div>
-                </div>
-            </div>
-
-        </div>
-
-        <!-- Inbox preview — from GET /api/user/inbox?limit=4 -->
-        <div class="card fd d4">
-            <div class="card-hd">
-                <span class="card-hd-t">Recent Messages</span>
-                <a href="/inbox" class="card-hd-l">View all →</a>
-            </div>
-            <div class="card-body" id="inboxWrap">
-                <!-- skeleton -->
-                <div class="msg">
-                    <div class="msg-icon"><span class="sk" style="width:28px;height:28px;display:block;border-radius:6px;"></span></div>
-                    <div style="flex:1">
-                        <div class="sk" style="width:55%;height:13px;margin-bottom:6px;"></div>
-                        <div class="sk" style="width:35%;height:10px;"></div>
-                    </div>
-                </div>
-            </div>
-        </div>
-
-    </main>
+<!-- MOBILE DRAWER -->
+<div class="kb-drawer" id="drawer">
+    <a href="/home">Home</a>
+    <a href="/boost">Boost</a>
+    <a href="/cookies">Accounts</a>
+    <a href="/transactions">Orders</a>
+    <a href="/inbox">Inbox</a>
+    <a href="/limits">Limits</a>
+    <a href="/profile">Profile</a>
+    <a href="/admin" id="drawerAdmin" style="display:none">Admin</a>
+    <hr>
+    <button class="danger" onclick="logout()">Log out</button>
 </div>
 
-<!-- ══════════════════════════════════════════════════════════
-     BOTTOM NAV (mobile only)
-══════════════════════════════════════════════════════════ -->
-<nav class="bot-nav">
-    <div class="bot-inner">
-        <a href="/home" class="bot-a active">
-            <svg width="20" height="20" viewBox="0 0 24 24" fill="currentColor"><path d="M10 20v-6h4v6h5v-8h3L12 3 2 12h3v8z"/></svg>
-            Home
-        </a>
-        <a href="/inbox" class="bot-a" id="botInbox">
-            <div style="position:relative;line-height:0;">
-                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"/><polyline points="22,6 12,13 2,6"/></svg>
-                <span class="bot-unread" id="botDot" style="display:none;"></span>
-            </div>
-            Inbox
-        </a>
-        <div class="bot-fab-wrap">
-            <a href="/boost" class="bot-fab">
-                <svg width="20" height="20" viewBox="0 0 24 24" fill="currentColor"><path d="M13 10V3L4 14h7v7l9-11h-7z"/></svg>
+<!-- MAIN CONTENT -->
+<main class="kb-main page-fade" id="mainWrap">
+
+    <!-- Hero header -->
+    <div class="kb-hero-hdr">
+        <div>
+            <div class="kb-greeting">Welcome back</div>
+            <div class="kb-hero-name" id="heroName"><span class="skel" style="width:160px;height:28px;">&nbsp;</span></div>
+            <span class="kb-schip off" id="statusChip" style="display:none">Inactive</span>
+        </div>
+        <div style="display:flex;align-items:center;gap:8px;">
+            <a href="/boost" class="kb-hero-cta">
+                <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+                    <path d="M13 2L3 14h9l-1 8 10-12h-9l1-8z"/>
+                </svg>
+                New Boost
             </a>
         </div>
-        <a href="/transactions" class="bot-a">
-            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M9 5H7a2 2 0 0 0-2 2v12a2 2 0 0 0 2 2h10a2 2 0 0 0 2-2V7a2 2 0 0 0-2-2h-2"/><rect x="9" y="3" width="6" height="4" rx="2"/></svg>
-            Orders
+    </div>
+
+    <!-- Stat cards -->
+    <div class="kb-stats-row">
+
+        <div class="kb-sc">
+            <div class="kb-sc-lbl">
+                <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                    <rect x="2" y="7" width="20" height="14" rx="2"/><path d="M16 7V5a2 2 0 0 0-2-2h-4a2 2 0 0 0-2 2v2"/>
+                </svg>
+                Accounts
+            </div>
+            <div class="kb-sc-val" id="scCookies"><span class="skel" style="width:50px;height:24px;">&nbsp;</span></div>
+            <div class="kb-sc-sub">of <span id="scLimit">—</span> slots used</div>
+            <div class="kb-pbar"><div class="kb-pfill" id="pbar"></div></div>
+        </div>
+
+        <div class="kb-sc">
+            <div class="kb-sc-lbl">
+                <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                    <circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/>
+                </svg>
+                Today
+            </div>
+            <div class="kb-sc-val" id="scToday"><span class="skel" style="width:50px;height:24px;">&nbsp;</span></div>
+            <div class="kb-sc-sub">shares today</div>
+        </div>
+
+        <div class="kb-sc">
+            <div class="kb-sc-lbl">
+                <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                    <polyline points="22 12 18 12 15 21 9 3 6 12 2 12"/>
+                </svg>
+                Total Shares
+            </div>
+            <div class="kb-sc-val" id="scTotal"><span class="skel" style="width:50px;height:24px;">&nbsp;</span></div>
+            <div class="kb-sc-sub">all time</div>
+        </div>
+
+        <div class="kb-sc">
+            <div class="kb-sc-lbl">
+                <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                    <polyline points="20 6 9 17 4 12"/>
+                </svg>
+                Success Rate
+            </div>
+            <div class="kb-sc-val" id="scRate"><span class="skel" style="width:50px;height:24px;">&nbsp;</span></div>
+            <div class="kb-sc-sub">of shares succeeded</div>
+        </div>
+    </div>
+
+    <!-- Quick actions -->
+    <div class="kb-card">
+        <div class="kb-card-hdr"><span class="kb-card-ttl">Quick actions</span></div>
+        <div class="kb-qgrid">
+
+            <a href="/boost" class="kb-qa">
+                <div class="kb-qa-icon">
+                    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M13 2L3 14h9l-1 8 10-12h-9l1-8z"/></svg>
+                </div>
+                <span class="kb-qa-lbl">Boost</span>
+            </a>
+
+            <a href="/cookies" class="kb-qa">
+                <div class="kb-qa-icon">
+                    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><rect x="2" y="7" width="20" height="14" rx="2"/><path d="M16 7V5a2 2 0 0 0-2-2h-4a2 2 0 0 0-2 2v2"/></svg>
+                </div>
+                <span class="kb-qa-lbl">Accounts</span>
+            </a>
+
+            <a href="/transactions" class="kb-qa">
+                <div class="kb-qa-icon">
+                    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M9 5H7a2 2 0 0 0-2 2v12a2 2 0 0 0 2 2h10a2 2 0 0 0 2-2V7a2 2 0 0 0-2-2h-2M9 5a2 2 0 0 0 2 2h2a2 2 0 0 0 2-2M9 5a2 2 0 0 1 2-2h2a2 2 0 0 1 2 2"/></svg>
+                </div>
+                <span class="kb-qa-lbl">Orders</span>
+            </a>
+
+            <a href="/inbox" class="kb-qa" id="qaInbox">
+                <div class="kb-qa-icon">
+                    <div class="kb-qa-bdg" id="qaInboxBdg"></div>
+                    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"/><polyline points="22,6 12,13 2,6"/></svg>
+                </div>
+                <span class="kb-qa-lbl">Inbox</span>
+            </a>
+
+            <a href="/limits" class="kb-qa">
+                <div class="kb-qa-icon">
+                    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><line x1="18" y1="20" x2="18" y2="10"/><line x1="12" y1="20" x2="12" y2="4"/><line x1="6" y1="20" x2="6" y2="14"/></svg>
+                </div>
+                <span class="kb-qa-lbl">Limits</span>
+            </a>
+
+            <a href="/profile" class="kb-qa">
+                <div class="kb-qa-icon">
+                    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>
+                </div>
+                <span class="kb-qa-lbl">Profile</span>
+            </a>
+
+            <a href="/admin" class="kb-qa" id="qaAdmin" style="display:none">
+                <div class="kb-qa-icon">
+                    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg>
+                </div>
+                <span class="kb-qa-lbl">Admin</span>
+            </a>
+
+            <a href="/" class="kb-qa">
+                <div class="kb-qa-icon">
+                    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/><polyline points="9 22 9 12 15 12 15 22"/></svg>
+                </div>
+                <span class="kb-qa-lbl">Landing</span>
+            </a>
+
+        </div>
+    </div>
+
+    <!-- Two col: chart + account info -->
+    <div class="kb-two">
+
+        <div class="kb-card">
+            <div class="kb-card-hdr">
+                <span class="kb-card-ttl">Share activity — last 30 days</span>
+                <a href="/boost" class="kb-card-lnk">New session →</a>
+            </div>
+            <div class="kb-card-body">
+                <div id="chartEmpty" class="kb-empty" style="display:none">
+                    <div class="kb-empty-icon">
+                        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><polyline points="22 12 18 12 15 21 9 3 6 12 2 12"/></svg>
+                    </div>
+                    <p>No activity yet — <a href="/boost" style="color:var(--text-muted)">start your first boost</a></p>
+                </div>
+                <div id="chartWrap">
+                    <div class="kb-chart"><svg id="chartSvg" viewBox="0 0 400 80" preserveAspectRatio="none"></svg></div>
+                    <div class="kb-chart-lbls" id="chartLbls"></div>
+                </div>
+                <div style="display:flex;gap:24px;margin-top:16px;padding-top:14px;border-top:1px solid var(--border);">
+                    <div>
+                        <div style="font-size:11px;color:var(--text-faint);margin-bottom:2px;">Successful</div>
+                        <div style="font-size:16px;font-weight:700;color:var(--green);letter-spacing:-.03em;font-variant-numeric:tabular-nums;" id="sumOk">—</div>
+                    </div>
+                    <div>
+                        <div style="font-size:11px;color:var(--text-faint);margin-bottom:2px;">Failed</div>
+                        <div style="font-size:16px;font-weight:700;color:var(--red);letter-spacing:-.03em;font-variant-numeric:tabular-nums;" id="sumFail">—</div>
+                    </div>
+                    <div>
+                        <div style="font-size:11px;color:var(--text-faint);margin-bottom:2px;">Rate</div>
+                        <div style="font-size:16px;font-weight:700;color:var(--text);letter-spacing:-.03em;font-variant-numeric:tabular-nums;" id="sumRate">—</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="kb-card">
+            <div class="kb-card-hdr">
+                <span class="kb-card-ttl">Account</span>
+                <a href="/profile" class="kb-card-lnk">Edit →</a>
+            </div>
+            <div class="kb-card-body" style="padding-top:8px;">
+                <div class="kb-irow"><span class="kb-ikey">Username</span><span class="kb-ival" id="iUser">—</span></div>
+                <div class="kb-irow"><span class="kb-ikey">Facebook</span><span class="kb-ival" id="iFb" style="max-width:140px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;">—</span></div>
+                <div class="kb-irow"><span class="kb-ikey">Country</span><span class="kb-ival" id="iCountry">—</span></div>
+                <div class="kb-irow"><span class="kb-ikey">Status</span><span class="kb-ival" id="iStatus">—</span></div>
+                <div class="kb-irow"><span class="kb-ikey">Cookies</span><span class="kb-ival" id="iCookies">—</span></div>
+                <div class="kb-irow"><span class="kb-ikey">Role</span><span class="kb-ival" id="iRole">—</span></div>
+            </div>
+        </div>
+
+    </div>
+
+    <!-- Recent sessions -->
+    <div class="kb-card" style="margin-bottom:0;">
+        <div class="kb-card-hdr">
+            <span class="kb-card-ttl">Recent sessions</span>
+            <a href="/boost" class="kb-card-lnk">View all →</a>
+        </div>
+        <div class="kb-card-body" id="sessBody">
+            <!-- skeleton -->
+            <div class="kb-srow">
+                <div class="kb-sicon skel" style="width:32px;height:32px;"></div>
+                <div class="kb-sinfo">
+                    <div class="skel" style="width:55%;height:12px;margin-bottom:5px;">&nbsp;</div>
+                    <div class="skel" style="width:30%;height:10px;">&nbsp;</div>
+                </div>
+                <div class="skel" style="width:32px;height:14px;">&nbsp;</div>
+            </div>
+            <div class="kb-srow">
+                <div class="kb-sicon skel" style="width:32px;height:32px;"></div>
+                <div class="kb-sinfo">
+                    <div class="skel" style="width:45%;height:12px;margin-bottom:5px;">&nbsp;</div>
+                    <div class="skel" style="width:25%;height:10px;">&nbsp;</div>
+                </div>
+                <div class="skel" style="width:32px;height:14px;">&nbsp;</div>
+            </div>
+        </div>
+    </div>
+
+</main>
+
+<!-- BOTTOM NAV -->
+<nav class="kb-bnav">
+    <div class="kb-bnav-inner">
+        <a href="/home" class="kb-bn active">
+            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/><polyline points="9 22 9 12 15 12 15 22"/></svg>
+            Home
         </a>
-        <a href="/profile" class="bot-a">
+        <a href="/cookies" class="kb-bn">
+            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="2" y="7" width="20" height="14" rx="2"/><path d="M16 7V5a2 2 0 0 0-2-2h-4a2 2 0 0 0-2 2v2"/></svg>
+            Accts
+        </a>
+        <a href="/boost" class="kb-bn-fab">
+            <div class="kb-fab-icon">
+                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M13 2L3 14h9l-1 8 10-12h-9l1-8z"/></svg>
+            </div>
+            <span class="kb-fab-lbl">Boost</span>
+        </a>
+        <a href="/inbox" class="kb-bn" style="position:relative;">
+            <div class="kb-bn-bdg" id="bnBdg"></div>
+            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"/><polyline points="22,6 12,13 2,6"/></svg>
+            Inbox
+        </a>
+        <a href="/profile" class="kb-bn">
             <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>
             Profile
         </a>
     </div>
 </nav>
 
+<div id="toast"></div>
+
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
 <script>
-/* ═══════════════════════════════════════════════════════════
+/* ====================================================
    AUTH GUARD
-═══════════════════════════════════════════════════════════ */
-const TOKEN = localStorage.getItem('kb_token');
-if (!TOKEN) window.location.replace('/login');
+==================================================== */
+const token = localStorage.getItem('kb_token');
+if (!token) { window.location.replace('/login'); throw 0; }
 
-/* ═══════════════════════════════════════════════════════════
-   HELPERS
-═══════════════════════════════════════════════════════════ */
-const $   = id => document.getElementById(id);
-const fmt = n  => {
-    if (n == null || isNaN(n)) return '0';
-    if (n >= 1_000_000) return (n / 1_000_000).toFixed(1) + 'M';
-    if (n >= 1_000)     return (n / 1_000).toFixed(1) + 'k';
-    return String(n);
-};
-const ago = str => {
-    const s = Math.floor((Date.now() - new Date(str)) / 1000);
-    if (s < 60)    return 'just now';
-    if (s < 3600)  return Math.floor(s / 60)  + 'm ago';
-    if (s < 86400) return Math.floor(s / 3600) + 'h ago';
-    return Math.floor(s / 86400) + 'd ago';
-};
-
-function doLogout() {
+function logout() {
     localStorage.removeItem('kb_token');
     localStorage.removeItem('kb_user');
     window.location.replace('/login');
 }
 
-/* ═══════════════════════════════════════════════════════════
-   RENDER STATS
-   stats object = response from GET /api/user/stats → .stats
-   isAdmin & facebook come from cached kb_user (set on login)
-═══════════════════════════════════════════════════════════ */
-function renderStats(stats, cached) {
-    const username  = stats.username  || '—';
-    const active    = !!stats.isActive;
-    const cookies   = stats.cookieCount ?? 0;
-    const total     = stats.totalShares ?? 0;
-    const history   = Array.isArray(stats.shareHistory) ? stats.shareHistory : [];
-    const recent    = history.reduce((s, d) => s + (d.count || 0), 0);
-
-    // isAdmin + facebook from login cache (not in stats response)
-    const isAdmin   = !!(cached.isAdmin);
-    const facebook  = cached.facebook || '—';
-
-    // Profile image — stats has profileImage (base64) or profileImageUrl
-    const imgSrc    = stats.bannerImage ? null : (stats.profileImage || stats.profileImageUrl || null);
-
-    /* ── Nav chip ── */
-    $('navInit').textContent = username.charAt(0).toUpperCase();
-    if (imgSrc) {
-        $('navAv').innerHTML = `<img src="${imgSrc}" alt="">`;
+/* ====================================================
+   MOBILE NAV
+==================================================== */
+const hamBtn = document.getElementById('hamBtn');
+const drawer = document.getElementById('drawer');
+const hamIco = document.getElementById('hamIco');
+const HAM  = '<line x1="3" y1="6" x2="21" y2="6"/><line x1="3" y1="12" x2="21" y2="12"/><line x1="3" y1="18" x2="21" y2="18"/>';
+const CLOS = '<line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/>';
+hamBtn.addEventListener('click', () => {
+    const o = drawer.classList.toggle('open');
+    hamIco.innerHTML = o ? CLOS : HAM;
+    document.body.style.overflow = o ? 'hidden' : '';
+});
+document.addEventListener('click', e => {
+    if (!drawer.contains(e.target) && !hamBtn.contains(e.target)) {
+        drawer.classList.remove('open');
+        hamIco.innerHTML = HAM;
+        document.body.style.overflow = '';
     }
-    if (stats.avatarBorder && stats.avatarBorder !== 'none') {
-        $('navAv').style.border = `2px solid ${stats.accentColor || '#fff'}`;
-    }
-    $('navName').textContent = username;
+});
 
-    /* ── Greeting ── */
-    $('gName').textContent = username;
-    $('gSub').textContent  = active
-        ? `Account active — ${cookies} cookie${cookies !== 1 ? 's' : ''} saved, ${fmt(total)} total shares.`
-        : 'Your account is inactive. Contact an admin to get activated.';
-
-    /* ── Stat cards ── */
-    $('dotSt').className      = active ? 'dot-g' : 'dot-r';
-    $('stSt').textContent     = active ? 'Active' : 'Inactive';
-    $('stStSub').textContent  = active ? 'Ready to boost' : 'Awaiting activation';
-    $('stCk').textContent     = fmt(cookies);
-    $('stCkSub').textContent  = `${cookies} account${cookies !== 1 ? 's' : ''}`;
-    $('stTot').textContent    = fmt(total);
-    $('stRec').textContent    = fmt(recent);
-    $('chartN').textContent   = fmt(recent);
-
-    /* ── Detail card ── */
-    $('dUser').textContent  = username;
-    $('dSt').innerHTML      = active
-        ? '<span class="chip chip-g">Active</span>'
-        : '<span class="chip chip-r">Inactive</span>';
-    $('dCk').textContent    = `${cookies} saved`;
-    $('dFb').textContent    = facebook;
-    $('dFb').title          = facebook;
-    $('dRole').innerHTML    = isAdmin
-        ? '<span class="chip chip-am">admin</span>'
-        : '<span class="chip chip-n">user</span>';
-
-    // Badges (optional array from stats)
-    if (Array.isArray(stats.badges) && stats.badges.length > 0) {
-        $('dBadgesRow').style.display = '';
-        $('dBadges').innerHTML = stats.badges.map(b =>
-            `<span class="badge-item">${b}</span>`
-        ).join('');
-    }
-
-    /* ── Admin visibility ── */
-    if (isAdmin) {
-        $('actAdmin').style.display = '';
-        $('sbAdmin').style.display  = '';
-    }
-
-    /* ── Bar chart from real shareHistory[{date,count}] ── */
-    buildChart(history);
-
-    /* ── Date label ── */
-    const d30 = new Date();
-    d30.setDate(d30.getDate() - 29);
-    $('chartStart').textContent = d30.toLocaleDateString('en-US', { month: 'short', day: 'numeric' });
-
-    /* ── Persist merged cache ── */
-    localStorage.setItem('kb_user', JSON.stringify({ ...cached, ...stats }));
+/* ====================================================
+   TOAST
+==================================================== */
+function toast(msg) {
+    const t = document.getElementById('toast');
+    t.textContent = msg;
+    t.classList.add('show');
+    setTimeout(() => t.classList.remove('show'), 2800);
 }
 
-/* ═══════════════════════════════════════════════════════════
-   BUILD BAR CHART
-   Uses real shareHistory array from stats API
-   Format: [{date: 'YYYY-MM-DD', count: N}, ...]
-═══════════════════════════════════════════════════════════ */
-function buildChart(history) {
-    const chart = $('barChart');
-    chart.innerHTML = '';
-    const N = 30;
-
-    // Build a date→count map from history
-    const map = {};
-    history.forEach(h => { map[h.date] = (h.count || 0); });
-
-    // Generate last 30 days in order
-    const days = [];
-    for (let i = N - 1; i >= 0; i--) {
-        const d = new Date();
-        d.setDate(d.getDate() - i);
-        const key = d.toISOString().slice(0, 10);
-        days.push({ date: key, count: map[key] || 0 });
-    }
-
-    const maxCount = Math.max(...days.map(d => d.count), 1);
-
-    days.forEach(day => {
-        const bar = document.createElement('div');
-        bar.className = 'bar' + (day.count > 0 ? ' lit' : '');
-        const pct = (day.count / maxCount) * 100;
-        bar.style.height = day.count > 0 ? Math.max(pct, 6) + '%' : '6%';
-        bar.dataset.tip  = `${day.date}: ${day.count}`;
-        chart.appendChild(bar);
-    });
-}
-
-/* ═══════════════════════════════════════════════════════════
-   RENDER INBOX
-   Uses GET /api/user/inbox?limit=4
-   Response: { success, messages:[{messageId,title,content,isRead,date,time,createdAt}], unreadCount }
-═══════════════════════════════════════════════════════════ */
-function renderInbox(messages, unreadCount) {
-    const hasUnread = (unreadCount || 0) > 0;
-
-    if (hasUnread) {
-        $('sbBadge').style.display = '';
-        $('sbBadge').textContent   = unreadCount > 99 ? '99+' : unreadCount;
-        $('botDot').style.display  = '';
-
-        // Badge on action tile
-        const dot = document.createElement('span');
-        dot.className   = 'act-badge';
-        dot.textContent = unreadCount > 9 ? '9+' : unreadCount;
-        $('actInbox').appendChild(dot);
-    }
-
-    const wrap = $('inboxWrap');
-
-    if (!messages || messages.length === 0) {
-        wrap.innerHTML = `
-            <div class="empty">
-                <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
-                    <path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"/>
-                    <polyline points="22,6 12,13 2,6"/>
-                </svg>
-                <p>No messages yet</p>
-            </div>`;
+/* ====================================================
+   SVG SPARKLINE CHART
+==================================================== */
+function drawChart(data) {
+    if (!data || !data.length) {
+        document.getElementById('chartWrap').style.display  = 'none';
+        document.getElementById('chartEmpty').style.display = '';
         return;
     }
-
-    wrap.innerHTML = messages.slice(0, 4).map(m => `
-        <div class="msg">
-            <div class="msg-icon">
-                <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                    <path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"/>
-                    <polyline points="22,6 12,13 2,6"/>
-                </svg>
-            </div>
-            <div style="flex:1;min-width:0;">
-                <div class="msg-t">${escHtml(m.title || 'Message')}</div>
-                <div class="msg-s">${m.date || ''} ${m.time || ''}</div>
-            </div>
-            ${!m.isRead ? '<span class="unread-dot"></span>' : ''}
-        </div>`).join('');
+    const vals  = data.map(d => (typeof d === 'object' ? (d.count || d.shares || 0) : d));
+    const dates = data.map(d => (typeof d === 'object' ? (d.date || d._id || '') : ''));
+    const W = 400, H = 80, P = 2;
+    const max  = Math.max(...vals, 1);
+    const step = (W - P*2) / Math.max(vals.length - 1, 1);
+    const pts  = vals.map((v, i) => {
+        const x = P + i * step;
+        const y = H - P - (v / max) * (H - P*2);
+        return x.toFixed(1) + ',' + y.toFixed(1);
+    });
+    const area = P + ',' + H + ' ' + pts.join(' ') + ' ' + (P + (vals.length-1)*step).toFixed(1) + ',' + H;
+    document.getElementById('chartSvg').innerHTML =
+        '<defs><linearGradient id="cg" x1="0" y1="0" x2="0" y2="1">' +
+        '<stop offset="0%" stop-color="#fff" stop-opacity=".08"/>' +
+        '<stop offset="100%" stop-color="#fff" stop-opacity="0"/>' +
+        '</linearGradient></defs>' +
+        '<polygon points="' + area + '" fill="url(#cg)"/>' +
+        '<polyline points="' + pts.join(' ') + '" fill="none" stroke="#fff" stroke-width="1.2" stroke-opacity=".5" stroke-linejoin="round" stroke-linecap="round"/>';
+    const fmt = s => { if (!s) return ''; const d = new Date(s); return isNaN(d) ? s : d.toLocaleDateString('en',{month:'short',day:'numeric'}); };
+    const mid  = Math.floor(dates.length / 2);
+    if (dates[0]) {
+        document.getElementById('chartLbls').innerHTML =
+            '<span>' + fmt(dates[0]) + '</span>' +
+            '<span>' + fmt(dates[mid]) + '</span>' +
+            '<span>' + fmt(dates[dates.length-1]) + '</span>';
+    }
 }
 
-function escHtml(s) {
-    return String(s)
-        .replace(/&/g, '&amp;')
-        .replace(/</g, '&lt;')
-        .replace(/>/g, '&gt;')
-        .replace(/"/g, '&quot;');
+/* ====================================================
+   RENDER RECENT SESSIONS
+==================================================== */
+function renderSessions(sessions) {
+    const body = document.getElementById('sessBody');
+    if (!sessions || !sessions.length) {
+        body.innerHTML = '<div class="kb-empty"><div class="kb-empty-icon"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M13 2L3 14h9l-1 8 10-12h-9l1-8z"/></svg></div><p>No sessions yet — <a href="/boost" style="color:var(--text-muted)">start your first boost</a></p></div>';
+        return;
+    }
+    const spd  = { instant: '⚡ Instant', fast: '→ Fast', slow: '◌ Slow' };
+    const col  = { completed: 'var(--green)', running: 'var(--amber)', stopped: 'var(--text-faint)', failed: 'var(--red)' };
+    body.innerHTML = sessions.slice(0,5).map(s => {
+        const link  = s.postLink || s.link || '—';
+        const short = link.length > 42 ? link.slice(0,42)+'…' : link;
+        const cnt   = (s.successCount || s.shares || 0).toLocaleString();
+        const speed = s.speed || 'instant';
+        const stat  = s.status || 'completed';
+        const when  = s.createdAt ? new Date(s.createdAt).toLocaleDateString('en',{month:'short',day:'numeric',hour:'2-digit',minute:'2-digit'}) : '—';
+        return '<div class="kb-srow">' +
+            '<div class="kb-sicon"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M13 2L3 14h9l-1 8 10-12h-9l1-8z"/></svg></div>' +
+            '<div class="kb-sinfo"><div class="kb-stitle" title="' + link + '">' + short + '</div>' +
+            '<div class="kb-smeta">' + when + ' &nbsp;·&nbsp; <span style="color:' + (col[stat]||'var(--text-faint)') + '">' + stat + '</span> &nbsp;·&nbsp; ' + (spd[speed]||speed) + '</div></div>' +
+            '<div class="kb-scnt">' + cnt + '</div></div>';
+    }).join('');
 }
 
-/* ═══════════════════════════════════════════════════════════
-   MAIN LOAD — hits both endpoints defined in main.js
-═══════════════════════════════════════════════════════════ */
-async function loadDashboard() {
-    const hdrs   = { 'Authorization': `Bearer ${TOKEN}` };
-    const cached = JSON.parse(localStorage.getItem('kb_user') || '{}');
-
-    /* ── 1. GET /api/user/stats (proxied by main.js → server.js) ── */
+/* ====================================================
+   LOAD STATS  — GET /api/user/stats
+==================================================== */
+async function loadStats() {
     try {
-        const res  = await fetch('/api/user/stats', { headers: hdrs });
-
+        const res = await fetch('/api/user/stats', {
+            headers: { 'Authorization': 'Bearer ' + token }
+        });
         if (res.status === 401) {
             localStorage.removeItem('kb_token');
             localStorage.removeItem('kb_user');
             window.location.replace('/login');
             return;
         }
+        const data = await res.json();
+        if (!data.success) throw new Error(data.message || 'Stats load failed');
+        const s = data.stats;
+        localStorage.setItem('kb_user', JSON.stringify(s));
 
-        const body = await res.json();
+        /* hero */
+        document.getElementById('heroName').textContent = s.username || 'User';
+        document.getElementById('navUser').textContent  = s.username || '';
+        document.getElementById('navAv').textContent    = (s.username || 'U').charAt(0).toUpperCase();
 
-        if (body.success && body.stats) {
-            renderStats(body.stats, cached);
+        /* status chip */
+        const chip = document.getElementById('statusChip');
+        chip.style.display = 'inline-flex';
+        if (s.isActive) {
+            chip.textContent = 'Active';
+            chip.className   = 'kb-schip on';
         } else {
-            throw new Error(body.message || 'Stats failed');
+            chip.textContent = 'Inactive — contact admin';
+            chip.className   = 'kb-schip off';
         }
+
+        /* cookie card */
+        const cc = s.cookieCount ?? 0;
+        const cl = s.cookieLimit ?? 10;
+        document.getElementById('scCookies').textContent = cc;
+        document.getElementById('scLimit').textContent   = cl;
+        const pct = cl > 0 ? (cc / cl) * 100 : 0;
+        const bar = document.getElementById('pbar');
+        bar.style.width = Math.min(pct,100) + '%';
+        bar.className   = 'kb-pfill' + (pct >= 90 ? ' danger' : pct >= 70 ? ' warn' : '');
+
+        /* share cards */
+        const today   = s.todayShares   ?? 0;
+        const total   = s.totalShares   ?? 0;
+        const ok      = s.successShares ?? 0;
+        const fail    = s.failShares    ?? 0;
+        const rate    = total > 0 ? Math.round((ok/total)*100) : 0;
+        document.getElementById('scToday').textContent = today.toLocaleString();
+        document.getElementById('scTotal').textContent = total.toLocaleString();
+        document.getElementById('scRate').textContent  = rate + '%';
+        document.getElementById('sumOk').textContent   = ok.toLocaleString();
+        document.getElementById('sumFail').textContent = fail.toLocaleString();
+        document.getElementById('sumRate').textContent = rate + '%';
+
+        /* admin */
+        if (s.isAdmin) {
+            ['navAdmin','drawerAdmin','qaAdmin'].forEach(id => {
+                const el = document.getElementById(id);
+                if (el) el.style.display = '';
+            });
+        }
+
+        /* account card */
+        document.getElementById('iUser').textContent    = s.username || '—';
+        document.getElementById('iFb').textContent      = s.facebook  || '—';
+        document.getElementById('iCountry').textContent = s.country   || '—';
+        document.getElementById('iStatus').innerHTML    = s.isActive
+            ? '<span style="color:var(--green)">Active</span>'
+            : '<span style="color:var(--red)">Inactive</span>';
+        document.getElementById('iCookies').textContent = cc + ' / ' + cl;
+        document.getElementById('iRole').textContent    = s.isAdmin ? 'Administrator' : 'User';
+
+        /* chart */
+        const hist = s.shareHistory || s.history || [];
+        drawChart(hist);
+
+        /* sessions */
+        renderSessions(s.recentSessions || s.sessions || []);
+
     } catch (err) {
-        console.error('[home] stats error:', err);
-        // Graceful fallback — use cached login data
-        if (cached.username) {
-            // Build a minimal stats-shape from cached login data
-            renderStats({
-                username:    cached.username,
-                isActive:    cached.isActive,
-                totalShares: cached.totalShares || 0,
-                cookieCount: cached.cookieCount || 0,
-                shareHistory: [],
-                badges:      cached.badges || []
-            }, cached);
-            $('gSub').textContent = 'Showing cached data — refresh to update.';
+        console.error('loadStats:', err);
+        const cached = JSON.parse(localStorage.getItem('kb_user') || 'null');
+        if (cached) {
+            document.getElementById('heroName').textContent = cached.username || 'User';
+            document.getElementById('navUser').textContent  = cached.username || '';
+            document.getElementById('navAv').textContent    = (cached.username || 'U').charAt(0).toUpperCase();
+            document.getElementById('scCookies').textContent = cached.cookieCount ?? 0;
+            document.getElementById('scLimit').textContent   = cached.cookieLimit ?? 10;
+            document.getElementById('scToday').textContent   = cached.todayShares ?? 0;
+            document.getElementById('scTotal').textContent   = cached.totalShares ?? 0;
+            document.getElementById('scRate').textContent    = '—';
+            renderSessions([]);
+            toast('Using cached data — check your connection');
         } else {
-            $('gName').textContent = 'there';
-            $('gSub').textContent  = 'Could not connect — check your network.';
+            document.getElementById('heroName').textContent = 'Error loading';
         }
-    }
-
-    /* ── 2. GET /api/user/inbox?limit=4&filter=all (proxied by main.js) ── */
-    try {
-        const res  = await fetch('/api/user/inbox?limit=4', { headers: hdrs });
-        const body = await res.json();
-
-        if (body.success) {
-            renderInbox(body.messages, body.unreadCount);
-        }
-    } catch (err) {
-        console.error('[home] inbox error:', err);
-        $('inboxWrap').innerHTML =
-            '<div class="empty"><p>Could not load messages.</p></div>';
     }
 }
 
-/* ═══════════════════════════════════════════════════════════
-   INIT — instant render from cache, then fetch fresh data
-═══════════════════════════════════════════════════════════ */
-;(function init() {
-    const c = JSON.parse(localStorage.getItem('kb_user') || '{}');
-    if (c.username) {
-        $('navInit').textContent  = c.username.charAt(0).toUpperCase();
-        $('navName').textContent  = c.username;
-        $('gName').textContent    = c.username;
-    }
-    loadDashboard();
-})();
+/* ====================================================
+   LOAD INBOX — GET /api/user/inbox?filter=unread&limit=1
+==================================================== */
+async function loadInbox() {
+    try {
+        const res  = await fetch('/api/user/inbox?filter=unread&limit=1', {
+            headers: { 'Authorization': 'Bearer ' + token }
+        });
+        const data = await res.json();
+        const hasUnread = data.success && (data.unreadCount > 0 || (data.messages && data.messages.length > 0));
+        if (hasUnread) {
+            document.getElementById('navBell').classList.add('show');
+            document.getElementById('qaInboxBdg').classList.add('show');
+            document.getElementById('bnBdg').classList.add('show');
+        }
+    } catch(e) { /* non-critical */ }
+}
+
+/* ====================================================
+   INIT
+==================================================== */
+loadStats();
+loadInbox();
 </script>
 </body>
 </html>
