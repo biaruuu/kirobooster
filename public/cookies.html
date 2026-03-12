@@ -2,370 +2,838 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>Kiro Cookies</title>
-    <script src="https://cdn.tailwindcss.com"></script>
-    <link href="https://fonts.googleapis.com/css2?family=Karla:wght@400;500;700&family=Poppins:wght@400;600;700&display=swap" rel="stylesheet">
-    
-    <script>
-        tailwind.config = {
-            theme: {
-                extend: {
-                    fontFamily: {
-                        'sans': ['Karla', 'sans-serif'],
-                        'header': ['Poppins', 'sans-serif'],
-                    },
-                    colors: {
-                        'kiro-blue': '#007DFE',
-                        'kiro-dark': '#0055aa',
-                        'kiro-bg': '#F4F7F9',
-                        'success': '#22C55E',
-                        'error': '#DC2626',
-                        'gray-txt': '#6B7280'
-                    },
-                    boxShadow: {
-                        'card': '0 4px 12px rgba(0,0,0,0.05)',
-                        'floating': '0 10px 25px -5px rgba(0, 125, 254, 0.4)',
-                    }
-                }
-            }
-        }
-    </script>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>KiroBoost - Cookies</title>
+    <link rel="shortcut icon" href="img/fav-icon.png" type="image/x-icon">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet">
+
     <style>
-        body { background-color: #F4F7F9; -webkit-tap-highlight-color: transparent; overscroll-behavior-y: none; }
-        
-        #app-wrapper {
-            max-width: 480px;
-            margin: 0 auto;
-            background-color: #ffffff;
-            min-height: 100vh;
-            position: relative;
-            padding-bottom: 90px;
-            box-shadow: 0 0 20px rgba(0,0,0,0.05);
+        *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; font-family: 'Outfit', sans-serif !important; }
+        *::selection { background: #4C4948 !important; color: #fff; }
+
+        :root {
+            --bg:      #000000;
+            --card:    #111111;
+            --card2:   #161616;
+            --border:  rgba(255,255,255,0.08);
+            --border2: rgba(255,255,255,0.14);
+            --muted:   #B4B4B4;
+            --muted2:  #555;
+            --green:   #22c55e;
+            --red:     #ef4444;
+            --yellow:  #eab308;
+            --blue:    #3b82f6;
+            --orange:  #f97316;
         }
 
-        /* Animations */
-        .fade-in { animation: fadeIn 0.4s cubic-bezier(0.16, 1, 0.3, 1); }
-        @keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
+        html, body { min-height: 100vh; background: var(--bg); color: #fff; overflow-x: hidden; }
+        ::-webkit-scrollbar { width: 5px; } ::-webkit-scrollbar-track { background: #000; } ::-webkit-scrollbar-thumb { background: #2a2a2a; border-radius: 3px; }
 
-        .tap-effect:active { transform: scale(0.96); transition: transform 0.1s; opacity: 0.9; }
-
-        /* Cookie Bubble Styling */
-        .cookie-bubble .avatar-circle { transition: all 0.2s; }
-        .cookie-bubble.selected .avatar-circle {
-            background-color: #0055aa; 
-            ring: 3px solid #BFDBFE;
+        /* ── Navbar ── */
+        #topnav {
+            position: sticky; top: 0; z-index: 200;
+            background: rgba(0,0,0,0.92);
+            border-bottom: 1px solid var(--border);
+            backdrop-filter: blur(12px);
+            display: flex; align-items: center; justify-content: space-between;
+            padding: 0 1.5rem; height: 60px; gap: 12px;
         }
-        .cookie-bubble.selected .check-badge { display: flex; }
+        .kiro-logo { display: inline-flex; align-items: baseline; letter-spacing: -0.04em; user-select: none; text-decoration: none; }
+        .logo-kiro  { font-weight: 800; color: #fff; font-style: italic; font-size: 1.4rem; }
+        .logo-boost { font-weight: 300; color: rgba(255,255,255,0.4); font-size: 1.4rem; }
+        .nav-back {
+            display: flex; align-items: center; gap: 6px;
+            color: var(--muted); font-size: 0.82rem; font-weight: 600;
+            text-decoration: none; transition: color .2s;
+        }
+        .nav-back:hover { color: #fff; }
 
-        /* Scrollbar Hide */
-        .no-scrollbar::-webkit-scrollbar { display: none; }
-        .no-scrollbar { -ms-overflow-style: none; scrollbar-width: none; }
+        /* ── Page ── */
+        #page { max-width: 860px; margin: 0 auto; padding: 2rem 1.25rem 4rem; display: flex; flex-direction: column; gap: 1.25rem; }
 
-        /* Modal Blur */
-        .modal-backdrop { backdrop-filter: blur(2px); }
+        /* ── Page header ── */
+        .page-header {
+            display: flex; align-items: flex-start; justify-content: space-between; gap: 1rem; flex-wrap: wrap;
+        }
+        .page-title { font-size: 1.5rem; font-weight: 800; letter-spacing: -0.03em; }
+        .page-sub   { font-size: 0.82rem; color: var(--muted2); margin-top: 2px; }
+
+        /* ── Stats strip ── */
+        .stats-strip {
+            display: grid; grid-template-columns: repeat(4, 1fr); gap: .85rem;
+        }
+        .scard {
+            background: var(--card);
+            border: 1px solid var(--border);
+            border-radius: 12px;
+            padding: 1rem 1.1rem;
+            display: flex; flex-direction: column; gap: 4px;
+            transition: border-color .2s;
+        }
+        .scard:hover { border-color: var(--border2); }
+        .scard-val  { font-size: 1.5rem; font-weight: 800; letter-spacing: -0.04em; line-height: 1; }
+        .scard-key  { font-size: 0.72rem; color: var(--muted2); font-weight: 500; text-transform: uppercase; letter-spacing: .05em; }
+        .scard-val.green  { color: #86efac; }
+        .scard-val.yellow { color: #fde68a; }
+        .scard-val.red    { color: #fca5a5; }
+        .scard-val.orange { color: #fdba74; }
+
+        /* ── Add Cookie Card ── */
+        .add-card {
+            background: var(--card);
+            border: 1px solid var(--border);
+            border-radius: 12px;
+            overflow: hidden;
+        }
+        .add-card-header {
+            display: flex; align-items: center; justify-content: space-between;
+            padding: .9rem 1.25rem;
+            border-bottom: 1px solid var(--border);
+        }
+        .section-title {
+            font-size: 0.78rem; font-weight: 700;
+            text-transform: uppercase; letter-spacing: .07em; color: var(--muted2);
+        }
+        .add-card-body { padding: 1.25rem; display: flex; flex-direction: column; gap: .85rem; }
+
+        /* Textarea */
+        .cookie-textarea {
+            background: rgba(255,255,255,0.04);
+            border: 1px solid var(--border);
+            border-radius: 9px;
+            color: #fff;
+            padding: .85rem 1rem;
+            font-size: 0.8rem;
+            font-family: 'Courier New', monospace !important;
+            line-height: 1.5;
+            width: 100%;
+            resize: vertical;
+            min-height: 90px;
+            outline: none;
+            transition: border-color .2s, background .2s;
+        }
+        .cookie-textarea:focus { border-color: rgba(255,255,255,.25); background: rgba(255,255,255,.06); }
+        .cookie-textarea::placeholder { color: #333; font-family: 'Courier New', monospace !important; }
+
+        /* Info hint */
+        .field-hint {
+            font-size: 0.72rem; color: var(--muted2);
+            display: flex; align-items: flex-start; gap: 6px; line-height: 1.5;
+        }
+        .field-hint svg { flex-shrink: 0; margin-top: 1px; }
+
+        /* Add button */
+        .btn-add {
+            background: #fff; color: #000;
+            font-size: 0.875rem; font-weight: 700;
+            border: none; border-radius: 8px;
+            padding: .6rem 1.4rem;
+            cursor: pointer;
+            display: inline-flex; align-items: center; gap: 7px;
+            transition: background .2s;
+            height: 42px; white-space: nowrap;
+        }
+        .btn-add:hover:not(:disabled) { background: #e0e0e0; }
+        .btn-add:disabled { opacity: .6; cursor: not-allowed; }
+
+        /* Error / success inline */
+        .inline-msg {
+            padding: 9px 13px; border-radius: 8px;
+            font-size: 0.82rem; font-weight: 500;
+            display: none; align-items: center; gap: 8px;
+        }
+        .inline-msg.visible { display: flex; }
+        .inline-msg.error   { background: rgba(239,68,68,.1); border: 1px solid rgba(239,68,68,.3); color: #fca5a5; }
+        .inline-msg.success { background: rgba(34,197,94,.1); border: 1px solid rgba(34,197,94,.25); color: #86efac; }
+
+        /* ── Cookie list card ── */
+        .list-card {
+            background: var(--card);
+            border: 1px solid var(--border);
+            border-radius: 12px;
+            overflow: hidden;
+        }
+        .list-header {
+            display: flex; align-items: center; justify-content: space-between; flex-wrap: wrap; gap: 8px;
+            padding: .9rem 1.25rem;
+            border-bottom: 1px solid var(--border);
+        }
+        .list-header-left { display: flex; align-items: center; gap: 10px; flex-wrap: wrap; }
+
+        /* Filter tabs */
+        .filter-tabs { display: flex; gap: 4px; }
+        .ftab {
+            padding: 3px 11px; border-radius: 20px;
+            font-size: 0.7rem; font-weight: 700;
+            cursor: pointer; white-space: nowrap;
+            border: 1px solid transparent;
+            transition: all .15s; color: var(--muted2);
+            background: none;
+        }
+        .ftab:hover { color: var(--muted); background: rgba(255,255,255,.04); }
+        .ftab.active { background: rgba(255,255,255,.09); border-color: var(--border2); color: #fff; }
+
+        /* Bulk action bar */
+        .bulk-bar {
+            display: none; align-items: center; gap: 10px; flex-wrap: wrap;
+            padding: .7rem 1.25rem;
+            background: rgba(239,68,68,.07);
+            border-bottom: 1px solid rgba(239,68,68,.15);
+        }
+        .bulk-bar.show { display: flex; }
+        .bulk-info { font-size: 0.8rem; color: #fca5a5; font-weight: 600; flex: 1; }
+        .btn-bulk-delete {
+            background: rgba(239,68,68,.15); border: 1px solid rgba(239,68,68,.3);
+            color: #fca5a5; border-radius: 7px;
+            font-size: 0.78rem; font-weight: 700;
+            padding: .35rem .85rem; cursor: pointer;
+            display: flex; align-items: center; gap: 6px;
+            transition: background .2s;
+        }
+        .btn-bulk-delete:hover { background: rgba(239,68,68,.25); }
+        .btn-bulk-cancel {
+            background: none; border: 1px solid var(--border2);
+            color: var(--muted2); border-radius: 7px;
+            font-size: 0.78rem; font-weight: 600;
+            padding: .35rem .85rem; cursor: pointer;
+            transition: color .2s;
+        }
+        .btn-bulk-cancel:hover { color: #fff; }
+
+        /* Cookie rows */
+        #cookieList { display: flex; flex-direction: column; }
+
+        .cookie-row {
+            display: grid;
+            grid-template-columns: 20px 40px 1fr auto;
+            align-items: center;
+            gap: 12px;
+            padding: .9rem 1.25rem;
+            border-bottom: 1px solid var(--border);
+            transition: background .15s;
+            cursor: pointer;
+        }
+        .cookie-row:last-child { border-bottom: none; }
+        .cookie-row:hover { background: rgba(255,255,255,.025); }
+        .cookie-row.selected { background: rgba(239,68,68,.04); }
+
+        /* Checkbox */
+        .ck-box {
+            width: 15px; height: 15px;
+            border: 1.5px solid var(--muted2);
+            border-radius: 4px;
+            display: flex; align-items: center; justify-content: center;
+            flex-shrink: 0; cursor: pointer; transition: all .15s;
+        }
+        .ck-box.checked { background: #fff; border-color: #fff; }
+        .ck-box.checked::after { content: ''; display: block; width: 4px; height: 7px; border-right: 2px solid #000; border-bottom: 2px solid #000; transform: rotate(45deg) translate(-1px,-1px); }
+
+        /* Avatar placeholder */
+        .fb-avatar {
+            width: 40px; height: 40px; border-radius: 50%;
+            background: rgba(255,255,255,.07);
+            display: flex; align-items: center; justify-content: center;
+            font-size: 0.85rem; font-weight: 700; color: var(--muted);
+            flex-shrink: 0; overflow: hidden; border: 1.5px solid var(--border);
+        }
+        .fb-avatar img { width: 100%; height: 100%; object-fit: cover; }
+
+        /* Cookie info */
+        .cookie-info { min-width: 0; }
+        .cookie-name {
+            font-size: 0.875rem; font-weight: 700;
+            white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
+        }
+        .cookie-uid  { font-size: 0.72rem; color: var(--muted2); margin-top: 1px; font-family: 'Courier New', monospace; }
+        .cookie-meta { font-size: 0.7rem; color: #3a3a3a; margin-top: 2px; }
+
+        /* Right side of row */
+        .cookie-right {
+            display: flex; flex-direction: column; align-items: flex-end; gap: 5px; flex-shrink: 0;
+        }
+
+        /* Status badge */
+        .status-badge {
+            display: inline-flex; align-items: center; gap: 4px;
+            padding: 2px 8px; border-radius: 20px;
+            font-size: 0.68rem; font-weight: 700;
+        }
+        .status-dot { width: 5px; height: 5px; border-radius: 50%; flex-shrink: 0; }
+        .sb-active     { background: rgba(34,197,94,.12); color: #86efac; }
+        .sb-active     .status-dot { background: #22c55e; }
+        .sb-expired    { background: rgba(239,68,68,.12); color: #fca5a5; }
+        .sb-expired    .status-dot { background: #ef4444; }
+        .sb-blocked    { background: rgba(239,68,68,.12); color: #fca5a5; }
+        .sb-blocked    .status-dot { background: #ef4444; }
+        .sb-restricted { background: rgba(234,179,8,.12); color: #fde68a; }
+        .sb-restricted .status-dot { background: #eab308; }
+
+        /* Row action buttons */
+        .row-actions { display: flex; gap: 5px; }
+        .row-btn {
+            width: 28px; height: 28px; border-radius: 6px;
+            border: none; cursor: pointer;
+            display: flex; align-items: center; justify-content: center;
+            transition: all .15s;
+        }
+        .row-btn.copy   { background: rgba(255,255,255,.06); color: var(--muted); }
+        .row-btn.copy:hover   { background: rgba(255,255,255,.12); color: #fff; }
+        .row-btn.del    { background: rgba(239,68,68,.08); color: #fca5a5; }
+        .row-btn.del:hover    { background: rgba(239,68,68,.2); }
+
+        /* Empty state */
+        .empty-state {
+            padding: 3.5rem 1rem; text-align: center;
+            display: flex; flex-direction: column; align-items: center; gap: 10px;
+            color: var(--muted2);
+        }
+        .empty-state svg { opacity: .18; }
+        .empty-title { font-size: 0.9rem; font-weight: 700; color: #333; }
+        .empty-sub   { font-size: 0.78rem; }
+
+        /* Skeleton */
+        .skeleton {
+            background: linear-gradient(90deg, #141414 25%, #1c1c1c 50%, #141414 75%);
+            background-size: 200% 100%;
+            animation: shimmer 1.5s infinite;
+            border-radius: 5px;
+        }
+        @keyframes shimmer { 0% { background-position: 200% 0; } 100% { background-position: -200% 0; } }
+
+        /* Spinner */
+        .geist-spinner { display: inline-flex; align-items: center; justify-content: center; animation: spin .8s linear infinite; }
+        @keyframes spin { to { transform: rotate(360deg); } }
+
+        /* ── Delete confirm modal ── */
+        .modal-overlay {
+            position: fixed; inset: 0; z-index: 999;
+            background: rgba(0,0,0,.7);
+            backdrop-filter: blur(4px);
+            display: none; align-items: center; justify-content: center; padding: 1rem;
+        }
+        .modal-overlay.open { display: flex; }
+        .modal-box {
+            background: #111; border: 1px solid var(--border2);
+            border-radius: 14px; padding: 1.75rem 1.5rem;
+            max-width: 380px; width: 100%;
+            display: flex; flex-direction: column; gap: 1rem;
+        }
+        .modal-icon {
+            width: 44px; height: 44px; border-radius: 12px;
+            background: rgba(239,68,68,.12);
+            display: flex; align-items: center; justify-content: center;
+            color: #fca5a5;
+        }
+        .modal-title { font-size: 1rem; font-weight: 800; }
+        .modal-sub   { font-size: 0.82rem; color: var(--muted2); line-height: 1.5; }
+        .modal-name  { color: #fff; font-weight: 700; }
+        .modal-actions { display: flex; gap: 8px; }
+        .btn-modal-cancel {
+            flex: 1; background: rgba(255,255,255,.06); border: 1px solid var(--border2);
+            color: var(--muted); border-radius: 8px; padding: .6rem;
+            font-size: 0.82rem; font-weight: 600; cursor: pointer; transition: background .2s;
+        }
+        .btn-modal-cancel:hover { background: rgba(255,255,255,.1); color: #fff; }
+        .btn-modal-confirm {
+            flex: 1; background: rgba(239,68,68,.15); border: 1px solid rgba(239,68,68,.3);
+            color: #fca5a5; border-radius: 8px; padding: .6rem;
+            font-size: 0.82rem; font-weight: 700; cursor: pointer; transition: background .2s;
+            display: flex; align-items: center; justify-content: center; gap: 6px;
+        }
+        .btn-modal-confirm:hover { background: rgba(239,68,68,.28); }
+
+        /* ── Toast ── */
+        #toast {
+            position: fixed; bottom: 1.5rem; right: 1.5rem;
+            background: #111; border: 1px solid var(--border);
+            border-radius: 10px; padding: .65rem 1rem;
+            font-size: 0.82rem; font-weight: 500;
+            display: flex; align-items: center; gap: 8px;
+            z-index: 9999; max-width: 300px;
+            transform: translateY(20px); opacity: 0;
+            transition: transform .3s, opacity .3s; pointer-events: none;
+        }
+        #toast.show { transform: translateY(0); opacity: 1; }
+        #toast.success { border-color: rgba(34,197,94,.3); color: #86efac; }
+        #toast.error   { border-color: rgba(239,68,68,.3);  color: #fca5a5; }
+        #toast.info    { border-color: rgba(59,130,246,.3);  color: #93c5fd; }
+
+        /* ── Responsive ── */
+        @media (max-width: 640px) {
+            #page { padding: 1rem .75rem 3rem; }
+            .stats-strip { grid-template-columns: repeat(2, 1fr); }
+            .cookie-row { grid-template-columns: 20px 36px 1fr auto; gap: 8px; padding: .85rem 1rem; }
+        }
+        @media (max-width: 420px) {
+            .stats-strip { grid-template-columns: repeat(2, 1fr); }
+            .cookie-uid { display: none; }
+        }
     </style>
 </head>
 <body>
 
-    <div id="addModal" class="hidden fixed inset-0 z-[70] flex items-center justify-center bg-black/40 modal-backdrop px-4">
-        <div class="bg-white rounded-2xl w-full max-w-sm p-5 shadow-2xl fade-in transform transition-all scale-100">
-            <h3 class="font-header font-bold text-lg text-gray-800 mb-2">Add New Cookie</h3>
-            <p class="text-xs text-gray-500 mb-4">Paste your Facebook cookie/appstate JSON below.</p>
-            
-            <textarea id="cookieInput" rows="5" 
-                class="w-full bg-gray-50 border border-gray-200 rounded-xl p-3 text-sm focus:outline-none focus:ring-1 focus:ring-kiro-blue mb-4 resize-none font-mono text-gray-600"
-                placeholder='[{"key": "c_user", "value": "..."}]'></textarea>
-            
-            <div id="modalError" class="hidden text-xs text-red-500 mb-3 font-bold bg-red-50 p-2 rounded-lg">Error message</div>
+<!-- ═══ NAVBAR ═══ -->
+<nav id="topnav">
+    <a href="/home" class="kiro-logo">
+        <span class="logo-kiro">Kiro</span><span class="logo-boost">Boost</span>
+    </a>
+    <a href="/home" class="nav-back">
+        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="15 18 9 12 15 6"/></svg>
+        Home
+    </a>
+</nav>
 
-            <div class="flex gap-3">
-                <button onclick="closeAddModal()" class="flex-1 py-3 bg-gray-100 text-gray-600 font-bold text-sm rounded-xl hover:bg-gray-200 transition tap-effect">Cancel</button>
-                <button onclick="submitCookie()" id="submitBtn" class="flex-1 py-3 bg-kiro-blue text-white font-bold text-sm rounded-xl shadow-lg tap-effect flex justify-center items-center gap-2">
-                    Add Account
+<!-- ═══ PAGE ═══ -->
+<div id="page">
+
+    <!-- Page header -->
+    <div class="page-header">
+        <div>
+            <div class="page-title">My Cookies</div>
+            <div class="page-sub">Manage your Facebook session cookies for boosting</div>
+        </div>
+    </div>
+
+    <!-- Stats strip -->
+    <div class="stats-strip">
+        <div class="scard">
+            <div class="scard-val" id="statTotal">—</div>
+            <div class="scard-key">Total</div>
+        </div>
+        <div class="scard">
+            <div class="scard-val green" id="statActive">—</div>
+            <div class="scard-key">Active</div>
+        </div>
+        <div class="scard">
+            <div class="scard-val yellow" id="statRestricted">—</div>
+            <div class="scard-key">Restricted</div>
+        </div>
+        <div class="scard">
+            <div class="scard-val red" id="statDead">—</div>
+            <div class="scard-key">Dead</div>
+        </div>
+    </div>
+
+    <!-- Add Cookie -->
+    <div class="add-card">
+        <div class="add-card-header">
+            <span class="section-title">Add Cookie</span>
+        </div>
+        <div class="add-card-body">
+
+            <!-- Inline messages -->
+            <div class="inline-msg error" id="addError">
+                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/></svg>
+                <span id="addErrorText"></span>
+            </div>
+            <div class="inline-msg success" id="addSuccess">
+                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="20 6 9 17 4 12"/></svg>
+                <span id="addSuccessText"></span>
+            </div>
+
+            <textarea
+                class="cookie-textarea"
+                id="cookieInput"
+                placeholder="Paste your Facebook cookie here (c_user, xs, datr, etc.)..."
+                spellcheck="false"
+                autocomplete="off"
+                oninput="clearAddMsgs()"
+            ></textarea>
+
+            <div class="field-hint">
+                <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><line x1="12" y1="16" x2="12" y2="12"/><line x1="12" y1="8" x2="12.01" y2="8"/></svg>
+                Paste the full cookie string from your browser's DevTools. The system will automatically validate and extract account info.
+            </div>
+
+            <div style="display:flex; justify-content:flex-end;">
+                <button class="btn-add" id="addBtn" onclick="addCookie()">
+                    <span id="addBtnContent">
+                        <span style="display:inline-flex;align-items:center;gap:6px;">
+                            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
+                            Add Cookie
+                        </span>
+                    </span>
                 </button>
+            </div>
+
+        </div>
+    </div>
+
+    <!-- Cookie List -->
+    <div class="list-card">
+        <div class="list-header">
+            <div class="list-header-left">
+                <span class="section-title">Saved Cookies</span>
+                <div class="filter-tabs">
+                    <button class="ftab active" data-filter="all"        onclick="switchFilter(this)">All</button>
+                    <button class="ftab"        data-filter="active"     onclick="switchFilter(this)">Active</button>
+                    <button class="ftab"        data-filter="restricted" onclick="switchFilter(this)">Restricted</button>
+                    <button class="ftab"        data-filter="expired"    onclick="switchFilter(this)">Expired</button>
+                    <button class="ftab"        data-filter="blocked"    onclick="switchFilter(this)">Blocked</button>
+                </div>
+            </div>
+        </div>
+
+        <!-- Bulk action bar -->
+        <div class="bulk-bar" id="bulkBar">
+            <span class="bulk-info" id="bulkInfo">0 selected</span>
+            <button class="btn-bulk-delete" onclick="bulkDelete()">
+                <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="3 6 5 6 21 6"/><path d="M19 6l-1 14a2 2 0 01-2 2H8a2 2 0 01-2-2L5 6"/></svg>
+                Delete Selected
+            </button>
+            <button class="btn-bulk-cancel" onclick="clearSelection()">Cancel</button>
+        </div>
+
+        <div id="cookieList">
+            <!-- Skeleton -->
+            <div id="listSkeleton">
+                ${Array(4).fill(0).map(() => `
+                <div style="display:grid;grid-template-columns:20px 40px 1fr auto;align-items:center;gap:12px;padding:.9rem 1.25rem;border-bottom:1px solid rgba(255,255,255,.05);">
+                    <div class="skeleton" style="width:15px;height:15px;border-radius:3px;"></div>
+                    <div class="skeleton" style="width:40px;height:40px;border-radius:50%;"></div>
+                    <div style="display:flex;flex-direction:column;gap:6px;">
+                        <div class="skeleton" style="height:12px;width:55%;"></div>
+                        <div class="skeleton" style="height:10px;width:80%;"></div>
+                        <div class="skeleton" style="height:9px;width:40%;"></div>
+                    </div>
+                    <div class="skeleton" style="width:60px;height:20px;border-radius:20px;"></div>
+                </div>`).join('')}
             </div>
         </div>
     </div>
 
-    <div id="app-wrapper">
-        
-        <header class="bg-kiro-blue text-white h-16 flex items-center justify-between px-4 shadow-sm sticky top-0 z-40">
-            <a href="/home" class="p-2 -ml-2 hover:bg-white/20 rounded-full transition">
-                <svg class="w-6 h-6" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M15 19l-7-7 7-7"/></svg>
-            </a>
-            <h1 class="font-header font-semibold text-lg tracking-wide">Manage Accounts</h1>
-            <button onclick="openAddModal()" class="p-2 -mr-2 hover:bg-white/20 rounded-full transition">
-                <svg class="w-6 h-6" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M12 4v16m8-8H4"/></svg>
+</div><!-- /page -->
+
+<!-- ── Delete confirm modal ── -->
+<div class="modal-overlay" id="deleteModal">
+    <div class="modal-box">
+        <div class="modal-icon">
+            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="3 6 5 6 21 6"/><path d="M19 6l-1 14a2 2 0 01-2 2H8a2 2 0 01-2-2L5 6"/><path d="M10 11v6M14 11v6"/><path d="M9 6V4h6v2"/></svg>
+        </div>
+        <div>
+            <div class="modal-title">Delete Cookie</div>
+            <div class="modal-sub" id="modalSubText">This will permanently remove <span class="modal-name" id="modalCookieName">this account</span>'s cookie. This cannot be undone.</div>
+        </div>
+        <div class="modal-actions">
+            <button class="btn-modal-cancel" onclick="closeModal()">Cancel</button>
+            <button class="btn-modal-confirm" id="modalConfirmBtn" onclick="confirmDelete()">
+                <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="3 6 5 6 21 6"/><path d="M19 6l-1 14a2 2 0 01-2 2H8a2 2 0 01-2-2L5 6"/></svg>
+                Delete
             </button>
-        </header>
-
-        <main class="p-4">
-            
-            <div class="bg-white p-4 rounded-xl shadow-card border border-gray-100 mb-6 flex justify-between items-center fade-in">
-                <div>
-                    <p class="text-[10px] text-gray-400 font-bold uppercase tracking-wider mb-0.5">Total Accounts</p>
-                    <div class="flex items-baseline gap-1">
-                        <span id="cookieCount" class="text-2xl font-bold text-gray-800">--</span>
-                        <span class="text-sm text-gray-400 font-medium">/ <span id="cookieLimit">--</span></span>
-                    </div>
-                </div>
-                <div class="text-right">
-                    <p class="text-[10px] text-gray-400 font-bold uppercase tracking-wider mb-1">Your Plan</p>
-                    <span id="planBadge" class="inline-block bg-blue-50 text-kiro-blue text-[10px] font-bold px-2.5 py-1 rounded-md border border-blue-100">Free</span>
-                </div>
-            </div>
-
-            <div class="flex justify-between items-center mb-4 px-1 fade-in">
-                <p class="text-[11px] text-gray-500 font-medium">Tap contacts to select</p>
-                <div class="flex items-center gap-2">
-                    <span id="selectedCount" class="text-xs font-bold text-kiro-blue">0 selected</span>
-                    <button onclick="deleteSelected()" id="deleteBtn" class="hidden text-xs font-bold text-red-500 bg-red-50 px-2 py-1 rounded hover:bg-red-100 transition">Delete</button>
-                </div>
-            </div>
-
-            <div id="cookieListContainer" class="fade-in">
-                <div id="cookieList" class="flex gap-4 overflow-x-auto no-scrollbar pb-4 px-1 min-h-[100px] items-start">
-                    <div class="flex justify-center w-full py-4">
-                        <div class="w-6 h-6 border-2 border-kiro-blue border-t-transparent rounded-full animate-spin"></div>
-                    </div>
-                </div>
-                
-                <div class="text-center mt-2 border-t border-gray-100 pt-4">
-                    <button onclick="selectAllCookies()" class="text-xs text-kiro-blue font-bold active:opacity-60 transition">Select All Accounts</button>
-                </div>
-            </div>
-
-        </main>
-
-        <nav class="fixed bottom-0 w-full max-w-[480px] bg-white border-t border-gray-100 pb-5 pt-2 px-4 flex justify-between items-end z-40 text-[10px] font-medium text-gray-400">
-            <a href="/home" class="flex flex-col items-center w-1/5 hover:text-kiro-blue transition group">
-                <svg class="w-6 h-6 mb-1 group-hover:scale-110 transition-transform" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 12l2-2m0 0l7-7 7 7M5 10v10a1 1 0 001 1h3m10-11l2 2m-2-2v10a1 1 0 01-1 1h-3m-6 0a1 1 0 001-1v-4a1 1 0 011-1h2a1 1 0 011 1v4a1 1 0 001 1m-6 0h6"/></svg>
-                <span>Home</span>
-            </a>
-            <a href="/inbox" class="flex flex-col items-center w-1/5 hover:text-kiro-blue transition group">
-                <svg class="w-6 h-6 mb-1 group-hover:scale-110 transition-transform" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 8l7.89 5.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z"/></svg>
-                <span>Inbox</span>
-            </a>
-            <a href="/boost" class="flex flex-col items-center w-1/5 -mt-6 group tap-effect">
-                <div class="bg-gray-50 p-1 rounded-full group-hover:-translate-y-1 transition">
-                    <div class="w-12 h-12 bg-kiro-blue rounded-full flex items-center justify-center text-white shadow-lg">
-                        <svg class="w-6 h-6" fill="currentColor" viewBox="0 0 24 24"><path d="M13 10V3L4 14h7v7l9-11h-7z"/></svg>
-                    </div>
-                </div>
-                <span class="mt-1 text-kiro-blue font-bold">Boost</span>
-            </a>
-            <a href="/transactions" class="flex flex-col items-center w-1/5 hover:text-kiro-blue transition group">
-                <svg class="w-6 h-6 mb-1 group-hover:scale-110 transition-transform" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2"/></svg>
-                <span>Orders</span>
-            </a>
-            <a href="/profile" class="flex flex-col items-center w-1/5 hover:text-kiro-blue transition group">
-                <svg class="w-6 h-6 mb-1 group-hover:scale-110 transition-transform" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z"/></svg>
-                <span>Profile</span>
-            </a>
-        </nav>
-
+        </div>
     </div>
+</div>
 
-    <script>
-        const token = localStorage.getItem('kb_token');
-        if (!token) window.location.href = '/login';
+<div id="toast"></div>
 
-        let cookies = [];
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
+<script>
+'use strict';
 
-        // FETCH COOKIES
-        async function loadCookies() {
-            try {
-                const res = await fetch('/api/user/cookies', {
-                    headers: { 'Authorization': `Bearer ${token}` }
-                });
-                const data = await res.json();
-                
-                if (data.success) {
-                    cookies = data.cookies || [];
-                    
-                    // Update Stats
-                    document.getElementById('cookieCount').textContent = data.count || cookies.length;
-                    document.getElementById('cookieLimit').textContent = data.limit || 10;
-                    
-                    const planBadge = document.getElementById('planBadge');
-                    if(data.plan === 'premium') {
-                        planBadge.textContent = "Premium";
-                        planBadge.className = "inline-block bg-amber-100 text-amber-600 text-[10px] font-bold px-2.5 py-1 rounded-md border border-amber-200";
-                    }
+/* ── Auth ── */
+const TOKEN = localStorage.getItem('token') || localStorage.getItem('kb_token');
+if (!TOKEN) { window.location.href = '/login'; }
 
-                    renderList();
-                } else {
-                    document.getElementById('cookieList').innerHTML = '<p class="text-xs text-error font-medium w-full text-center">Failed to load data</p>';
-                }
-            } catch (err) {
-                document.getElementById('cookieList').innerHTML = '<p class="text-xs text-error font-medium w-full text-center">Connection Error</p>';
-            }
-        }
+function authHeaders() {
+    return { 'Authorization': `Bearer ${TOKEN}`, 'Content-Type': 'application/json' };
+}
+async function apiFetch(url, opts = {}) {
+    const res = await fetch(url, { ...opts, headers: { ...authHeaders(), ...(opts.headers||{}) } });
+    if (res.status === 401) { logout(); return null; }
+    return res.json();
+}
 
-        // RENDER CONTACT BUBBLES
-        function renderList() {
-            const container = document.getElementById('cookieList');
-            
-            if (cookies.length === 0) {
-                container.innerHTML = `
-                    <div class="flex flex-col items-center justify-center w-full py-6 opacity-60">
-                        <div class="w-12 h-12 bg-gray-100 rounded-full flex items-center justify-center mb-2">
-                            <svg class="w-6 h-6 text-gray-300" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4"/></svg>
-                        </div>
-                        <p class="text-xs text-gray-400 font-medium">Tap + to link account</p>
-                    </div>`;
-                return;
-            }
+/* ── State ── */
+let allCookies   = [];
+let activeFilter = 'all';
+let selected     = new Set();
+let pendingDelId = null;
 
-            container.innerHTML = cookies.map((c, i) => `
-                <div onclick="toggleCookie(${i})" class="cookie-bubble flex flex-col items-center flex-shrink-0 cursor-pointer group w-[74px] relative transition-transform active:scale-95" id="cookie-${i}">
-                    <div class="avatar-circle w-[52px] h-[52px] bg-gray-100 text-kiro-blue rounded-full flex items-center justify-center font-bold text-lg mb-1.5 shadow-sm border border-gray-200 relative overflow-hidden">
-                        ${c.name.charAt(0).toUpperCase()}
-                        
-                        <div class="check-badge hidden absolute inset-0 bg-kiro-blue/80 items-center justify-center text-white backdrop-blur-[1px]">
-                            <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="3" d="M5 13l4 4L19 7"/></svg>
-                        </div>
+/* ── Spinner ── */
+const SPINNER = `<span class="geist-spinner"><svg height="16" viewBox="0 0 16 16" width="16" style="color:currentColor"><g clip-path="url(#cs)"><path d="M8 0V4" stroke="currentColor" stroke-width="1.5"/><path opacity=".5" d="M8 16V12" stroke="currentColor" stroke-width="1.5"/><path opacity=".9" d="M3.29773 1.52783L5.64887 4.7639" stroke="currentColor" stroke-width="1.5"/><path opacity=".1" d="M12.7023 1.52783L10.3511 4.7639" stroke="currentColor" stroke-width="1.5"/><path opacity=".4" d="M12.7023 14.472L10.3511 11.236" stroke="currentColor" stroke-width="1.5"/><path opacity=".6" d="M3.29773 14.472L5.64887 11.236" stroke="currentColor" stroke-width="1.5"/><path opacity=".2" d="M15.6085 5.52783L11.8043 6.7639" stroke="currentColor" stroke-width="1.5"/><path opacity=".7" d="M0.391602 10.472L4.19583 9.23598" stroke="currentColor" stroke-width="1.5"/><path opacity=".3" d="M15.6085 10.4722L11.8043 9.2361" stroke="currentColor" stroke-width="1.5"/><path opacity=".8" d="M0.391602 5.52783L4.19583 6.7639" stroke="currentColor" stroke-width="1.5"/></g><defs><clipPath id="cs"><rect width="16" height="16" fill="white"/></clipPath></defs></svg></span>`;
 
-                        ${c.status === 'active' ? `<div class="active-dot absolute bottom-1 right-1 w-2.5 h-2.5 bg-green-500 rounded-full border-2 border-white"></div>` : ''}
-                    </div>
-                    
-                    <p class="text-[10px] text-center font-bold text-gray-700 leading-tight w-full truncate px-1">${c.name.split(' ')[0]}</p>
-                    <p class="text-[8px] text-center text-gray-400 font-medium">${c.uid}</p>
-                    
-                    <input type="checkbox" class="cookie-cb hidden" data-index="${i}" data-id="${c.id}">
+/* ── Toast ── */
+function toast(msg, type = 'success') {
+    const el = document.getElementById('toast');
+    const icons = {
+        success: `<svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="20 6 9 17 4 12"/></svg>`,
+        error:   `<svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/></svg>`,
+        info:    `<svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><circle cx="12" cy="12" r="10"/><line x1="12" y1="16" x2="12" y2="12"/><line x1="12" y1="8" x2="12.01" y2="8"/></svg>`
+    };
+    el.className = `show ${type}`;
+    el.innerHTML = (icons[type]||icons.info) + msg;
+    clearTimeout(el._t);
+    el._t = setTimeout(() => el.className = '', 3200);
+}
+
+/* ── Escape html ── */
+function esc(s) { return (s||'').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;'); }
+
+/* ── Status badge ── */
+function statusBadge(status) {
+    const map = {
+        active:     '<span class="status-badge sb-active"><span class="status-dot"></span>Active</span>',
+        expired:    '<span class="status-badge sb-expired"><span class="status-dot"></span>Expired</span>',
+        blocked:    '<span class="status-badge sb-blocked"><span class="status-dot"></span>Blocked</span>',
+        restricted: '<span class="status-badge sb-restricted"><span class="status-dot"></span>Restricted</span>',
+    };
+    return map[status] || map.active;
+}
+
+/* ── Avatar initial ── */
+function fbAvatar(name) {
+    const letter = (name||'?').charAt(0).toUpperCase();
+    const colors = ['#1877f2','#4267B2','#5865f2','#7c3aed','#db2777'];
+    const bg = colors[letter.charCodeAt(0) % colors.length];
+    return `<div class="fb-avatar" style="background:${bg};color:#fff;">${letter}</div>`;
+}
+
+/* ── Filter cookies ── */
+function filtered() {
+    if (activeFilter === 'all') return allCookies;
+    return allCookies.filter(c => c.status === activeFilter);
+}
+
+/* ── Update stats ── */
+function updateStats() {
+    const total      = allCookies.length;
+    const active     = allCookies.filter(c => c.status === 'active').length;
+    const restricted = allCookies.filter(c => c.status === 'restricted').length;
+    const dead       = allCookies.filter(c => c.status === 'expired' || c.status === 'blocked').length;
+    document.getElementById('statTotal').textContent      = total;
+    document.getElementById('statActive').textContent     = active;
+    document.getElementById('statRestricted').textContent = restricted;
+    document.getElementById('statDead').textContent       = dead;
+}
+
+/* ── Render list ── */
+function renderList() {
+    const list = document.getElementById('cookieList');
+    document.getElementById('listSkeleton')?.remove();
+    const visible = filtered();
+
+    if (!visible.length) {
+        list.innerHTML = `<div class="empty-state">
+            <svg width="40" height="40" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.3"><rect x="3" y="3" width="18" height="18" rx="2"/><path d="M3 9h18M9 21V9"/></svg>
+            <div class="empty-title">${activeFilter === 'all' ? 'No cookies yet' : 'No ' + activeFilter + ' cookies'}</div>
+            <div class="empty-sub">${activeFilter === 'all' ? 'Add your first Facebook cookie above' : 'Try switching to a different filter'}</div>
+        </div>`;
+        return;
+    }
+
+    list.innerHTML = visible.map(c => {
+        const isSelected = selected.has(c.id);
+        const lastUsed   = c.lastUsed ? `Last used ${c.lastUsed}` : 'Never used';
+        return `
+        <div class="cookie-row${isSelected ? ' selected' : ''}" id="cookie-${c.id}" data-id="${c.id}">
+            <div class="ck-box${isSelected ? ' checked' : ''}" onclick="toggleSelect('${c.id}', event)" title="Select"></div>
+            ${fbAvatar(c.name)}
+            <div class="cookie-info">
+                <div class="cookie-name">${esc(c.name)}</div>
+                <div class="cookie-uid">UID: ${esc(c.uid)}</div>
+                <div class="cookie-meta">Added ${esc(c.addedAt)} · ${lastUsed}</div>
+            </div>
+            <div class="cookie-right">
+                ${statusBadge(c.status)}
+                <div class="row-actions">
+                    <button class="row-btn copy" onclick="copyCookie('${c.id}', event)" title="Copy cookie">
+                        <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="9" y="9" width="13" height="13" rx="2" ry="2"/><path d="M5 15H4a2 2 0 01-2-2V4a2 2 0 012-2h9a2 2 0 012 2v1"/></svg>
+                    </button>
+                    <button class="row-btn del" onclick="promptDelete('${c.id}', '${esc(c.name)}', event)" title="Delete">
+                        <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="3 6 5 6 21 6"/><path d="M19 6l-1 14a2 2 0 01-2 2H8a2 2 0 01-2-2L5 6"/><path d="M10 11v6M14 11v6"/></svg>
+                    </button>
                 </div>
-            `).join('');
-        }
+            </div>
+        </div>`;
+    }).join('');
+}
 
-        // --- SELECTION LOGIC ---
-        function toggleCookie(index) {
-            const card = document.getElementById(`cookie-${index}`);
-            const cb = card.querySelector('.cookie-cb');
-            
-            cb.checked = !cb.checked;
-            
-            // Toggle visual state
-            if(cb.checked) {
-                card.classList.add('selected');
-                // Hide active dot when selected to show checkmark cleanly
-                const dot = card.querySelector('.active-dot');
-                if(dot) dot.classList.add('hidden');
-            } else {
-                card.classList.remove('selected');
-                const dot = card.querySelector('.active-dot');
-                if(dot) dot.classList.remove('hidden');
-            }
-            updateSelectionUI();
-        }
+/* ── Selection ── */
+function toggleSelect(id, e) {
+    e.stopPropagation();
+    if (selected.has(id)) selected.delete(id);
+    else selected.add(id);
+    updateBulkBar();
+    renderList();
+}
 
-        function selectAllCookies() {
-            const cbs = document.querySelectorAll('.cookie-cb');
-            const allChecked = Array.from(cbs).every(cb => cb.checked);
-            
-            cbs.forEach(cb => {
-                cb.checked = !allChecked;
-                const card = cb.closest('.cookie-bubble');
-                const dot = card.querySelector('.active-dot');
-                
-                if(!allChecked) {
-                    card.classList.add('selected');
-                    if(dot) dot.classList.add('hidden');
-                } else {
-                    card.classList.remove('selected');
-                    if(dot) dot.classList.remove('hidden');
-                }
-            });
-            updateSelectionUI();
-        }
+function updateBulkBar() {
+    const bar  = document.getElementById('bulkBar');
+    const info = document.getElementById('bulkInfo');
+    if (selected.size > 0) {
+        bar.classList.add('show');
+        info.textContent = `${selected.size} cookie${selected.size > 1 ? 's' : ''} selected`;
+    } else {
+        bar.classList.remove('show');
+    }
+}
 
-        function updateSelectionUI() {
-            const count = document.querySelectorAll('.cookie-cb:checked').length;
-            document.getElementById('selectedCount').textContent = `${count} selected`;
-            
-            // Show delete button if selection > 0
-            const delBtn = document.getElementById('deleteBtn');
-            if(count > 0) {
-                delBtn.classList.remove('hidden');
-            } else {
-                delBtn.classList.add('hidden');
-            }
-        }
+function clearSelection() {
+    selected.clear();
+    updateBulkBar();
+    renderList();
+}
 
-        function getSelectedIds() {
-            return Array.from(document.querySelectorAll('.cookie-cb:checked')).map(cb => cb.dataset.id);
-        }
+/* ── Filter switch ── */
+function switchFilter(el) {
+    document.querySelectorAll('.ftab').forEach(t => t.classList.remove('active'));
+    el.classList.add('active');
+    activeFilter = el.dataset.filter;
+    clearSelection();
+    renderList();
+}
 
-        // --- ADD COOKIE ---
-        function openAddModal() {
-            document.getElementById('addModal').classList.remove('hidden');
-            document.getElementById('cookieInput').value = '';
-            document.getElementById('modalError').classList.add('hidden');
-        }
+/* ── Copy cookie ── */
+function copyCookie(id, e) {
+    e.stopPropagation();
+    const c = allCookies.find(x => x.id === id);
+    if (!c) return;
+    navigator.clipboard.writeText(c.cookie).then(() => {
+        toast('Cookie copied to clipboard.', 'info');
+    }).catch(() => {
+        toast('Failed to copy.', 'error');
+    });
+}
 
-        function closeAddModal() {
-            document.getElementById('addModal').classList.add('hidden');
-        }
+/* ── Delete confirm modal ── */
+function promptDelete(id, name, e) {
+    if (e) e.stopPropagation();
+    pendingDelId = id;
+    document.getElementById('modalCookieName').textContent = name;
+    document.getElementById('deleteModal').classList.add('open');
+}
+function closeModal() {
+    pendingDelId = null;
+    document.getElementById('deleteModal').classList.remove('open');
+}
+document.getElementById('deleteModal').addEventListener('click', function(e) {
+    if (e.target === this) closeModal();
+});
 
-        async function submitCookie() {
-            const cookie = document.getElementById('cookieInput').value.trim();
-            const btn = document.getElementById('submitBtn');
-            const errorText = document.getElementById('modalError');
+async function confirmDelete() {
+    if (!pendingDelId) return;
+    const id  = pendingDelId;
+    const btn = document.getElementById('modalConfirmBtn');
+    btn.innerHTML = SPINNER;
+    btn.disabled  = true;
 
-            if (!cookie) return;
+    const data = await apiFetch(`/api/user/cookies/${id}`, { method: 'DELETE' });
 
-            btn.disabled = true;
-            btn.innerHTML = '<div class="w-4 h-4 border-2 border-white border-t-transparent rounded-full animate-spin"></div>';
-            errorText.classList.add('hidden');
+    btn.innerHTML = `<svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="3 6 5 6 21 6"/><path d="M19 6l-1 14a2 2 0 01-2 2H8a2 2 0 01-2-2L5 6"/></svg> Delete`;
+    btn.disabled  = false;
+    closeModal();
 
-            try {
-                const res = await fetch('/api/user/cookies', {
-                    method: 'POST',
-                    headers: { 'Content-Type': 'application/json', 'Authorization': `Bearer ${token}` },
-                    body: JSON.stringify({ cookie })
-                });
-                const data = await res.json();
+    if (data?.success) {
+        allCookies = allCookies.filter(c => c.id !== id);
+        selected.delete(id);
+        updateStats();
+        updateBulkBar();
+        renderList();
+        toast('Cookie deleted.');
+    } else {
+        toast(data?.message || 'Failed to delete.', 'error');
+    }
+}
 
-                if (data.success) {
-                    closeAddModal();
-                    loadCookies(); // Refresh UI
-                } else {
-                    throw new Error(data.message || 'Invalid format');
-                }
-            } catch (err) {
-                errorText.textContent = err.message;
-                errorText.classList.remove('hidden');
-            } finally {
-                btn.disabled = false;
-                btn.innerHTML = 'Add Account';
-            }
-        }
+/* ── Bulk delete ── */
+async function bulkDelete() {
+    if (!selected.size) return;
+    const ids = Array.from(selected);
+    const data = await apiFetch('/api/user/cookies/delete-multiple', {
+        method: 'POST',
+        body: JSON.stringify({ cookieIds: ids })
+    });
+    if (data?.success) {
+        allCookies = allCookies.filter(c => !ids.includes(c.id));
+        selected.clear();
+        updateStats();
+        updateBulkBar();
+        renderList();
+        toast(`${data.deletedCount} cookie${data.deletedCount > 1 ? 's' : ''} deleted.`);
+    } else {
+        toast(data?.message || 'Failed to delete.', 'error');
+    }
+}
 
-        // --- DELETE LOGIC ---
-        async function deleteSelected() {
-            const ids = getSelectedIds();
-            if(ids.length === 0) return;
+/* ── Add cookie ── */
+function clearAddMsgs() {
+    document.getElementById('addError').classList.remove('visible');
+    document.getElementById('addSuccess').classList.remove('visible');
+}
 
-            if(!confirm(`Delete ${ids.length} selected accounts?`)) return;
+async function addCookie() {
+    const input   = document.getElementById('cookieInput');
+    const btn     = document.getElementById('addBtn');
+    const content = document.getElementById('addBtnContent');
+    const cookie  = input.value.trim();
 
-            try {
-                await fetch('/api/user/cookies/delete-multiple', {
-                    method: 'POST',
-                    headers: { 
-                        'Content-Type': 'application/json',
-                        'Authorization': `Bearer ${token}`
-                    },
-                    body: JSON.stringify({ cookieIds: ids })
-                });
-                loadCookies();
-                document.getElementById('deleteBtn').classList.add('hidden');
-            } catch (err) {
-                alert('Failed to delete');
-            }
-        }
+    clearAddMsgs();
 
-        // Init
-        loadCookies();
-    </script>
+    if (!cookie) {
+        document.getElementById('addErrorText').textContent = 'Please paste a cookie string.';
+        document.getElementById('addError').classList.add('visible');
+        input.focus();
+        return;
+    }
+
+    btn.disabled  = true;
+    content.innerHTML = SPINNER;
+
+    const data = await apiFetch('/api/user/cookies', {
+        method: 'POST',
+        body: JSON.stringify({ cookie })
+    });
+
+    btn.disabled = false;
+    content.innerHTML = `<span style="display:inline-flex;align-items:center;gap:6px;"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>Add Cookie</span>`;
+
+    if (data?.success) {
+        input.value = '';
+        document.getElementById('addSuccessText').textContent = `✓ Added "${data.name}" (UID: ${data.uid}) successfully.`;
+        document.getElementById('addSuccess').classList.add('visible');
+        await loadCookies();
+        toast(`Cookie added — ${data.name}`);
+    } else {
+        document.getElementById('addErrorText').textContent = data?.message || 'Failed to add cookie.';
+        document.getElementById('addError').classList.add('visible');
+    }
+}
+
+/* ── Load cookies (GET /api/user/cookies) ── */
+async function loadCookies() {
+    const data = await apiFetch('/api/user/cookies');
+    document.getElementById('listSkeleton')?.remove();
+
+    if (!data || !data.success) {
+        toast('Failed to load cookies.', 'error');
+        document.getElementById('cookieList').innerHTML = `<div class="empty-state"><span>Failed to load cookies.</span></div>`;
+        return;
+    }
+
+    allCookies = data.cookies || [];
+    updateStats();
+    renderList();
+}
+
+/* ── Logout ── */
+function logout() {
+    ['token','kb_token','userRole','username','kb_user'].forEach(k => localStorage.removeItem(k));
+    window.location.href = '/login';
+}
+
+/* ── Enter key in textarea ── */
+document.getElementById('cookieInput').addEventListener('keydown', function(e) {
+    if (e.key === 'Enter' && (e.ctrlKey || e.metaKey)) {
+        addCookie();
+    }
+});
+
+/* ── Init ── */
+loadCookies();
+</script>
+
 </body>
 </html>
