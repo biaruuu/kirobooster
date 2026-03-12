@@ -3,627 +3,442 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>KiroBoost — Login</title>
+    <title>KiroBoost - Sign In</title>
 
-    <!-- Bootstrap 5 -->
-    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
-    <!-- Geist Font (Google Fonts) -->
+    <link rel="shortcut icon" href="img/fav-icon.png" type="image/x-icon">
+    
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-T3c6CoIi6uLrA9TneNEoa7RxnatzjcDSCmG1MXxSR1GAsXEV/Dwwykc2MPK8M2HN" crossorigin="anonymous">
+    
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Geist:wght@300;400;500;600;700&display=swap" rel="stylesheet">
-
+    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet">
+    
     <style>
-        /* ───── Design Tokens ───────────────────────────────── */
-        :root {
-            --bg:             #000000;
-            --surface:        #0a0a0a;
-            --surface-2:      #111111;
-            --border:         #1f1f1f;
-            --border-strong:  #2e2e2e;
-            --text:           #ededed;
-            --text-muted:     #888888;
-            --text-faint:     #484848;
-            --accent:         #ffffff;
-            --accent-dim:     #ededed;
-            --danger:         #ff4040;
-            --danger-bg:      #150000;
-            --danger-border:  #3a0000;
-            --r-sm: 6px;
-            --r-md: 10px;
-            --r-lg: 14px;
-            --font: 'Geist', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
-            --ease: 0.15s ease;
-        }
-
-        /* ───── Reset ────────────────────────────────────────── */
-        *, *::before, *::after { box-sizing: border-box; }
-
-        body {
-            font-family: var(--font);
-            background-color: var(--bg);
-            color: var(--text);
-            min-height: 100svh;
-            display: flex;
-            flex-direction: column;
-            -webkit-font-smoothing: antialiased;
+        * {
             margin: 0;
             padding: 0;
+            font-family: 'Outfit', sans-serif !important;
+            scroll-behavior: smooth !important;
         }
 
-        ::selection { background: #fff; color: #000; }
+        *::selection {
+            background-color: #4C4948 !important;
+            color: white;
+        }
 
-        /* Subtle grid overlay */
-        body::after {
-            content: '';
+        html, body {
+            min-height: 100vh;
+            background-color: #000;
+        }
+
+        /* Main wrapper — normal flow, scrollable */
+        #mainBg {
+            width: 100%;
+            min-height: 100vh;
+            background-color: #000000;
+            display: flex;
+            flex-direction: column;
+            position: relative;
+            overflow-x: hidden;
+        }
+
+        /* Background image */
+        #bgImg {
             position: fixed;
-            inset: 0;
-            background-image:
-                linear-gradient(rgba(255,255,255,0.025) 1px, transparent 1px),
-                linear-gradient(90deg, rgba(255,255,255,0.025) 1px, transparent 1px);
-            background-size: 48px 48px;
+            top: 0; left: 0;
+            width: 100%; height: 100%;
+            object-fit: cover;
+            opacity: 0.45;
             pointer-events: none;
             z-index: 0;
         }
 
-        /* ───── Header ───────────────────────────────────────── */
-        .kb-nav {
-            position: sticky;
-            top: 0;
-            z-index: 200;
-            background: rgba(0,0,0,0.85);
-            backdrop-filter: blur(16px);
-            -webkit-backdrop-filter: blur(16px);
-            border-bottom: 1px solid var(--border);
-        }
-
-        .kb-nav-inner {
-            max-width: 1200px;
-            margin: 0 auto;
-            padding: 0 24px;
-            height: 56px;
+        /* Everything above bg */
+        #pageWrap {
+            position: relative;
+            z-index: 1;
             display: flex;
-            align-items: center;
-            justify-content: space-between;
+            flex-direction: column;
+            min-height: 100vh;
         }
 
-        .kb-brand {
-            display: flex;
-            align-items: center;
-            gap: 9px;
-            text-decoration: none;
-            color: var(--text);
-            font-size: 15px;
-            font-weight: 600;
-            letter-spacing: -0.025em;
-        }
-        .kb-brand:hover { color: var(--text); opacity: 0.75; }
-
-        .kb-brand-mark {
-            width: 27px;
-            height: 27px;
-            background: #fff;
-            border-radius: 6px;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            flex-shrink: 0;
+        /* Navbar */
+        #navbar {
+            padding: 0 2rem;
         }
 
-        .kb-nav-end {
-            display: flex;
-            align-items: center;
-            gap: 6px;
+        #navbarBrand img {
+            width: 180px;
+            height: auto;
+            display: block;
         }
 
-        .kb-nav-link {
-            font-size: 13px;
-            color: var(--text-muted);
-            text-decoration: none;
-            padding: 6px 10px;
-            border-radius: var(--r-sm);
-            transition: color var(--ease), background var(--ease);
-            font-weight: 500;
-        }
-        .kb-nav-link:hover { color: var(--text); background: var(--surface-2); }
-
-        .kb-nav-cta {
-            font-size: 13px;
-            font-family: var(--font);
-            font-weight: 500;
-            color: #000;
-            background: #fff;
-            border: none;
-            padding: 6px 14px;
-            border-radius: var(--r-sm);
-            cursor: pointer;
-            text-decoration: none;
-            transition: background var(--ease);
-        }
-        .kb-nav-cta:hover { background: var(--accent-dim); color: #000; }
-
-        /* ───── Main ─────────────────────────────────────────── */
-        .kb-main {
+        /* Center section grows */
+        #signIn {
             flex: 1;
             display: flex;
-            align-items: center;
             justify-content: center;
-            padding: 56px 20px;
-            position: relative;
-            z-index: 1;
-        }
-
-        /* ───── Card ─────────────────────────────────────────── */
-        .kb-card {
-            width: 100%;
-            max-width: 392px;
-            background: var(--surface);
-            border: 1px solid var(--border);
-            border-radius: var(--r-lg);
-            overflow: hidden;
-            box-shadow: 0 0 0 1px rgba(255,255,255,0.03), 0 8px 40px rgba(0,0,0,0.6);
-            animation: cardUp 0.28s cubic-bezier(0.16,1,0.3,1) both;
-        }
-
-        @keyframes cardUp {
-            from { opacity: 0; transform: translateY(10px); }
-            to   { opacity: 1; transform: translateY(0); }
-        }
-
-        /* Card header */
-        .kb-card-top {
-            padding: 26px 26px 20px;
-            border-bottom: 1px solid var(--border);
-        }
-
-        .kb-eyebrow {
-            font-size: 11px;
-            font-weight: 500;
-            letter-spacing: 0.09em;
-            text-transform: uppercase;
-            color: var(--text-faint);
-            margin-bottom: 12px;
-            display: flex;
             align-items: center;
-            gap: 7px;
-        }
-        .kb-eyebrow::before {
-            content: '';
-            display: inline-block;
-            width: 4px;
-            height: 4px;
-            border-radius: 50%;
-            background: var(--text-faint);
-            flex-shrink: 0;
+            padding: 2rem 1rem;
         }
 
-        .kb-title {
-            font-size: 19px;
-            font-weight: 600;
-            letter-spacing: -0.03em;
-            color: var(--text);
-            margin-bottom: 3px;
-        }
-
-        .kb-sub {
-            font-size: 13px;
-            color: var(--text-muted);
-        }
-
-        /* Card body */
-        .kb-card-body {
-            padding: 22px 26px 24px;
-        }
-
-        /* Card foot */
-        .kb-card-foot {
-            padding: 14px 26px;
-            border-top: 1px solid var(--border);
-            text-align: center;
-        }
-        .kb-card-foot p {
-            font-size: 13px;
-            color: var(--text-muted);
-            margin: 0;
-        }
-        .kb-card-foot a {
-            color: var(--text);
-            font-weight: 500;
-            text-decoration: none;
-        }
-        .kb-card-foot a:hover { opacity: 0.7; }
-
-        /* ───── Fields ───────────────────────────────────────── */
-        .kb-field { margin-bottom: 12px; }
-
-        .kb-field-header {
-            display: flex;
-            align-items: center;
-            justify-content: space-between;
-            margin-bottom: 6px;
-        }
-
-        .kb-label {
-            font-size: 12px;
-            font-weight: 500;
-            color: var(--text-muted);
-            letter-spacing: 0.01em;
-        }
-
-        .kb-forgot {
-            font-size: 11px;
-            color: var(--text-faint);
-            text-decoration: none;
-            font-weight: 500;
-            transition: color var(--ease);
-        }
-        .kb-forgot:hover { color: var(--text-muted); }
-
-        .kb-input-wrap { position: relative; }
-
-        .kb-input {
+        /* Card */
+        #signInner {
             width: 100%;
-            height: 36px;
-            padding: 0 36px 0 11px;
-            background: var(--surface-2);
-            border: 1px solid var(--border);
-            border-radius: var(--r-sm);
-            font-family: var(--font);
-            font-size: 14px;
-            color: var(--text);
-            outline: none;
-            transition: border-color var(--ease), box-shadow var(--ease), background var(--ease);
-        }
-        .kb-input::placeholder { color: var(--text-faint); font-size: 13px; }
-        .kb-input:focus {
-            border-color: rgba(255,255,255,0.4);
-            box-shadow: 0 0 0 3px rgba(255,255,255,0.06);
-            background: #0d0d0d;
+            max-width: 450px;
+            background: rgba(0,0,0,0.80);
+            border-radius: 8px;
+            padding: 2.5rem 2rem;
+            display: flex;
+            flex-direction: column;
+            gap: 0;
         }
 
-        .kb-icon-btn {
+        .form-control {
+            border: 1px solid rgb(94,96,96) !important;
+            color: white !important;
+        }
+
+        .form-control::placeholder {
+            user-select: none !important;
+        }
+
+        .form-control:focus {
+            color: #ffffff !important;
+            background-color: transparent !important;
+            border-color: #ffffff !important;
+            outline: 0;
+            box-shadow: 0 0 0 0.2rem rgba(252,252,252,0.25) !important;
+        }
+
+        .form-floating > .form-control:focus ~ label {
+            font-size: 0.8rem !important;
+            font-weight: 100 !important;
+        }
+
+        .form-floating > .form-control-plaintext ~ label::after,
+        .form-floating > .form-control:focus ~ label::after,
+        .form-floating > .form-control:not(:placeholder-shown) ~ label::after,
+        .form-floating > .form-select ~ label::after {
             position: absolute;
-            right: 8px;
-            top: 50%;
-            transform: translateY(-50%);
-            background: none;
-            border: none;
-            padding: 4px;
-            border-radius: 4px;
-            color: var(--text-faint);
-            cursor: pointer;
-            display: flex;
-            align-items: center;
-            transition: color var(--ease);
-            line-height: 0;
-        }
-        .kb-icon-btn:hover { color: var(--text-muted); }
-
-        /* ───── Alert ────────────────────────────────────────── */
-        .kb-alert {
-            display: none;
-            align-items: flex-start;
-            gap: 8px;
-            padding: 10px 11px;
-            border-radius: var(--r-sm);
-            border: 1px solid var(--danger-border);
-            background: var(--danger-bg);
-            margin-bottom: 12px;
-            animation: fadeIn 0.18s ease;
-        }
-        .kb-alert.show { display: flex; }
-        .kb-alert svg { flex-shrink: 0; color: var(--danger); margin-top: 1px; }
-        .kb-alert-msg {
-            font-size: 12px;
-            color: #ff7070;
-            line-height: 1.5;
+            inset: 1rem 0.2rem;
+            z-index: -1;
+            height: 1.5em;
+            content: "";
+            background-color: transparent !important;
         }
 
-        @keyframes fadeIn {
-            from { opacity: 0; transform: translateY(-3px); }
-            to   { opacity: 1; transform: translateY(0); }
+        #inpLabel {
+            color: #B4B4B4 !important;
         }
 
-        /* ───── Button ───────────────────────────────────────── */
-        .kb-btn {
-            width: 100%;
-            height: 36px;
+        .anchorHov:hover {
+            text-decoration: underline !important;
+        }
+
+        /* Sign In Button */
+        .signin-btn {
+            background-color: #FFFFFF !important;
+            color: #000000 !important;
+            font-size: 1rem;
+            font-weight: 700;
+            transition: background-color 0.2s ease;
+            height: 52px;
             display: flex;
             align-items: center;
             justify-content: center;
-            gap: 7px;
-            font-family: var(--font);
-            font-size: 13.5px;
-            font-weight: 500;
+            gap: 8px;
             letter-spacing: -0.01em;
-            border: none;
-            border-radius: var(--r-sm);
-            cursor: pointer;
-            transition: background var(--ease), opacity var(--ease), transform 0.1s;
-            margin-top: 4px;
         }
 
-        .kb-btn-white {
-            background: #fff;
-            color: #000;
+        .signin-btn:hover:not(:disabled) {
+            background-color: #E0E0E0 !important;
         }
-        .kb-btn-white:hover:not(:disabled) { background: #ebebeb; }
-        .kb-btn-white:active:not(:disabled) { transform: scale(0.988); }
-        .kb-btn-white:disabled { opacity: 0.45; cursor: not-allowed; pointer-events: none; }
 
-        /* ───── Spinner ──────────────────────────────────────── */
-        .kb-spin {
-            width: 14px;
-            height: 14px;
-            border: 2px solid rgba(0,0,0,0.15);
-            border-top-color: #000;
-            border-radius: 50%;
-            animation: spin 0.6s linear infinite;
+        .signin-btn:disabled {
+            opacity: 0.85 !important;
+            cursor: not-allowed;
         }
-        @keyframes spin { to { transform: rotate(360deg); } }
 
-        /* ───── Page Footer ──────────────────────────────────── */
-        .kb-footer {
-            border-top: 1px solid var(--border);
-            padding: 14px 24px;
+        /* Geist Spinner */
+        .geist-spinner {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            animation: spin 0.8s linear infinite;
+        }
+
+        @keyframes spin {
+            from { transform: rotate(0deg); }
+            to   { transform: rotate(360deg); }
+        }
+
+        /* Error Box */
+        .error-box {
+            background-color: rgba(239,68,68,0.12);
+            border: 1px solid rgba(239,68,68,0.4);
+            border-radius: 6px;
+            padding: 10px 14px;
+            color: #fca5a5;
+            font-size: 0.875rem;
+            font-weight: 500;
+            align-items: center;
+            gap: 8px;
+            display: none;
+        }
+        .error-box.visible { display: flex; }
+
+        /* Cloudflare badge */
+        .cf-badge {
+            display: flex;
+            align-items: flex-start;
+            gap: 6px;
+            color: #B4B4B4;
+            font-size: 0.78rem;
+            font-weight: 400;
+            line-height: 1.6;
+        }
+
+        .cf-badge svg {
+            flex-shrink: 0;
+            margin-top: 2px;
+        }
+
+
+        /* KiroBoost text logo */
+        .kiro-logo {
+            display: inline-flex;
+            align-items: baseline;
+            font-family: 'Outfit', sans-serif !important;
+            font-size: 1.75rem;
+            line-height: 1;
+            letter-spacing: -0.04em;
+            user-select: none;
+        }
+
+        .logo-kiro {
+            font-weight: 800;
+            color: #ffffff;
+            font-style: italic;
+        }
+
+        .logo-boost {
+            font-weight: 300;
+            color: rgba(255,255,255,0.45);
+            font-style: normal;
+            letter-spacing: -0.02em;
+        }
+
+        /* Footer */
+        footer {
+            background: rgba(0,0,0,0.75);
             position: relative;
             z-index: 1;
         }
-        .kb-footer-inner {
-            max-width: 1200px;
-            margin: 0 auto;
-            display: flex;
-            align-items: center;
-            justify-content: space-between;
-            flex-wrap: wrap;
-            gap: 8px;
-        }
-        .kb-footer-copy {
-            font-size: 12px;
-            color: var(--text-faint);
-        }
-        .kb-footer-links {
-            display: flex;
-            align-items: center;
-            gap: 14px;
-        }
-        .kb-footer-links a {
-            font-size: 12px;
-            color: var(--text-faint);
-            text-decoration: none;
-            transition: color var(--ease);
-        }
-        .kb-footer-links a:hover { color: var(--text-muted); }
 
-        /* ───── Responsive ───────────────────────────────────── */
-        @media (max-width: 480px) {
-            .kb-main { padding: 36px 16px 48px; align-items: flex-start; }
-            .kb-card { border-radius: var(--r-md); }
-            .kb-card-top { padding: 20px 20px 16px; }
-            .kb-card-body { padding: 18px 20px 20px; }
-            .kb-card-foot { padding: 12px 20px; }
-            .kb-nav-inner { padding: 0 16px; }
-            .kb-footer { padding: 12px 16px; }
-            .kb-footer-links { gap: 10px; }
+        /* Mobile */
+        @media only screen and (max-width: 600px) {
+            #bgImg { display: none; }
+            #signInner {
+                max-width: 100% !important;
+                border-radius: 0;
+                padding: 2rem 1.25rem;
+                background: transparent;
+            }
+            #signIn {
+                align-items: flex-start;
+                padding-top: 1rem;
+            }
+            #navbarBrand img {
+                width: 140px !important;
+            }
         }
 
-        @media (max-width: 360px) {
-            .kb-title { font-size: 17px; }
-            .kb-card-top { padding: 16px 16px 14px; }
-            .kb-card-body { padding: 16px; }
-            .kb-card-foot { padding: 10px 16px; }
-        }
-
-        /* Tablet centered */
-        @media (min-width: 768px) and (max-width: 1024px) {
-            .kb-main { padding: 64px 24px; }
+        @media only screen and (max-width: 1280px) {
+            #navbar { padding: 0 1rem !important; }
         }
     </style>
 </head>
 <body>
 
-    <!-- ───── Navigation ─────────────────────────────────────── -->
-    <nav class="kb-nav">
-        <div class="kb-nav-inner">
-            <a href="/" class="kb-brand">
-                <div class="kb-brand-mark">
-                    <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#000" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
-                        <path d="M13 2L3 14h9l-1 8 10-12h-9l1-8z"/>
-                    </svg>
-                </div>
-                KiroBoost
-            </a>
-            <div class="kb-nav-end">
-                <a href="/register" class="kb-nav-link">Sign up</a>
-                <a href="/register" class="kb-nav-cta">Get started</a>
-            </div>
-        </div>
-    </nav>
+    <div id="mainBg">
 
-    <!-- ───── Main ────────────────────────────────────────────── -->
-    <main class="kb-main">
-        <div class="kb-card">
+        <!-- Fixed background image -->
+        <img src="img/signinBg.jpg" id="bgImg" alt="">
 
-            <!-- Top -->
-            <div class="kb-card-top">
-                <div class="kb-eyebrow">KiroBoost</div>
-                <h1 class="kb-title">Welcome back</h1>
-                <p class="kb-sub">Log in to your account to continue.</p>
-            </div>
+        <!-- Page content (scrollable) -->
+        <div id="pageWrap">
 
-            <!-- Body -->
-            <div class="kb-card-body">
+            <!-- Navbar -->
+            <nav class="navbar bg-transparent align-items-center w-100 py-3" id="navbar">
+                <a href="index.html" class="navbar-brand px-2 text-decoration-none" id="navbarBrand">
+                    <span class="kiro-logo">
+                        <span class="logo-kiro">Kiro</span><span class="logo-boost">Boost</span>
+                    </span>
+                </a>
+            </nav>
 
-                <!-- Error -->
-                <div class="kb-alert" id="errorBox" role="alert" aria-live="polite">
-                    <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                        <circle cx="12" cy="12" r="10"/>
-                        <line x1="12" y1="8" x2="12" y2="12"/>
-                        <line x1="12" y1="16" x2="12.01" y2="16"/>
-                    </svg>
-                    <span class="kb-alert-msg" id="errorText"></span>
-                </div>
+            <!-- Sign In Section -->
+            <div id="signIn">
+                <div id="signInner">
 
-                <!-- Username -->
-                <div class="kb-field">
-                    <div class="kb-field-header">
-                        <label class="kb-label" for="username">Username</label>
-                    </div>
-                    <div class="kb-input-wrap">
-                        <input
-                            class="kb-input"
-                            type="text"
-                            id="username"
-                            placeholder="Enter your username"
-                            autocomplete="username"
-                            spellcheck="false"
-                            autofocus
-                        >
-                    </div>
-                </div>
+                    <h2 class="fw-semibold text-white mb-4" style="letter-spacing:-0.03em;">Sign In</h2>
 
-                <!-- Password -->
-                <div class="kb-field">
-                    <div class="kb-field-header">
-                        <label class="kb-label" for="password">Password</label>
-                        <a class="kb-forgot" href="#" onclick="alert('Please contact support.'); return false;">Forgot password?</a>
-                    </div>
-                    <div class="kb-input-wrap">
-                        <input
-                            class="kb-input"
-                            type="password"
-                            id="password"
-                            placeholder="Enter your password"
-                            autocomplete="current-password"
-                        >
-                        <button class="kb-icon-btn" id="eyeBtn" type="button" aria-label="Toggle password" onclick="togglePassword()">
-                            <svg id="eyeIcon" width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                                <path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/>
-                                <circle cx="12" cy="12" r="3"/>
+                    <form class="d-flex flex-column gap-3" id="loginForm" onsubmit="return false;">
+
+                        <!-- Error Box -->
+                        <div class="error-box" id="errorBox">
+                            <svg width="15" height="15" viewBox="0 0 15 15" fill="none">
+                                <path d="M7.5 1C3.91 1 1 3.91 1 7.5S3.91 14 7.5 14 14 11.09 14 7.5 11.09 1 7.5 1zm.75 9.75h-1.5v-1.5h1.5v1.5zm0-3h-1.5v-4.5h1.5v4.5z" fill="#fca5a5"/>
                             </svg>
+                            <span id="errorText"></span>
+                        </div>
+
+                        <!-- Username -->
+                        <div class="form-floating w-100 rounded-1" style="background-color:rgb(22 22 22 / 70%);">
+                            <input type="text" class="form-control rounded-1 bg-transparent" id="floatingInput" placeholder="Username" required autocomplete="username">
+                            <label for="floatingInput" class="inpLabel d-block bg-transparent fw-bold" id="inpLabel">Username</label>
+                        </div>
+
+                        <!-- Password -->
+                        <div class="form-floating w-100 rounded-1" style="background-color:rgb(22 22 22 / 70%);">
+                            <input type="password" class="form-control rounded-1 bg-transparent" id="floatingPassword" placeholder="Password" required autocomplete="current-password">
+                            <label for="floatingPassword" class="inpLabel d-block bg-transparent fw-bold" id="inpLabel">Password</label>
+                        </div>
+
+                        <!-- Sign In Button -->
+                        <button type="button" class="btn w-100 signin-btn rounded-1 border-0 mt-1" id="loginBtn" onclick="login()">
+                            <span id="btnContent">Sign In</span>
                         </button>
+
+                    </form>
+
+                    <!-- Below form -->
+                    <div class="d-flex flex-column gap-2 mt-4">
+
+                        <span class="d-flex align-items-center gap-2">
+                            <span style="color:#B4B4B4;font-weight:600;font-size:0.95rem;">New to KiroBoost?</span>
+                            <a href="index.html" class="anchorHov text-decoration-none text-white fw-bolder">Sign Up Now.</a>
+                        </span>
+
+                        <!-- Cloudflare Badge -->
+                        <div class="cf-badge mt-1">
+                            <svg data-testid="geist-icon" height="16" stroke-linejoin="round" style="color:currentColor;" viewBox="0 0 16 16" width="16">
+                                <path d="M14.3038 7.872L12.5118 7.456L12.1918 7.328L3.96777 7.392V11.36L14.3038 11.392V7.872Z" fill="white"></path>
+                                <path d="M10.9441 11.008C10.9956 10.8717 11.0138 10.7251 10.9971 10.5804C10.9804 10.4356 10.9293 10.297 10.8481 10.176C10.7648 10.0761 10.6625 9.99351 10.5472 9.93311C10.4319 9.87271 10.3058 9.83564 10.1761 9.82402L4.60814 9.76002C4.57614 9.76002 4.54414 9.72802 4.51214 9.72802C4.50469 9.72243 4.49864 9.71518 4.49447 9.70685C4.49031 9.69852 4.48814 9.68933 4.48814 9.68002C4.48814 9.6707 4.49031 9.66151 4.49447 9.65318C4.49864 9.64485 4.50469 9.6376 4.51214 9.63202C4.54414 9.56802 4.57614 9.53602 4.64014 9.53602L10.2401 9.47202C10.5957 9.43256 10.9343 9.29911 11.2211 9.08539C11.5079 8.87167 11.7326 8.5854 11.8721 8.25602L12.1921 7.42402C12.1921 7.39202 12.2241 7.36002 12.1921 7.32802C12.0182 6.55311 11.596 5.85618 10.9898 5.34312C10.3835 4.83006 9.62638 4.52893 8.83338 4.48548C8.04037 4.44202 7.25486 4.65863 6.5962 5.10238C5.93754 5.54612 5.44174 6.19276 5.18414 6.94402C4.84973 6.70518 4.44182 6.59187 4.03214 6.62402C3.65616 6.66594 3.30563 6.8345 3.03813 7.102C2.77062 7.3695 2.60206 7.72004 2.56014 8.09602C2.53883 8.28846 2.54965 8.48311 2.59214 8.67202C1.9838 8.68883 1.40603 8.94233 0.981719 9.37859C0.557411 9.81485 0.320056 10.3994 0.32014 11.008C0.314889 11.1263 0.325653 11.2447 0.35214 11.36C0.353609 11.385 0.364196 11.4086 0.381891 11.4263C0.399586 11.444 0.42316 11.4545 0.448141 11.456H10.7201C10.7841 11.456 10.8481 11.424 10.8481 11.36L10.9441 11.008Z" fill="#F48120"></path>
+                                <path d="M12.7038 7.42401H12.5438C12.5118 7.42401 12.4798 7.45601 12.4478 7.48801L12.2238 8.25601C12.1723 8.3923 12.1542 8.53893 12.1709 8.68366C12.1876 8.82839 12.2386 8.96703 12.3198 9.08801C12.4032 9.18798 12.5054 9.27052 12.6207 9.33092C12.7361 9.39132 12.8621 9.42839 12.9918 9.44001L14.1758 9.50401C14.2078 9.50401 14.2398 9.53601 14.2718 9.53601C14.2792 9.5416 14.2853 9.54885 14.2895 9.55718C14.2936 9.56551 14.2958 9.5747 14.2958 9.58401C14.2958 9.59333 14.2936 9.60251 14.2895 9.61084C14.2853 9.61918 14.2792 9.62642 14.2718 9.63201C14.2398 9.69601 14.2078 9.72801 14.1438 9.72801L12.9278 9.79201C12.5723 9.83147 12.2337 9.96492 11.9468 10.1786C11.66 10.3924 11.4353 10.6786 11.2958 11.008L11.2318 11.296C11.1998 11.328 11.2318 11.392 11.2958 11.392H15.5198C15.5328 11.3939 15.5461 11.3927 15.5586 11.3885C15.5711 11.3843 15.5825 11.3773 15.5918 11.368C15.6011 11.3587 15.6081 11.3473 15.6123 11.3348C15.6165 11.3223 15.6177 11.3091 15.6158 11.296C15.692 11.0249 15.735 10.7455 15.7438 10.464C15.7387 9.65932 15.4168 8.88903 14.8478 8.32001C14.2788 7.751 13.5085 7.42908 12.7038 7.42401Z" fill="#FAAD3F"></path>
+                            </svg>
+                            <span>This page is protected by <strong style="color:#d4d4d4;font-weight:600;">Cloudflare</strong> to ensure you're not a bot.</span>
+                        </div>
+
                     </div>
+
                 </div>
-
-                <!-- Button -->
-                <button class="kb-btn kb-btn-white" id="loginBtn" type="button" onclick="login()">
-                    <span id="btnContent">Log in</span>
-                </button>
-
             </div>
 
-            <!-- Foot -->
-            <div class="kb-card-foot">
-                <p>Don't have an account? <a href="/register">Sign up</a></p>
-            </div>
+            <!-- Footer -->
+            <footer class="py-3 px-3 d-flex align-items-center justify-content-center">
+                <p class="m-0 text-center" style="color:#B4B4B4;font-size:0.82rem;font-weight:400;letter-spacing:0.01em;">
+                    © 2026 Developed by <span style="color:#ffffff;font-weight:600;">Kiro Takashi</span>
+                </p>
+            </footer>
 
-        </div>
-    </main>
+        </div><!-- /pageWrap -->
+    </div><!-- /mainBg -->
 
-    <!-- ───── Footer ─────────────────────────────────────────── -->
-    <footer class="kb-footer">
-        <div class="kb-footer-inner">
-            <span class="kb-footer-copy">© 2025 KiroBoost</span>
-            <div class="kb-footer-links">
-                <a href="#">Privacy</a>
-                <a href="#">Terms</a>
-                <a href="#">Support</a>
-            </div>
-        </div>
-    </footer>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js" integrity="sha384-C6RzsynM9kWDrMNeT87bh95OGNyZPhcTNXj1NW7RuBCsyN/o0jlpcV8Qyq46cDfL" crossorigin="anonymous"></script>
 
-    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
     <script>
-        // ── Auth guard ──────────────────────────────────────────
-        if (localStorage.getItem('kb_token')) {
-            window.location.replace('/home');
-        }
+        // Auto-redirect if already logged in
+        (function() {
+            if (localStorage.getItem('token') || localStorage.getItem('kb_token')) {
+                window.location.href = '/home';
+            }
+        })();
 
-        // ── Toggle password visibility ──────────────────────────
-        const EYE_OPEN = `<path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/><circle cx="12" cy="12" r="3"/>`;
-        const EYE_OFF  = `<path d="M17.94 17.94A10.07 10.07 0 0 1 12 20c-7 0-11-8-11-8a18.45 18.45 0 0 1 5.06-5.94M9.9 4.24A9.12 9.12 0 0 1 12 4c7 0 11 8 11 8a18.5 18.5 0 0 1-2.16 3.19m-6.72-1.07a3 3 0 1 1-4.24-4.24"/><line x1="1" y1="1" x2="23" y2="23"/>`;
-
-        function togglePassword() {
-            const inp  = document.getElementById('password');
-            const icon = document.getElementById('eyeIcon');
-            const show = inp.type === 'password';
-            inp.type       = show ? 'text' : 'password';
-            icon.innerHTML = show ? EYE_OFF : EYE_OPEN;
-        }
-
-        // ── Show / hide error ───────────────────────────────────
-        function showError(msg) {
-            document.getElementById('errorText').textContent = msg;
-            document.getElementById('errorBox').classList.add('show');
-        }
-        function hideError() {
-            document.getElementById('errorBox').classList.remove('show');
-        }
-
-        // ── Button state helpers ────────────────────────────────
-        const btn     = document.getElementById('loginBtn');
-        const btnBody = document.getElementById('btnContent');
-
-        function setLoading(on) {
-            btn.disabled = on;
-            btnBody.innerHTML = on
-                ? `<span class="kb-spin"></span><span>Logging in…</span>`
-                : `Log in`;
-        }
-
-        function setSuccess() {
-            btnBody.innerHTML = `
-                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
-                    <polyline points="20 6 9 17 4 12"/>
+        // Geist spinner HTML
+        const SPINNER_HTML = `
+            <span class="geist-spinner">
+                <svg data-testid="geist-icon" height="16" stroke-linejoin="round" style="color:currentColor" viewBox="0 0 16 16" width="16">
+                    <g clip-path="url(#clip0_spinner)">
+                        <path d="M8 0V4" stroke="currentColor" stroke-width="1.5"></path>
+                        <path opacity="0.5" d="M8 16V12" stroke="currentColor" stroke-width="1.5"></path>
+                        <path opacity="0.9" d="M3.29773 1.52783L5.64887 4.7639" stroke="currentColor" stroke-width="1.5"></path>
+                        <path opacity="0.1" d="M12.7023 1.52783L10.3511 4.7639" stroke="currentColor" stroke-width="1.5"></path>
+                        <path opacity="0.4" d="M12.7023 14.472L10.3511 11.236" stroke="currentColor" stroke-width="1.5"></path>
+                        <path opacity="0.6" d="M3.29773 14.472L5.64887 11.236" stroke="currentColor" stroke-width="1.5"></path>
+                        <path opacity="0.2" d="M15.6085 5.52783L11.8043 6.7639" stroke="currentColor" stroke-width="1.5"></path>
+                        <path opacity="0.7" d="M0.391602 10.472L4.19583 9.23598" stroke="currentColor" stroke-width="1.5"></path>
+                        <path opacity="0.3" d="M15.6085 10.4722L11.8043 9.2361" stroke="currentColor" stroke-width="1.5"></path>
+                        <path opacity="0.8" d="M0.391602 5.52783L4.19583 6.7639" stroke="currentColor" stroke-width="1.5"></path>
+                    </g>
+                    <defs>
+                        <clipPath id="clip0_spinner">
+                            <rect width="16" height="16" fill="white"></rect>
+                        </clipPath>
+                    </defs>
                 </svg>
-                <span>Success!</span>`;
-        }
+            </span>
+        `;
 
-        // ── Login ───────────────────────────────────────────────
         async function login() {
-            const username = document.getElementById('username').value.trim();
-            const password = document.getElementById('password').value;
+            const username   = document.getElementById('floatingInput').value.trim();
+            const password   = document.getElementById('floatingPassword').value.trim();
+            const btn        = document.getElementById('loginBtn');
+            const btnContent = document.getElementById('btnContent');
+            const errorBox   = document.getElementById('errorBox');
+            const errorText  = document.getElementById('errorText');
 
-            hideError();
+            errorBox.classList.remove('visible');
 
             if (!username || !password) {
-                showError('Please enter your username and password.');
+                errorText.textContent = "Please enter both username and password.";
+                errorBox.classList.add('visible');
                 return;
             }
 
-            setLoading(true);
+            // Show spinner
+            btn.disabled = true;
+            btnContent.innerHTML = SPINNER_HTML;
 
             try {
                 const res = await fetch('/api/auth/login', {
-                    method:  'POST',
+                    method: 'POST',
                     headers: { 'Content-Type': 'application/json' },
-                    body:    JSON.stringify({ username, password })
+                    body: JSON.stringify({ username, password })
                 });
 
                 const data = await res.json();
 
-                if (data.success) {
-                    // Persist session
+                if (res.ok) {
+                    localStorage.setItem('token',    data.token);
                     localStorage.setItem('kb_token', data.token);
+                    localStorage.setItem('userRole', data.role);
+                    localStorage.setItem('username', data.username);
                     if (data.user) {
                         localStorage.setItem('kb_user', JSON.stringify(data.user));
                     }
-
-                    setSuccess();
-                    setTimeout(() => window.location.replace('/home'), 500);
+                    window.location.href = (data.role === 'admin') ? '/admin' : '/home';
                 } else {
-                    throw new Error(data.message || 'Invalid username or password.');
+                    throw new Error(data.error || data.message || 'Login failed. Check your credentials.');
                 }
 
             } catch (err) {
-                showError(err.message || 'Connection error. Please try again.');
-                setLoading(false);
+                errorText.textContent = err.message || "Connection error. Please try again.";
+                errorBox.classList.add('visible');
+                btn.disabled = false;
+                btnContent.innerHTML = 'Sign In';
             }
         }
 
-        // ── Enter key ───────────────────────────────────────────
-        document.addEventListener('keydown', e => {
-            if (e.key === 'Enter' && !btn.disabled) login();
+        // Enter key
+        document.addEventListener('keydown', function(e) {
+            if (e.key === 'Enter') {
+                const btn = document.getElementById('loginBtn');
+                if (!btn.disabled) login();
+            }
         });
     </script>
+
 </body>
 </html>
