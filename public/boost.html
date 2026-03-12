@@ -3,1274 +3,1025 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>KiroBoost — Boost</title>
+    <title>KiroBoost - Boost</title>
+    <link rel="shortcut icon" href="img/fav-icon.png" type="image/x-icon">
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Geist:wght@300;400;500;600;700;800&family=Geist+Mono:wght@400;500&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet">
+
     <style>
-        /* =========================================================
-           DESIGN TOKENS — identical to all other pages
-        ========================================================= */
+        *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; font-family: 'Outfit', sans-serif !important; }
+        *::selection { background: #4C4948 !important; color: #fff; }
+
         :root {
-            --bg:            #000000;
-            --surface:       #0a0a0a;
-            --surface-2:     #111111;
-            --surface-3:     #161616;
-            --border:        #1f1f1f;
-            --border-strong: #2e2e2e;
-            --text:          #ededed;
-            --text-muted:    #888888;
-            --text-faint:    #444444;
-            --accent:        #ffffff;
-            --accent-dim:    #e8e8e8;
-            --green:         #22c55e;
-            --amber:         #f59e0b;
-            --red:           #ef4444;
-            --r-sm:  6px;
-            --r-md:  10px;
-            --r-lg:  14px;
-            --font:  'Geist', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
-            --mono:  'Geist Mono', 'SF Mono', 'Fira Code', monospace;
-            --ease:  0.15s ease;
-            --nav-h: 56px;
-        }
-        *, *::before, *::after { box-sizing: border-box; }
-        body {
-            font-family: var(--font);
-            background: var(--bg);
-            color: var(--text);
-            margin: 0; padding: 0;
-            -webkit-font-smoothing: antialiased;
-            min-height: 100vh;
-        }
-        ::selection { background: #fff; color: #000; }
-
-        /* grid overlay */
-        #grid-bg {
-            position: fixed; inset: 0;
-            background-image:
-                linear-gradient(rgba(255,255,255,0.02) 1px, transparent 1px),
-                linear-gradient(90deg, rgba(255,255,255,0.02) 1px, transparent 1px);
-            background-size: 48px 48px;
-            pointer-events: none; z-index: 0;
+            --bg:      #000000;
+            --card:    #111111;
+            --card2:   #161616;
+            --border:  rgba(255,255,255,0.08);
+            --border2: rgba(255,255,255,0.14);
+            --muted:   #B4B4B4;
+            --muted2:  #555;
+            --green:   #22c55e;
+            --red:     #ef4444;
+            --yellow:  #eab308;
+            --blue:    #3b82f6;
         }
 
-        /* =========================================================
-           TOP NAV
-        ========================================================= */
-        .kb-nav {
-            position: fixed; inset: 0 0 auto; z-index: 300;
-            background: rgba(0,0,0,0.85);
-            backdrop-filter: blur(20px); -webkit-backdrop-filter: blur(20px);
+        html, body { min-height: 100vh; background: var(--bg); color: #fff; overflow-x: hidden; }
+        ::-webkit-scrollbar { width: 5px; height: 5px; }
+        ::-webkit-scrollbar-track { background: #000; }
+        ::-webkit-scrollbar-thumb { background: #2a2a2a; border-radius: 3px; }
+
+        /* ── Navbar ── */
+        #topnav {
+            position: sticky; top: 0; z-index: 200;
+            background: rgba(0,0,0,0.92);
             border-bottom: 1px solid var(--border);
-            height: var(--nav-h);
-        }
-        .kb-nav-inner {
-            max-width: 1160px; margin: 0 auto; padding: 0 20px;
-            height: 100%; display: flex; align-items: center; gap: 8px;
-        }
-        .kb-brand {
-            display: flex; align-items: center; gap: 8px; text-decoration: none;
-            color: var(--text); font-size: 14px; font-weight: 600;
-            letter-spacing: -0.025em; flex-shrink: 0; margin-right: 4px;
-        }
-        .kb-brand:hover { opacity: 0.7; color: var(--text); }
-        .kb-brand-icon {
-            width: 25px; height: 25px; background: #fff;
-            border-radius: 5px; display: flex; align-items: center; justify-content: center;
-        }
-        .kb-nav-links { display: flex; align-items: center; gap: 2px; flex: 1; }
-        .kb-nav-a {
-            font-size: 13px; color: var(--text-muted); text-decoration: none;
-            padding: 5px 10px; border-radius: var(--r-sm); font-weight: 500;
-            white-space: nowrap; transition: color var(--ease), background var(--ease);
-        }
-        .kb-nav-a:hover  { color: var(--text); background: var(--surface-2); }
-        .kb-nav-a.active { color: var(--text); background: var(--surface-2); }
-        .kb-nav-back {
-            display: flex; align-items: center; gap: 6px; font-size: 13px;
-            color: var(--text-muted); text-decoration: none; font-weight: 500;
-            padding: 5px 10px 5px 6px; border-radius: var(--r-sm);
-            transition: color var(--ease), background var(--ease); margin-right: 4px;
-        }
-        .kb-nav-back:hover { color: var(--text); background: var(--surface-2); }
-        .kb-nav-right { display: flex; align-items: center; gap: 6px; margin-left: auto; }
-        .kb-avatar-chip {
-            display: flex; align-items: center; gap: 7px; padding: 4px 10px 4px 5px;
-            border: 1px solid var(--border); border-radius: 99px;
-            background: var(--surface-2); text-decoration: none;
-            transition: border-color var(--ease), background var(--ease);
-        }
-        .kb-avatar-chip:hover { border-color: var(--border-strong); background: var(--surface-3); }
-        .kb-avatar {
-            width: 22px; height: 22px; background: var(--border-strong);
-            border-radius: 50%; display: flex; align-items: center; justify-content: center;
-            font-size: 10px; font-weight: 700; color: var(--text); flex-shrink: 0;
-        }
-        .kb-avatar-name {
-            font-size: 12px; font-weight: 500; color: var(--text-muted);
-            max-width: 90px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap;
-        }
-        .kb-ham {
-            display: none; align-items: center; background: none; border: none;
-            padding: 6px; color: var(--text-muted); cursor: pointer; border-radius: var(--r-sm);
-        }
-        .kb-ham:hover { background: var(--surface-2); color: var(--text); }
-        .kb-drawer {
-            display: none; position: fixed; top: var(--nav-h); left: 0; right: 0;
-            background: rgba(0,0,0,0.97); backdrop-filter: blur(24px);
-            border-bottom: 1px solid var(--border); padding: 10px 20px 18px;
-            z-index: 299; flex-direction: column; gap: 2px;
-        }
-        .kb-drawer.open { display: flex; }
-        .kb-drawer a {
-            font-size: 14px; color: var(--text-muted); text-decoration: none;
-            padding: 9px 10px; border-radius: var(--r-sm); font-weight: 500;
-            transition: color var(--ease), background var(--ease);
-        }
-        .kb-drawer a:hover { color: var(--text); background: var(--surface-2); }
-
-        /* =========================================================
-           MAIN LAYOUT
-        ========================================================= */
-        .kb-main {
-            position: relative; z-index: 1; max-width: 900px; margin: 0 auto;
-            padding: calc(var(--nav-h) + 32px) 20px 48px;
-        }
-
-        /* page title */
-        .kb-page-hdr { margin-bottom: 28px; }
-        .kb-page-eyebrow {
-            font-size: 11px; font-weight: 500; color: var(--text-faint);
-            letter-spacing: 0.1em; text-transform: uppercase; margin-bottom: 6px;
-            display: flex; align-items: center; gap: 8px;
-        }
-        .kb-page-eyebrow::before { content:''; width:16px; height:1px; background:var(--text-faint); }
-        .kb-page-title {
-            font-size: clamp(22px, 3vw, 30px); font-weight: 700;
-            letter-spacing: -0.035em; color: var(--text); line-height: 1.1;
-        }
-
-        /* =========================================================
-           SHARED CARD
-        ========================================================= */
-        .kb-card {
-            background: var(--surface); border: 1px solid var(--border);
-            border-radius: var(--r-lg); overflow: hidden; margin-bottom: 16px;
-        }
-        .kb-card-hdr {
+            backdrop-filter: blur(12px);
             display: flex; align-items: center; justify-content: space-between;
-            padding: 14px 18px; border-bottom: 1px solid var(--border);
+            padding: 0 1.5rem; height: 60px; gap: 12px;
         }
-        .kb-card-ttl { font-size: 13px; font-weight: 600; color: var(--text); letter-spacing: -.015em; }
-        .kb-card-sub { font-size: 11px; color: var(--text-faint); }
-        .kb-card-body { padding: 18px; }
+        .kiro-logo { display: inline-flex; align-items: baseline; letter-spacing: -0.04em; user-select: none; text-decoration: none; }
+        .logo-kiro  { font-weight: 800; color: #fff; font-style: italic; font-size: 1.4rem; }
+        .logo-boost { font-weight: 300; color: rgba(255,255,255,0.4); font-size: 1.4rem; }
+        .nav-back { display: flex; align-items: center; gap: 6px; color: var(--muted); font-size: 0.82rem; font-weight: 600; text-decoration: none; transition: color .2s; }
+        .nav-back:hover { color: #fff; }
 
-        /* =========================================================
-           FORM INPUTS
-        ========================================================= */
-        .kb-field { margin-bottom: 14px; }
-        .kb-label {
-            display: block; font-size: 11px; font-weight: 500;
-            color: var(--text-faint); letter-spacing: 0.06em; text-transform: uppercase;
-            margin-bottom: 7px;
-        }
-        .kb-input-wrap {
-            position: relative; display: flex; align-items: center;
-            background: var(--surface-2); border: 1px solid var(--border);
-            border-radius: var(--r-sm); height: 38px;
-            transition: border-color var(--ease), box-shadow var(--ease);
-        }
-        .kb-input-wrap:focus-within {
-            border-color: var(--border-strong);
-            box-shadow: 0 0 0 3px rgba(255,255,255,0.04);
-        }
-        .kb-input-pfx {
-            display: flex; align-items: center; justify-content: center;
-            width: 38px; height: 100%; color: var(--text-faint); flex-shrink: 0;
-            border-right: 1px solid var(--border);
-        }
-        .kb-input {
-            flex: 1; height: 100%; padding: 0 12px; background: transparent;
-            border: none; outline: none; font-family: var(--font); font-size: 13px;
-            color: var(--text); caret-color: var(--text);
-        }
-        .kb-input::placeholder { color: var(--text-faint); }
-        .kb-input-sfx {
-            display: flex; align-items: center; justify-content: center;
-            width: 38px; height: 100%; color: var(--text-faint); flex-shrink: 0;
-            cursor: pointer; border-left: 1px solid var(--border);
-            transition: color var(--ease), background var(--ease);
-            border-radius: 0 var(--r-sm) var(--r-sm) 0;
-        }
-        .kb-input-sfx:hover { color: var(--text-muted); background: var(--surface-3); }
+        /* ── Page ── */
+        #page { max-width: 900px; margin: 0 auto; padding: 2rem 1.25rem 4rem; }
 
-        /* grid of fields */
-        .kb-field-row { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; margin-bottom: 14px; }
+        /* ── Grid layout ── */
+        #grid {
+            display: grid;
+            grid-template-columns: 1fr 380px;
+            gap: 1.25rem;
+            align-items: start;
+        }
 
-        /* =========================================================
-           SPEED MODE SELECTOR
-        ========================================================= */
-        .kb-speed-grid {
-            display: grid; grid-template-columns: repeat(3,1fr); gap: 8px;
+        /* ── Cards ── */
+        .card {
+            background: var(--card);
+            border: 1px solid var(--border);
+            border-radius: 14px;
+            overflow: hidden;
         }
-        .kb-speed-btn {
-            background: var(--surface-2); border: 1px solid var(--border);
-            border-radius: var(--r-sm); padding: 12px 10px;
-            cursor: pointer; text-align: center; transition: border-color var(--ease), background var(--ease);
-            position: relative; overflow: hidden;
-        }
-        .kb-speed-btn:hover { border-color: var(--border-strong); background: var(--surface-3); }
-        .kb-speed-btn.active {
-            border-color: var(--accent);
-            background: var(--surface-3);
-            box-shadow: 0 0 0 1px rgba(255,255,255,0.08);
-        }
-        .kb-speed-btn.active::before {
-            content: '';
-            position: absolute; top: 0; left: 0; right: 0; height: 2px;
-            background: #fff;
-        }
-        .kb-speed-icon { font-size: 16px; margin-bottom: 4px; }
-        .kb-speed-name { font-size: 12px; font-weight: 600; color: var(--text); margin-bottom: 1px; }
-        .kb-speed-delay { font-size: 10px; color: var(--text-faint); font-family: var(--mono); }
-
-        /* =========================================================
-           METHOD TOGGLE (Normal / SMM)
-        ========================================================= */
-        .kb-method-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; }
-        .kb-method-btn {
-            background: var(--surface-2); border: 1px solid var(--border);
-            border-radius: var(--r-sm); padding: 12px 14px;
-            cursor: pointer; display: flex; align-items: center; gap: 10px;
-            transition: border-color var(--ease), background var(--ease);
-            position: relative; overflow: hidden;
-        }
-        .kb-method-btn:hover { border-color: var(--border-strong); background: var(--surface-3); }
-        .kb-method-btn.active {
-            border-color: var(--accent);
-            background: var(--surface-3);
-            box-shadow: 0 0 0 1px rgba(255,255,255,0.06);
-        }
-        .kb-method-btn.active::before {
-            content: '';
-            position: absolute; top: 0; left: 0; bottom: 0; width: 2px;
-            background: #fff;
-        }
-        .kb-method-icon {
-            width: 30px; height: 30px; border-radius: var(--r-sm);
-            background: var(--surface); border: 1px solid var(--border);
-            display: flex; align-items: center; justify-content: center;
-            color: var(--text-faint); flex-shrink: 0;
-        }
-        .kb-method-btn.active .kb-method-icon { border-color: var(--border-strong); color: var(--text-muted); }
-        .kb-method-info {}
-        .kb-method-name { font-size: 12px; font-weight: 600; color: var(--text); }
-        .kb-method-desc { font-size: 10px; color: var(--text-faint); margin-top: 1px; }
-
-        /* =========================================================
-           COOKIE SELECTION
-        ========================================================= */
-        .kb-cookie-toolbar {
+        .card-header {
             display: flex; align-items: center; justify-content: space-between;
-            margin-bottom: 12px;
+            padding: .9rem 1.25rem;
+            border-bottom: 1px solid var(--border);
         }
-        .kb-cookie-count {
-            font-size: 11px; font-weight: 500;
-            font-family: var(--mono); color: var(--text-faint);
+        .card-title {
+            font-size: 0.78rem; font-weight: 700;
+            text-transform: uppercase; letter-spacing: .07em; color: var(--muted2);
+            display: flex; align-items: center; gap: 7px;
         }
-        .kb-cookie-count span { color: var(--text-muted); }
-        .kb-sel-all {
-            font-size: 12px; font-weight: 500; color: var(--text-faint);
-            background: none; border: 1px solid var(--border); cursor: pointer;
-            padding: 4px 10px; border-radius: var(--r-sm); font-family: var(--font);
-            transition: color var(--ease), border-color var(--ease), background var(--ease);
-        }
-        .kb-sel-all:hover { color: var(--text-muted); border-color: var(--border-strong); background: var(--surface-2); }
+        .card-title svg { color: var(--muted2); }
+        .card-body { padding: 1.25rem; display: flex; flex-direction: column; gap: 1rem; }
 
-        /* cookie grid */
-        .kb-cookie-grid {
-            display: grid; grid-template-columns: repeat(auto-fill, minmax(76px, 1fr));
-            gap: 8px; min-height: 80px;
+        /* Page title */
+        .page-title-row { margin-bottom: 1.25rem; }
+        .page-title { font-size: 1.5rem; font-weight: 800; letter-spacing: -0.03em; }
+        .page-sub   { font-size: 0.82rem; color: var(--muted2); margin-top: 2px; }
+
+        /* ── Field groups ── */
+        .field-group { display: flex; flex-direction: column; gap: 6px; }
+        .field-label {
+            font-size: 0.72rem; font-weight: 700;
+            text-transform: uppercase; letter-spacing: .06em; color: var(--muted2);
+            display: flex; align-items: center; justify-content: space-between;
         }
-        .kb-cookie-item {
-            display: flex; flex-direction: column; align-items: center;
-            gap: 6px; padding: 10px 4px; cursor: pointer;
-            border: 1px solid var(--border); border-radius: var(--r-md);
-            background: var(--surface-2); transition: border-color var(--ease), background var(--ease);
-            position: relative; user-select: none;
+        .field-label-right { font-size: 0.68rem; font-weight: 500; color: #444; text-transform: none; letter-spacing: 0; }
+
+        .field-input {
+            background: rgba(255,255,255,0.04);
+            border: 1px solid var(--border);
+            border-radius: 8px;
+            color: #fff;
+            padding: .65rem .9rem;
+            font-size: 0.875rem;
+            width: 100%;
+            outline: none;
+            transition: border-color .2s, background .2s;
         }
-        .kb-cookie-item:hover { border-color: var(--border-strong); background: var(--surface-3); }
-        .kb-cookie-item.sel {
-            border-color: rgba(255,255,255,0.35);
-            background: var(--surface-3);
+        .field-input:focus { border-color: rgba(255,255,255,.25); background: rgba(255,255,255,.06); }
+        .field-input::placeholder { color: #333; }
+
+        .field-hint { font-size: 0.7rem; color: #444; display: flex; align-items: center; gap: 5px; }
+
+        /* Resolved post ID chip */
+        .post-id-chip {
+            display: none; align-items: center; gap: 6px;
+            padding: 4px 10px;
+            background: rgba(34,197,94,.1); border: 1px solid rgba(34,197,94,.2);
+            border-radius: 20px; font-size: 0.72rem; color: #86efac; font-weight: 600;
         }
-        .kb-cookie-av {
-            width: 36px; height: 36px; border-radius: 50%;
-            background: var(--surface-3); border: 1px solid var(--border-strong);
+        .post-id-chip.show { display: inline-flex; }
+        .post-id-chip.error { background: rgba(239,68,68,.1); border-color: rgba(239,68,68,.25); color: #fca5a5; }
+
+        /* ── Method selector ── */
+        .method-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; }
+        .method-opt {
+            padding: .7rem .9rem;
+            border: 1.5px solid var(--border);
+            border-radius: 10px;
+            cursor: pointer;
+            transition: all .15s;
+            display: flex; flex-direction: column; gap: 3px;
+        }
+        .method-opt:hover { border-color: var(--border2); background: rgba(255,255,255,.03); }
+        .method-opt.selected { border-color: rgba(255,255,255,.35); background: rgba(255,255,255,.06); }
+        .method-opt-name { font-size: 0.82rem; font-weight: 700; }
+        .method-opt-desc { font-size: 0.68rem; color: var(--muted2); }
+        .method-tag {
+            display: inline-block; font-size: 0.6rem; font-weight: 800;
+            padding: 1px 6px; border-radius: 4px; text-transform: uppercase;
+            margin-top: 2px;
+        }
+        .tag-fast { background: rgba(34,197,94,.15); color: #86efac; }
+        .tag-smm  { background: rgba(168,85,247,.15); color: #d8b4fe; }
+
+        /* ── Speed selector ── */
+        .speed-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 8px; }
+        .speed-opt {
+            padding: .65rem .6rem;
+            border: 1.5px solid var(--border);
+            border-radius: 9px;
+            cursor: pointer;
+            transition: all .15s;
+            text-align: center;
+        }
+        .speed-opt:hover { border-color: var(--border2); }
+        .speed-opt.selected { border-color: rgba(255,255,255,.3); background: rgba(255,255,255,.05); }
+        .speed-icon { font-size: 1.1rem; margin-bottom: 2px; }
+        .speed-name { font-size: 0.78rem; font-weight: 700; }
+        .speed-desc { font-size: 0.65rem; color: var(--muted2); }
+
+        /* ── Account selector ── */
+        .acct-header {
+            display: flex; align-items: center; justify-content: space-between;
+            margin-bottom: 8px;
+        }
+        .select-all-btn {
+            background: none; border: none; color: var(--muted2);
+            font-size: 0.72rem; font-weight: 600; cursor: pointer;
+            transition: color .2s;
+        }
+        .select-all-btn:hover { color: #fff; }
+
+        .acct-list {
+            display: flex; flex-direction: column; gap: 6px;
+            max-height: 230px; overflow-y: auto;
+        }
+
+        .acct-row {
+            display: flex; align-items: center; gap: 10px;
+            padding: .6rem .75rem;
+            border: 1.5px solid var(--border);
+            border-radius: 9px;
+            cursor: pointer;
+            transition: all .15s;
+            user-select: none;
+        }
+        .acct-row:hover { border-color: var(--border2); background: rgba(255,255,255,.025); }
+        .acct-row.selected { border-color: rgba(255,255,255,.3); background: rgba(255,255,255,.05); }
+        .acct-row.extracting { opacity: .6; pointer-events: none; }
+        .acct-row.token-ok  .acct-status-dot { background: var(--green); }
+        .acct-row.token-err .acct-status-dot { background: var(--red); }
+
+        .acct-ck {
+            width: 16px; height: 16px; border: 1.5px solid var(--muted2); border-radius: 4px;
+            display: flex; align-items: center; justify-content: center; flex-shrink: 0;
+            transition: all .15s;
+        }
+        .acct-row.selected .acct-ck { background: #fff; border-color: #fff; }
+        .acct-row.selected .acct-ck::after {
+            content: ''; display: block; width: 4px; height: 7px;
+            border-right: 2px solid #000; border-bottom: 2px solid #000;
+            transform: rotate(45deg) translate(-1px,-1px);
+        }
+
+        .acct-avatar {
+            width: 32px; height: 32px; border-radius: 50%;
             display: flex; align-items: center; justify-content: center;
-            font-size: 14px; font-weight: 700; color: var(--text-muted);
-            position: relative; overflow: hidden; flex-shrink: 0;
-            transition: border-color var(--ease);
-        }
-        .kb-cookie-item.sel .kb-cookie-av {
-            border-color: rgba(255,255,255,0.4);
-        }
-        .kb-cookie-check {
-            position: absolute; inset: 0; background: rgba(255,255,255,0.15);
-            display: none; align-items: center; justify-content: center;
-            border-radius: 50%;
-        }
-        .kb-cookie-item.sel .kb-cookie-check { display: flex; }
-        .kb-cookie-name {
-            font-size: 10px; font-weight: 600; color: var(--text-faint);
-            text-align: center; overflow: hidden; text-overflow: ellipsis;
-            white-space: nowrap; width: 100%; padding: 0 4px;
-            transition: color var(--ease);
-        }
-        .kb-cookie-item.sel .kb-cookie-name { color: var(--text-muted); }
-        .kb-cookie-uid {
-            font-size: 9px; color: var(--text-faint); font-family: var(--mono);
-            text-align: center; overflow: hidden; text-overflow: ellipsis;
-            white-space: nowrap; width: 100%; padding: 0 4px;
+            font-size: 0.75rem; font-weight: 800; flex-shrink: 0;
         }
 
-        /* cookie loading / empty state */
-        .kb-cookie-loading {
-            grid-column: 1/-1; display: flex; align-items: center; justify-content: center;
-            gap: 8px; padding: 24px; color: var(--text-faint); font-size: 12px;
+        .acct-info { flex: 1; min-width: 0; }
+        .acct-name { font-size: 0.82rem; font-weight: 700; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+        .acct-uid  { font-size: 0.68rem; color: var(--muted2); font-family: 'Courier New', monospace; }
+
+        .acct-right { display: flex; align-items: center; gap: 6px; flex-shrink: 0; }
+        .acct-status-dot { width: 7px; height: 7px; border-radius: 50%; background: #333; }
+        .acct-status-label { font-size: 0.65rem; color: var(--muted2); }
+
+        .no-cookies-msg {
+            text-align: center; padding: 1.5rem 1rem;
+            color: var(--muted2); font-size: 0.82rem;
+            display: flex; flex-direction: column; align-items: center; gap: 6px;
         }
-        .kb-spin {
-            width: 16px; height: 16px; border: 2px solid var(--border-strong);
-            border-top-color: var(--text-faint); border-radius: 50%;
-            animation: spin 0.7s linear infinite;
+        .no-cookies-msg svg { opacity: .2; }
+        .no-cookies-link { color: var(--muted); text-decoration: none; font-weight: 600; }
+        .no-cookies-link:hover { color: #fff; text-decoration: underline; }
+
+        /* ── Start button ── */
+        .btn-start {
+            background: #fff; color: #000;
+            font-size: 0.95rem; font-weight: 800;
+            border: none; border-radius: 10px;
+            height: 50px; width: 100%;
+            cursor: pointer;
+            display: flex; align-items: center; justify-content: center; gap: 8px;
+            transition: background .2s, transform .1s;
+            letter-spacing: -0.01em;
         }
+        .btn-start:hover:not(:disabled) { background: #e5e5e5; }
+        .btn-start:active:not(:disabled) { transform: scale(.98); }
+        .btn-start:disabled { opacity: .5; cursor: not-allowed; }
+
+        .btn-stop {
+            background: rgba(239,68,68,.12); color: #fca5a5;
+            font-size: 0.875rem; font-weight: 700;
+            border: 1px solid rgba(239,68,68,.3); border-radius: 10px;
+            height: 42px; width: 100%; cursor: pointer;
+            display: none; align-items: center; justify-content: center; gap: 8px;
+            transition: background .2s;
+            margin-top: 6px;
+        }
+        .btn-stop:hover { background: rgba(239,68,68,.22); }
+        .btn-stop.show { display: flex; }
+
+        /* ── RIGHT PANEL: Live Session ── */
+        .session-panel { display: flex; flex-direction: column; gap: 1.25rem; }
+
+        /* Stats bar */
+        .session-stats {
+            display: grid; grid-template-columns: repeat(3, 1fr);
+            gap: 8px; padding: 1rem 1.25rem;
+            border-bottom: 1px solid var(--border);
+        }
+        .sstat { text-align: center; }
+        .sstat-val { font-size: 1.4rem; font-weight: 800; letter-spacing: -0.04em; line-height: 1; }
+        .sstat-key { font-size: 0.65rem; color: var(--muted2); font-weight: 500; text-transform: uppercase; letter-spacing: .05em; margin-top: 2px; }
+        .sstat-val.green  { color: #86efac; }
+        .sstat-val.red    { color: #fca5a5; }
+        .sstat-val.muted  { color: #444; }
+
+        /* Progress bar */
+        .prog-wrap { padding: 0 1.25rem 1rem; }
+        .prog-labels { display: flex; justify-content: space-between; font-size: 0.7rem; color: var(--muted2); margin-bottom: 5px; }
+        .prog-bar { height: 5px; background: #1a1a1a; border-radius: 3px; overflow: hidden; }
+        .prog-fill { height: 100%; border-radius: 3px; background: #fff; transition: width .4s ease; width: 0%; }
+        .prog-fill.done { background: #86efac; }
+        .prog-fill.stopped { background: #fca5a5; }
+
+        /* Status badge */
+        .session-status {
+            display: inline-flex; align-items: center; gap: 5px;
+            padding: 3px 10px; border-radius: 20px;
+            font-size: 0.72rem; font-weight: 700;
+        }
+        .ss-idle      { background: rgba(255,255,255,.05); color: #444; border: 1px solid var(--border); }
+        .ss-running   { background: rgba(59,130,246,.12); color: #93c5fd; border: 1px solid rgba(59,130,246,.25); }
+        .ss-completed { background: rgba(34,197,94,.12); color: #86efac; border: 1px solid rgba(34,197,94,.25); }
+        .ss-stopped   { background: rgba(239,68,68,.1); color: #fca5a5; border: 1px solid rgba(239,68,68,.2); }
+        .ss-dot { width: 6px; height: 6px; border-radius: 50%; background: currentColor; }
+        .ss-running .ss-dot { animation: pulse .9s ease-in-out infinite; }
+        @keyframes pulse { 0%,100% { opacity:1; } 50% { opacity:.3; } }
+
+        /* Session top strip */
+        .session-top {
+            display: flex; align-items: center; justify-content: space-between;
+            padding: .9rem 1.25rem;
+            border-bottom: 1px solid var(--border);
+        }
+
+        /* Speed info */
+        .speed-info {
+            font-size: 0.7rem; color: var(--muted2);
+            display: flex; align-items: center; gap: 4px;
+        }
+
+        /* Log panel */
+        .log-header { padding: .75rem 1.25rem; border-bottom: 1px solid var(--border); display: flex; align-items: center; justify-content: space-between; }
+        .log-title  { font-size: 0.72rem; font-weight: 700; color: var(--muted2); text-transform: uppercase; letter-spacing: .06em; }
+        .log-clear  { background: none; border: none; color: #333; font-size: 0.7rem; cursor: pointer; font-weight: 600; transition: color .2s; }
+        .log-clear:hover { color: var(--muted); }
+
+        #logBox {
+            height: 280px; overflow-y: auto; padding: .75rem 1.25rem;
+            display: flex; flex-direction: column; gap: 4px;
+            font-size: 0.75rem; font-family: 'Courier New', monospace;
+        }
+
+        .log-entry {
+            display: flex; gap: 8px; align-items: flex-start;
+            padding: 3px 0;
+            border-bottom: 1px solid rgba(255,255,255,.03);
+            animation: logIn .2s ease;
+        }
+        @keyframes logIn { from { opacity: 0; transform: translateY(4px); } to { opacity: 1; transform: none; } }
+
+        .log-time { color: #333; flex-shrink: 0; font-size: 0.7rem; }
+        .log-acct { color: #666; flex-shrink: 0; max-width: 90px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+        .log-msg  { flex: 1; }
+        .log-msg.ok   { color: #86efac; }
+        .log-msg.fail { color: #fca5a5; }
+        .log-msg.info { color: #93c5fd; }
+        .log-msg.warn { color: #fde68a; }
+
+        .log-empty {
+            display: flex; flex-direction: column; align-items: center; justify-content: center;
+            height: 100%; gap: 8px; color: #2a2a2a;
+        }
+        .log-empty svg { opacity: .15; }
+
+        /* Inline error */
+        .inline-err {
+            background: rgba(239,68,68,.1); border: 1px solid rgba(239,68,68,.25);
+            border-radius: 8px; padding: 9px 12px;
+            font-size: 0.8rem; color: #fca5a5; font-weight: 500;
+            display: none; align-items: center; gap: 7px;
+        }
+        .inline-err.show { display: flex; }
+
+        /* Spinner */
+        .geist-spinner { display: inline-flex; align-items: center; justify-content: center; animation: spin .8s linear infinite; }
         @keyframes spin { to { transform: rotate(360deg); } }
 
-        /* =========================================================
-           ERROR BOX
-        ========================================================= */
-        .kb-error {
-            display: none; align-items: flex-start; gap: 10px;
-            background: #150000; border: 1px solid #3a0000;
-            border-radius: var(--r-sm); padding: 11px 14px; margin-bottom: 14px;
-        }
-        .kb-error.show { display: flex; }
-        .kb-error-text { font-size: 12.5px; color: #ff7070; line-height: 1.5; }
-
-        /* =========================================================
-           PRIMARY BUTTON
-        ========================================================= */
-        .kb-btn-primary {
-            width: 100%; height: 40px; display: flex; align-items: center; justify-content: center;
-            gap: 8px; font-size: 13px; font-family: var(--font); font-weight: 600;
-            color: #000; background: #fff; border: none; border-radius: var(--r-sm);
-            cursor: pointer; transition: background var(--ease), transform 0.1s;
-        }
-        .kb-btn-primary:hover { background: var(--accent-dim); }
-        .kb-btn-primary:active { transform: scale(0.99); }
-        .kb-btn-primary:disabled { opacity: 0.5; cursor: not-allowed; }
-        .kb-btn-outline {
-            height: 38px; padding: 0 18px; display: inline-flex; align-items: center;
-            justify-content: center; gap: 8px; font-size: 13px; font-family: var(--font);
-            font-weight: 500; color: var(--text-muted); background: transparent;
-            border: 1px solid var(--border-strong); border-radius: var(--r-sm);
-            cursor: pointer; transition: color var(--ease), border-color var(--ease), background var(--ease);
-        }
-        .kb-btn-outline:hover { color: var(--text); border-color: var(--text-faint); background: var(--surface-2); }
-
-        /* spinner inside button */
-        .kb-btn-spin {
-            width: 14px; height: 14px; border: 2px solid rgba(0,0,0,0.2);
-            border-top-color: #000; border-radius: 50%;
-            animation: spin 0.7s linear infinite; display: none;
-        }
-
-        /* =========================================================
-           PROGRESS SECTION
-        ========================================================= */
-        #progressSection { display: none; }
-
-        /* status badge */
-        .kb-status-badge {
-            display: inline-flex; align-items: center; gap: 6px;
-            font-size: 11px; font-weight: 500; padding: 4px 12px 4px 8px;
-            border-radius: 99px; border: 1px solid; margin-bottom: 18px;
-        }
-        .kb-status-badge::before {
-            content: ''; width: 6px; height: 6px; border-radius: 50%; background: currentColor; flex-shrink: 0;
-        }
-        .kb-status-badge.running { color: var(--amber); border-color: rgba(245,158,11,.25); background: rgba(245,158,11,.08); }
-        .kb-status-badge.running::before { animation: pulse 1.2s ease-in-out infinite; }
-        .kb-status-badge.done    { color: var(--green); border-color: rgba(34,197,94,.25);  background: rgba(34,197,94,.08); }
-        .kb-status-badge.stopped { color: var(--text-faint); border-color: var(--border);   background: var(--surface-2); }
-        .kb-status-badge.failed  { color: var(--red);   border-color: rgba(239,68,68,.25);  background: rgba(239,68,68,.08); }
-        @keyframes pulse { 0%,100%{opacity:1;transform:scale(1)} 50%{opacity:.4;transform:scale(.85)} }
-
-        /* progress stats row */
-        .kb-prog-stats {
-            display: grid; grid-template-columns: repeat(3,1fr); gap: 10px; margin-bottom: 16px;
-        }
-        .kb-prog-stat {
-            background: var(--surface-2); border: 1px solid var(--border);
-            border-radius: var(--r-md); padding: 14px 14px 12px;
-        }
-        .kb-prog-stat-lbl { font-size: 10px; color: var(--text-faint); letter-spacing: .04em; text-transform: uppercase; margin-bottom: 5px; }
-        .kb-prog-stat-val { font-size: 22px; font-weight: 700; letter-spacing: -.04em; font-variant-numeric: tabular-nums; }
-        .kb-prog-stat-val.success-val { color: var(--green); }
-        .kb-prog-stat-val.fail-val    { color: var(--red); }
-        .kb-prog-stat-val.rate-val    { color: var(--text); }
-
-        /* progress bar */
-        .kb-prog-bar-wrap {
-            background: var(--surface-2); border: 1px solid var(--border);
-            border-radius: var(--r-md); padding: 14px 16px; margin-bottom: 16px;
-        }
-        .kb-prog-bar-row {
-            display: flex; align-items: center; justify-content: space-between; margin-bottom: 10px;
-        }
-        .kb-prog-bar-lbl { font-size: 12px; font-weight: 500; color: var(--text-muted); }
-        .kb-prog-bar-pct { font-size: 12px; font-weight: 600; color: var(--text); font-family: var(--mono); }
-        .kb-pbar  { width: 100%; height: 3px; background: var(--surface-3); border-radius: 99px; overflow: hidden; }
-        .kb-pfill { height: 100%; background: #fff; border-radius: 99px; transition: width 0.5s ease; width: 0%; }
-
-        /* session receipt */
-        .kb-receipt { margin-bottom: 16px; }
-        .kb-receipt-row {
-            display: flex; align-items: center; justify-content: space-between;
-            padding: 9px 0; border-bottom: 1px solid var(--border);
-        }
-        .kb-receipt-row:last-child { border-bottom: none; }
-        .kb-receipt-key { font-size: 12px; color: var(--text-faint); font-weight: 500; }
-        .kb-receipt-val { font-size: 12px; color: var(--text-muted); font-weight: 500; font-family: var(--mono); }
-
-        /* =========================================================
-           LOG CONSOLE
-        ========================================================= */
-        .kb-log-toolbar {
-            display: flex; align-items: center; justify-content: space-between; margin-bottom: 10px;
-        }
-        .kb-log-clear {
-            font-size: 11px; color: var(--text-faint); background: none;
-            border: 1px solid var(--border); padding: 3px 10px; border-radius: var(--r-sm);
-            cursor: pointer; font-family: var(--font); font-weight: 500;
-            transition: color var(--ease), border-color var(--ease);
-        }
-        .kb-log-clear:hover { color: var(--text-muted); border-color: var(--border-strong); }
-        .kb-log-box {
-            background: var(--surface-2); border: 1px solid var(--border);
-            border-radius: var(--r-md); padding: 14px 14px;
-            height: 200px; overflow-y: auto; font-family: var(--mono); font-size: 11.5px;
-            display: flex; flex-direction: column; gap: 5px;
-        }
-        .kb-log-box::-webkit-scrollbar { width: 4px; }
-        .kb-log-box::-webkit-scrollbar-track { background: transparent; }
-        .kb-log-box::-webkit-scrollbar-thumb { background: var(--border-strong); border-radius: 99px; }
-        .kb-log-entry {
-            display: flex; gap: 8px; align-items: flex-start;
-            border-left: 2px solid; padding-left: 8px; line-height: 1.5;
-            animation: logIn 0.15s ease both;
-        }
-        @keyframes logIn { from{opacity:0;transform:translateY(-4px)} to{opacity:1;transform:none} }
-        .kb-log-entry.success { border-color: rgba(34,197,94,.4); }
-        .kb-log-entry.error   { border-color: rgba(239,68,68,.4); }
-        .kb-log-entry.info    { border-color: rgba(255,255,255,.12); }
-        .kb-log-time { color: var(--text-faint); white-space: nowrap; flex-shrink: 0; font-size: 10.5px; padding-top: 1px; }
-        .kb-log-msg { flex: 1; }
-        .kb-log-msg.success { color: #6ee7a0; }
-        .kb-log-msg.error   { color: #fca5a5; }
-        .kb-log-msg.info    { color: var(--text-muted); }
-        .kb-log-empty { color: var(--text-faint); text-align: center; padding: 20px 0; font-size: 11px; }
-
-        /* action buttons row */
-        .kb-actions-row {
-            display: flex; gap: 10px; margin-top: 16px;
-        }
-        .kb-btn-stop {
-            flex: 1; height: 38px; display: flex; align-items: center; justify-content: center;
-            gap: 8px; font-size: 13px; font-family: var(--font); font-weight: 500;
-            color: var(--red); background: transparent;
-            border: 1px solid rgba(239,68,68,.3); border-radius: var(--r-sm);
-            cursor: pointer; transition: background var(--ease), border-color var(--ease);
-        }
-        .kb-btn-stop:hover { background: rgba(239,68,68,.07); border-color: rgba(239,68,68,.5); }
-        .kb-btn-new {
-            flex: 1; height: 38px; display: flex; align-items: center; justify-content: center;
-            gap: 8px; font-size: 13px; font-family: var(--font); font-weight: 600;
-            color: #000; background: #fff; border: none; border-radius: var(--r-sm);
-            cursor: pointer; text-decoration: none;
-            transition: background var(--ease); display: none;
-        }
-        .kb-btn-new:hover { background: var(--accent-dim); }
-        .kb-btn-new.show { display: flex; }
-
-        /* page fade */
-        .page-fade { opacity: 0; animation: pgFade .3s .05s ease both; }
-        @keyframes pgFade { from{opacity:0;transform:translateY(8px);} to{opacity:1;transform:none;} }
-
-        /* toast */
+        /* Toast */
         #toast {
-            position: fixed; bottom: 24px; left: 50%;
-            transform: translateX(-50%) translateY(16px);
-            background: var(--surface-2); border: 1px solid var(--border-strong);
-            border-radius: var(--r-md); padding: 10px 18px;
-            font-size: 13px; color: var(--text-muted); z-index: 500;
-            pointer-events: none; opacity: 0;
-            transition: opacity .2s, transform .2s; white-space: nowrap;
+            position: fixed; bottom: 1.5rem; right: 1.5rem;
+            background: #111; border: 1px solid var(--border);
+            border-radius: 10px; padding: .65rem 1rem;
+            font-size: 0.82rem; font-weight: 500;
+            display: flex; align-items: center; gap: 8px;
+            z-index: 9999; max-width: 300px;
+            transform: translateY(20px); opacity: 0;
+            transition: transform .3s, opacity .3s; pointer-events: none;
         }
-        #toast.show { opacity: 1; transform: translateX(-50%) translateY(0); }
+        #toast.show { transform: translateY(0); opacity: 1; }
+        #toast.success { border-color: rgba(34,197,94,.3); color: #86efac; }
+        #toast.error   { border-color: rgba(239,68,68,.3);  color: #fca5a5; }
+        #toast.info    { border-color: rgba(59,130,246,.3);  color: #93c5fd; }
 
-        /* responsive */
-        @media(max-width:768px) {
-            .kb-nav-links { display: none; }
-            .kb-ham { display: flex; }
-            .kb-main { padding-left: 14px; padding-right: 14px; }
-            .kb-field-row { grid-template-columns: 1fr; }
-            .kb-prog-stats { grid-template-columns: repeat(3,1fr); gap: 8px; }
-            .kb-speed-grid { grid-template-columns: repeat(3,1fr); }
-        }
-        @media(max-width:480px) {
-            .kb-cookie-grid { grid-template-columns: repeat(auto-fill, minmax(68px,1fr)); }
-            .kb-method-grid { grid-template-columns: 1fr 1fr; }
+        /* Skeleton */
+        .skeleton { background: linear-gradient(90deg,#141414 25%,#1c1c1c 50%,#141414 75%); background-size: 200% 100%; animation: shimmer 1.5s infinite; border-radius: 5px; }
+        @keyframes shimmer { 0%{background-position:200% 0} 100%{background-position:-200% 0} }
+
+        /* Responsive */
+        @media (max-width: 760px) {
+            #grid { grid-template-columns: 1fr; }
+            #page { padding: 1rem .75rem 3rem; }
         }
     </style>
 </head>
 <body>
-<div id="grid-bg"></div>
 
-<!-- TOP NAV -->
-<nav class="kb-nav">
-    <div class="kb-nav-inner">
-        <a href="/home" class="kb-nav-back">
-            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
-                <path d="M15 18l-6-6 6-6"/>
-            </svg>
-        </a>
-        <a href="/home" class="kb-brand">
-            <div class="kb-brand-icon">
-                <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="#000" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
-                    <path d="M13 2L3 14h9l-1 8 10-12h-9l1-8z"/>
-                </svg>
-            </div>
-            KiroBoost
-        </a>
-        <div class="kb-nav-links">
-            <a href="/home"         class="kb-nav-a">Home</a>
-            <a href="/boost"        class="kb-nav-a active">Boost</a>
-            <a href="/cookies"      class="kb-nav-a">Accounts</a>
-            <a href="/transactions" class="kb-nav-a">Orders</a>
-            <a href="/profile"      class="kb-nav-a">Profile</a>
-        </div>
-        <div class="kb-nav-right">
-            <a href="/profile" class="kb-avatar-chip">
-                <div class="kb-avatar" id="navAv">—</div>
-                <span class="kb-avatar-name" id="navUser">…</span>
-            </a>
-            <button class="kb-ham" id="hamBtn" aria-label="Menu">
-                <svg id="hamIco" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                    <line x1="3" y1="6" x2="21" y2="6"/>
-                    <line x1="3" y1="12" x2="21" y2="12"/>
-                    <line x1="3" y1="18" x2="21" y2="18"/>
-                </svg>
-            </button>
-        </div>
-    </div>
+<!-- Navbar -->
+<nav id="topnav">
+    <a href="/home" class="kiro-logo">
+        <span class="logo-kiro">Kiro</span><span class="logo-boost">Boost</span>
+    </a>
+    <a href="/home" class="nav-back">
+        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="15 18 9 12 15 6"/></svg>
+        Home
+    </a>
 </nav>
 
-<!-- mobile drawer -->
-<div class="kb-drawer" id="drawer">
-    <a href="/home">Home</a>
-    <a href="/boost">Boost</a>
-    <a href="/cookies">Accounts</a>
-    <a href="/transactions">Orders</a>
-    <a href="/inbox">Inbox</a>
-    <a href="/profile">Profile</a>
-</div>
-
-<!-- MAIN -->
-<main class="kb-main page-fade">
-
-    <div class="kb-page-hdr">
-        <div class="kb-page-eyebrow">Share Engine</div>
-        <div class="kb-page-title">New Boost Session</div>
+<div id="page">
+    <div class="page-title-row">
+        <div class="page-title">Boost</div>
+        <div class="page-sub">Share a Facebook post across all your accounts simultaneously</div>
     </div>
 
-    <!-- ── FORM SECTION ───────────────────────────────────── -->
-    <div id="formSection">
+    <div id="grid">
 
-        <!-- Post link -->
-        <div class="kb-card">
-            <div class="kb-card-hdr">
-                <span class="kb-card-ttl">Post link</span>
-                <span class="kb-card-sub">Facebook post or reel URL</span>
-            </div>
-            <div class="kb-card-body">
-                <div class="kb-field">
-                    <div class="kb-input-wrap">
-                        <div class="kb-input-pfx">
-                            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
-                                <path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"/>
-                                <path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"/>
-                            </svg>
-                        </div>
-                        <input type="text" id="postLink" class="kb-input" placeholder="https://www.facebook.com/…">
-                        <div class="kb-input-sfx" onclick="pasteLink()" title="Paste from clipboard">
-                            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
-                                <path d="M16 4h2a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2H6a2 2 0 0 1-2-2V6a2 2 0 0 1 2-2h2"/>
-                                <rect x="8" y="2" width="8" height="4" rx="1" ry="1"/>
-                            </svg>
-                        </div>
-                    </div>
+        <!-- ════ LEFT: Setup ════ -->
+        <div style="display:flex;flex-direction:column;gap:1.25rem;">
+
+            <!-- Post Link -->
+            <div class="card">
+                <div class="card-header">
+                    <span class="card-title">
+                        <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M10 13a5 5 0 007.54.54l3-3a5 5 0 00-7.07-7.07l-1.72 1.71"/><path d="M14 11a5 5 0 00-7.54-.54l-3 3a5 5 0 007.07 7.07l1.71-1.71"/></svg>
+                        Post Link
+                    </span>
                 </div>
-
-                <div class="kb-field-row">
-                    <div>
-                        <label class="kb-label">Target shares</label>
-                        <div class="kb-input-wrap">
-                            <input type="number" id="targetShares" class="kb-input" placeholder="100" min="1" style="padding-left:14px;">
-                        </div>
+                <div class="card-body">
+                    <div class="inline-err" id="linkError">
+                        <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/></svg>
+                        <span id="linkErrorText"></span>
                     </div>
-                    <div>
-                        <label class="kb-label">Customer name</label>
-                        <div class="kb-input-wrap">
-                            <input type="text" id="customerName" class="kb-input" placeholder="Optional" style="padding-left:14px;">
-                        </div>
-                    </div>
-                </div>
 
-                <div class="kb-field">
-                    <label class="kb-label">Reference note</label>
-                    <div class="kb-input-wrap">
-                        <input type="text" id="referenceNote" class="kb-input" placeholder="e.g. Order #123 (optional)" style="padding-left:14px;">
+                    <div class="field-group">
+                        <div class="field-label">Facebook Post URL</div>
+                        <div style="display:flex;gap:8px;align-items:center;">
+                            <input type="text" class="field-input" id="postLink"
+                                placeholder="https://www.facebook.com/permalink.php?story_fbid=..."
+                                autocomplete="off" oninput="onLinkInput()">
+                            <button onclick="resolvePostId()" id="resolveBtn"
+                                style="background:rgba(255,255,255,.07);border:1px solid var(--border2);color:#fff;border-radius:8px;padding:.6rem .9rem;font-size:.78rem;font-weight:700;cursor:pointer;white-space:nowrap;transition:background .2s;flex-shrink:0;"
+                                onmouseenter="this.style.background='rgba(255,255,255,.13)'"
+                                onmouseleave="this.style.background='rgba(255,255,255,.07)'">
+                                <span id="resolveBtnContent">Resolve</span>
+                            </button>
+                        </div>
+                        <div style="display:flex;align-items:center;gap:8px;flex-wrap:wrap;">
+                            <span class="post-id-chip" id="postIdChip">
+                                <svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="20 6 9 17 4 12"/></svg>
+                                Post ID: <strong id="postIdText">—</strong>
+                            </span>
+                        </div>
+                        <div class="field-hint">
+                            <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><line x1="12" y1="16" x2="12" y2="12"/><line x1="12" y1="8" x2="12.01" y2="8"/></svg>
+                            Paste the direct link to the Facebook post you want to boost
+                        </div>
                     </div>
                 </div>
             </div>
+
+            <!-- Settings: Method + Speed + Target -->
+            <div class="card">
+                <div class="card-header">
+                    <span class="card-title">
+                        <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><circle cx="12" cy="12" r="3"/><path d="M19.07 4.93l-1.41 1.41M4.93 4.93l1.41 1.41M12 2v2M12 20v2M4.93 19.07l1.41-1.41M19.07 19.07l-1.41-1.41M22 12h-2M2 12h2"/></svg>
+                        Settings
+                    </span>
+                </div>
+                <div class="card-body">
+
+                    <!-- Method -->
+                    <div class="field-group">
+                        <div class="field-label">Share Method</div>
+                        <div class="method-grid">
+                            <div class="method-opt selected" data-method="normal" onclick="selectMethod(this)">
+                                <div class="method-opt-name">Normal</div>
+                                <div class="method-opt-desc">Standard b-graph share</div>
+                                <span class="method-tag tag-fast">Default</span>
+                            </div>
+                            <div class="method-opt" data-method="smm" onclick="selectMethod(this)">
+                                <div class="method-opt-name">SMM</div>
+                                <div class="method-opt-desc">SMM panel share route</div>
+                                <span class="method-tag tag-smm">Advanced</span>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Speed -->
+                    <div class="field-group">
+                        <div class="field-label">Speed</div>
+                        <div class="speed-grid">
+                            <div class="speed-opt selected" data-speed="instant" onclick="selectSpeed(this)">
+                                <div class="speed-icon">⚡</div>
+                                <div class="speed-name">Instant</div>
+                                <div class="speed-desc">No delay</div>
+                            </div>
+                            <div class="speed-opt" data-speed="fast" onclick="selectSpeed(this)">
+                                <div class="speed-icon">🚀</div>
+                                <div class="speed-name">Fast</div>
+                                <div class="speed-desc">2s delay</div>
+                            </div>
+                            <div class="speed-opt" data-speed="slow" onclick="selectSpeed(this)">
+                                <div class="speed-icon">🐢</div>
+                                <div class="speed-name">Slow</div>
+                                <div class="speed-desc">3s delay</div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Target count -->
+                    <div class="field-group">
+                        <div class="field-label">
+                            <span>Target Shares</span>
+                            <span class="field-label-right">Leave blank for unlimited</span>
+                        </div>
+                        <input type="number" class="field-input" id="targetCount"
+                            placeholder="e.g. 100" min="1" max="99999">
+                    </div>
+
+                </div>
+            </div>
+
+            <!-- Accounts -->
+            <div class="card">
+                <div class="card-header">
+                    <span class="card-title">
+                        <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M17 21v-2a4 4 0 00-4-4H5a4 4 0 00-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 00-3-3.87"/><path d="M16 3.13a4 4 0 010 7.75"/></svg>
+                        Accounts
+                    </span>
+                    <button class="select-all-btn" id="selectAllBtn" onclick="toggleSelectAll()">Select All</button>
+                </div>
+                <div class="card-body" style="padding-top:.85rem;padding-bottom:.85rem;">
+
+                    <div class="acct-header" style="margin-bottom:0;">
+                        <span id="selectedCount" style="font-size:0.72rem;color:var(--muted2);">Loading accounts...</span>
+                    </div>
+
+                    <div class="acct-list" id="acctList">
+                        <!-- Skeleton -->
+                        ${Array(3).fill(0).map(()=>`
+                        <div style="display:flex;align-items:center;gap:10px;padding:.6rem .75rem;border:1.5px solid var(--border);border-radius:9px;">
+                            <div class="skeleton" style="width:16px;height:16px;border-radius:3px;"></div>
+                            <div class="skeleton" style="width:32px;height:32px;border-radius:50%;flex-shrink:0;"></div>
+                            <div style="flex:1;display:flex;flex-direction:column;gap:5px;">
+                                <div class="skeleton" style="height:11px;width:55%;"></div>
+                                <div class="skeleton" style="height:9px;width:35%;"></div>
+                            </div>
+                        </div>`).join('')}
+                    </div>
+
+                </div>
+            </div>
+
+            <!-- Error + Start -->
+            <div class="inline-err" id="startError">
+                <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/></svg>
+                <span id="startErrorText"></span>
+            </div>
+
+            <button class="btn-start" id="startBtn" onclick="startBoost()">
+                <span id="startBtnContent">
+                    <span style="display:inline-flex;align-items:center;gap:8px;">
+                        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M13 2L3 14h9l-1 8 10-12h-9l1-8z"/></svg>
+                        Start Boost
+                    </span>
+                </span>
+            </button>
+            <button class="btn-stop" id="stopBtn" onclick="stopSession()">
+                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><rect x="3" y="3" width="18" height="18" rx="2"/></svg>
+                Stop Session
+            </button>
+
         </div>
 
-        <!-- Speed mode -->
-        <div class="kb-card">
-            <div class="kb-card-hdr">
-                <span class="kb-card-ttl">Speed mode</span>
-                <span class="kb-card-sub">Delay between shares per account</span>
+        <!-- ════ RIGHT: Live Session ════ -->
+        <div class="session-panel">
+            <div class="card">
+
+                <div class="session-top">
+                    <span class="card-title">Live Session</span>
+                    <span class="session-status ss-idle" id="sessionStatusBadge">
+                        <span class="ss-dot"></span>
+                        <span id="sessionStatusText">Idle</span>
+                    </span>
+                </div>
+
+                <div class="session-stats">
+                    <div class="sstat">
+                        <div class="sstat-val green" id="sessSuccess">0</div>
+                        <div class="sstat-key">Shared</div>
+                    </div>
+                    <div class="sstat">
+                        <div class="sstat-val red" id="sessFail">0</div>
+                        <div class="sstat-key">Failed</div>
+                    </div>
+                    <div class="sstat">
+                        <div class="sstat-val muted" id="sessTarget">∞</div>
+                        <div class="sstat-key">Target</div>
+                    </div>
+                </div>
+
+                <div class="prog-wrap">
+                    <div class="prog-labels">
+                        <span id="progLabel">—</span>
+                        <span id="progPct">0%</span>
+                    </div>
+                    <div class="prog-bar">
+                        <div class="prog-fill" id="progFill"></div>
+                    </div>
+                </div>
+
+                <div class="log-header">
+                    <span class="log-title">
+                        <svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" style="margin-right:4px;vertical-align:middle;"><path d="M14 2H6a2 2 0 00-2 2v16a2 2 0 002 2h12a2 2 0 002-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="16" y1="13" x2="8" y2="13"/><line x1="16" y1="17" x2="8" y2="17"/></svg>
+                        Activity Log
+                    </span>
+                    <button class="log-clear" onclick="clearLog()">Clear</button>
+                </div>
+
+                <div id="logBox">
+                    <div class="log-empty" id="logEmpty">
+                        <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.3"><path d="M14 2H6a2 2 0 00-2 2v16a2 2 0 002 2h12a2 2 0 002-2V8z"/><polyline points="14 2 14 8 20 8"/></svg>
+                        <span>No activity yet</span>
+                    </div>
+                </div>
+
             </div>
-            <div class="kb-card-body">
-                <div class="kb-speed-grid">
-                    <div class="kb-speed-btn active" data-speed="instant" onclick="selectSpeed(this)">
-                        <div class="kb-speed-icon">⚡</div>
-                        <div class="kb-speed-name">Instant</div>
-                        <div class="kb-speed-delay">0 ms</div>
-                    </div>
-                    <div class="kb-speed-btn" data-speed="fast" onclick="selectSpeed(this)">
-                        <div class="kb-speed-icon">→</div>
-                        <div class="kb-speed-name">Fast</div>
-                        <div class="kb-speed-delay">2 000 ms</div>
-                    </div>
-                    <div class="kb-speed-btn" data-speed="slow" onclick="selectSpeed(this)">
-                        <div class="kb-speed-icon">◌</div>
-                        <div class="kb-speed-name">Slow</div>
-                        <div class="kb-speed-delay">3 000 ms</div>
+
+            <!-- Speed info box -->
+            <div class="card">
+                <div class="card-body" style="gap:.6rem;">
+                    <div style="font-size:.72rem;font-weight:700;color:var(--muted2);text-transform:uppercase;letter-spacing:.06em;">How it works</div>
+                    <div style="font-size:.78rem;color:#555;line-height:1.6;">
+                        <div style="margin-bottom:4px;">⚡ <strong style="color:#B4B4B4;">Instant</strong> — Fires all accounts simultaneously, no delay</div>
+                        <div style="margin-bottom:4px;">🚀 <strong style="color:#B4B4B4;">Fast</strong> — 2 second delay between each share per account</div>
+                        <div style="margin-bottom:4px;">🐢 <strong style="color:#B4B4B4;">Slow</strong> — 3 second delay between each share per account</div>
+                        <div style="margin-top:8px;padding-top:8px;border-top:1px solid var(--border);">All accounts run in parallel. Each account stops individually on failure while others continue.</div>
                     </div>
                 </div>
             </div>
+
         </div>
 
-        <!-- Share method -->
-        <div class="kb-card">
-            <div class="kb-card-hdr">
-                <span class="kb-card-ttl">Share method</span>
-                <span class="kb-card-sub">Token extraction strategy</span>
-            </div>
-            <div class="kb-card-body">
-                <div class="kb-method-grid">
-                    <div class="kb-method-btn" data-method="normal" onclick="selectMethod(this)">
-                        <div class="kb-method-icon">
-                            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
-                                <path d="M13 2L3 14h9l-1 8 10-12h-9l1-8z"/>
-                            </svg>
-                        </div>
-                        <div class="kb-method-info">
-                            <div class="kb-method-name">Normal</div>
-                            <div class="kb-method-desc">Standard token flow</div>
-                        </div>
-                    </div>
-                    <div class="kb-method-btn active" data-method="smm" onclick="selectMethod(this)">
-                        <div class="kb-method-icon">
-                            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
-                                <rect x="2" y="7" width="20" height="14" rx="2"/>
-                                <path d="M16 7V5a2 2 0 0 0-2-2h-4a2 2 0 0 0-2 2v2"/>
-                            </svg>
-                        </div>
-                        <div class="kb-method-info">
-                            <div class="kb-method-name">SMM</div>
-                            <div class="kb-method-desc">Business endpoint</div>
-                        </div>
-                    </div>
-                </div>
-            </div>
-        </div>
-
-        <!-- Account selection -->
-        <div class="kb-card">
-            <div class="kb-card-hdr">
-                <span class="kb-card-ttl">Select accounts</span>
-                <span class="kb-card-sub" id="cookieSub">Loading…</span>
-            </div>
-            <div class="kb-card-body">
-                <div class="kb-cookie-toolbar">
-                    <div class="kb-cookie-count">
-                        <span id="selCount">0</span> selected
-                    </div>
-                    <button class="kb-sel-all" onclick="selectAllCookies()">Select all</button>
-                </div>
-                <div class="kb-cookie-grid" id="cookieGrid">
-                    <div class="kb-cookie-loading">
-                        <div class="kb-spin"></div>
-                        <span>Loading accounts…</span>
-                    </div>
-                </div>
-            </div>
-        </div>
-
-        <!-- Error -->
-        <div class="kb-error" id="errBox">
-            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#ff7070" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="flex-shrink:0;margin-top:1px;">
-                <circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/>
-            </svg>
-            <span class="kb-error-text" id="errTxt">Error</span>
-        </div>
-
-        <!-- Submit -->
-        <button class="kb-btn-primary" id="startBtn" onclick="startBoost()">
-            <div class="kb-btn-spin" id="startSpin"></div>
-            <svg id="startIco" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
-                <path d="M13 2L3 14h9l-1 8 10-12h-9l1-8z"/>
-            </svg>
-            <span id="startTxt">Launch boost</span>
-        </button>
-
-    </div><!-- /formSection -->
-
-    <!-- ── PROGRESS SECTION ───────────────────────────────── -->
-    <div id="progressSection">
-
-        <!-- Status + stats -->
-        <div class="kb-card">
-            <div class="kb-card-hdr">
-                <span class="kb-card-ttl">Session status</span>
-                <span class="kb-status-badge running" id="statusBadge">Running</span>
-            </div>
-            <div class="kb-card-body">
-
-                <div class="kb-prog-stats">
-                    <div class="kb-prog-stat">
-                        <div class="kb-prog-stat-lbl">Success</div>
-                        <div class="kb-prog-stat-val success-val" id="successCount">0</div>
-                    </div>
-                    <div class="kb-prog-stat">
-                        <div class="kb-prog-stat-lbl">Failed</div>
-                        <div class="kb-prog-stat-val fail-val" id="failCount">0</div>
-                    </div>
-                    <div class="kb-prog-stat">
-                        <div class="kb-prog-stat-lbl">Rate</div>
-                        <div class="kb-prog-stat-val rate-val" id="rateVal">0%</div>
-                    </div>
-                </div>
-
-                <!-- progress bar -->
-                <div class="kb-prog-bar-wrap">
-                    <div class="kb-prog-bar-row">
-                        <span class="kb-prog-bar-lbl">Progress</span>
-                        <span class="kb-prog-bar-pct" id="pctTxt">0%</span>
-                    </div>
-                    <div class="kb-pbar"><div class="kb-pfill" id="progFill"></div></div>
-                </div>
-
-                <!-- receipt -->
-                <div class="kb-receipt">
-                    <div class="kb-receipt-row">
-                        <span class="kb-receipt-key">Post link</span>
-                        <span class="kb-receipt-val" id="rcLink" style="max-width:220px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;">—</span>
-                    </div>
-                    <div class="kb-receipt-row">
-                        <span class="kb-receipt-key">Target shares</span>
-                        <span class="kb-receipt-val" id="rcTarget">—</span>
-                    </div>
-                    <div class="kb-receipt-row">
-                        <span class="kb-receipt-key">Accounts</span>
-                        <span class="kb-receipt-val" id="rcAccounts">—</span>
-                    </div>
-                    <div class="kb-receipt-row">
-                        <span class="kb-receipt-key">Speed</span>
-                        <span class="kb-receipt-val" id="rcSpeed">—</span>
-                    </div>
-                    <div class="kb-receipt-row">
-                        <span class="kb-receipt-key">Method</span>
-                        <span class="kb-receipt-val" id="rcMethod">—</span>
-                    </div>
-                </div>
-
-                <!-- action buttons -->
-                <div class="kb-actions-row">
-                    <button class="kb-btn-stop" id="stopBtn" onclick="stopBoost()">
-                        <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
-                            <rect x="3" y="3" width="18" height="18" rx="2"/>
-                        </svg>
-                        Stop session
-                    </button>
-                    <button class="kb-btn-new" id="newBtn" onclick="resetForm()">
-                        <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
-                            <path d="M13 2L3 14h9l-1 8 10-12h-9l1-8z"/>
-                        </svg>
-                        New boost
-                    </button>
-                </div>
-
-            </div>
-        </div>
-
-        <!-- Activity log -->
-        <div class="kb-card">
-            <div class="kb-card-hdr">
-                <span class="kb-card-ttl">Activity log</span>
-                <button class="kb-log-clear" onclick="clearLog()">Clear</button>
-            </div>
-            <div class="kb-card-body" style="padding-top:12px;">
-                <div class="kb-log-box" id="logBox">
-                    <div class="kb-log-empty">Waiting for session…</div>
-                </div>
-            </div>
-        </div>
-
-    </div><!-- /progressSection -->
-
-</main>
+    </div>
+</div>
 
 <div id="toast"></div>
 
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
 <script>
-/* ====================================================
-   AUTH GUARD
-==================================================== */
-const token = localStorage.getItem('kb_token');
-if (!token) { window.location.replace('/login'); throw 0; }
+'use strict';
 
-/* populate nav */
-const cached = JSON.parse(localStorage.getItem('kb_user') || '{}');
-if (cached.username) {
-    document.getElementById('navUser').textContent = cached.username;
-    document.getElementById('navAv').textContent   = cached.username.charAt(0).toUpperCase();
+/* ── Auth ── */
+const TOKEN = localStorage.getItem('token') || localStorage.getItem('kb_token');
+if (!TOKEN) { window.location.href = '/login'; }
+function authHeaders() { return { 'Authorization': `Bearer ${TOKEN}`, 'Content-Type': 'application/json' }; }
+async function apiFetch(url, opts = {}) {
+    const res = await fetch(url, { ...opts, headers: { ...authHeaders(), ...(opts.headers||{}) } });
+    if (res.status === 401) { logout(); return null; }
+    return res.json();
 }
 
-/* ====================================================
-   MOBILE NAV
-==================================================== */
-const hamBtn = document.getElementById('hamBtn');
-const drawer = document.getElementById('drawer');
-const hamIco = document.getElementById('hamIco');
-const HAM  = '<line x1="3" y1="6" x2="21" y2="6"/><line x1="3" y1="12" x2="21" y2="12"/><line x1="3" y1="18" x2="21" y2="18"/>';
-const CLOS = '<line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/>';
-hamBtn.addEventListener('click', () => {
-    const o = drawer.classList.toggle('open');
-    hamIco.innerHTML = o ? CLOS : HAM;
-    document.body.style.overflow = o ? 'hidden' : '';
-});
-document.addEventListener('click', e => {
-    if (!drawer.contains(e.target) && !hamBtn.contains(e.target)) {
-        drawer.classList.remove('open');
-        hamIco.innerHTML = HAM;
-        document.body.style.overflow = '';
-    }
-});
+/* ── Spinner ── */
+const SPINNER = `<span class="geist-spinner"><svg height="16" viewBox="0 0 16 16" width="16" style="color:currentColor"><g clip-path="url(#csp)"><path d="M8 0V4" stroke="currentColor" stroke-width="1.5"/><path opacity=".5" d="M8 16V12" stroke="currentColor" stroke-width="1.5"/><path opacity=".9" d="M3.29773 1.52783L5.64887 4.7639" stroke="currentColor" stroke-width="1.5"/><path opacity=".1" d="M12.7023 1.52783L10.3511 4.7639" stroke="currentColor" stroke-width="1.5"/><path opacity=".4" d="M12.7023 14.472L10.3511 11.236" stroke="currentColor" stroke-width="1.5"/><path opacity=".6" d="M3.29773 14.472L5.64887 11.236" stroke="currentColor" stroke-width="1.5"/><path opacity=".2" d="M15.6085 5.52783L11.8043 6.7639" stroke="currentColor" stroke-width="1.5"/><path opacity=".7" d="M0.391602 10.472L4.19583 9.23598" stroke="currentColor" stroke-width="1.5"/><path opacity=".3" d="M15.6085 10.4722L11.8043 9.2361" stroke="currentColor" stroke-width="1.5"/><path opacity=".8" d="M0.391602 5.52783L4.19583 6.7639" stroke="currentColor" stroke-width="1.5"/></g><defs><clipPath id="csp"><rect width="16" height="16" fill="white"/></clipPath></defs></svg></span>`;
 
-/* ====================================================
-   TOAST
-==================================================== */
-function toast(msg) {
-    const t = document.getElementById('toast');
-    t.textContent = msg;
-    t.classList.add('show');
-    setTimeout(() => t.classList.remove('show'), 2800);
+/* ── Toast ── */
+function toast(msg, type = 'success') {
+    const el = document.getElementById('toast');
+    const icons = {
+        success:`<svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="20 6 9 17 4 12"/></svg>`,
+        error:  `<svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/></svg>`,
+        info:   `<svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><circle cx="12" cy="12" r="10"/><line x1="12" y1="16" x2="12" y2="12"/><line x1="12" y1="8" x2="12.01" y2="8"/></svg>`
+    };
+    el.className = `show ${type}`;
+    el.innerHTML = (icons[type]||icons.info) + msg;
+    clearTimeout(el._t);
+    el._t = setTimeout(() => el.className = '', 3200);
 }
 
-/* ====================================================
-   SELECTORS — speed & method
-==================================================== */
-function selectSpeed(el) {
-    document.querySelectorAll('.kb-speed-btn').forEach(b => b.classList.remove('active'));
-    el.classList.add('active');
+function logout() {
+    ['token','kb_token','userRole','username','kb_user'].forEach(k => localStorage.removeItem(k));
+    window.location.href = '/login';
 }
+
+/* ── State ── */
+let cookies      = [];       // all saved cookies
+let selectedIds  = new Set();
+let resolvedPostId = null;
+let selectedMethod = 'normal';
+let selectedSpeed  = 'instant';
+let sessionId    = null;
+let pollTimer    = null;
+let logLines     = [];
+
+/* ── Selectors ── */
 function selectMethod(el) {
-    document.querySelectorAll('.kb-method-btn').forEach(b => b.classList.remove('active'));
-    el.classList.add('active');
-}
-function getSpeed()  { return document.querySelector('.kb-speed-btn.active')?.dataset.speed   || 'instant'; }
-function getMethod() { return document.querySelector('.kb-method-btn.active')?.dataset.method || 'smm'; }
-
-/* ====================================================
-   PASTE CLIPBOARD
-==================================================== */
-async function pasteLink() {
-    try {
-        const text = await navigator.clipboard.readText();
-        document.getElementById('postLink').value = text.trim();
-    } catch(e) {
-        toast('Clipboard access denied — paste manually');
-    }
+    document.querySelectorAll('.method-opt').forEach(o => o.classList.remove('selected'));
+    el.classList.add('selected');
+    selectedMethod = el.dataset.method;
 }
 
-/* ====================================================
-   COOKIE MANAGEMENT
-==================================================== */
-let cookies = [];
-
-async function loadCookies() {
-    try {
-        const res  = await fetch('/api/user/cookies', {
-            headers: { 'Authorization': 'Bearer ' + token }
-        });
-        if (res.status === 401) { localStorage.clear(); window.location.replace('/login'); return; }
-        const data = await res.json();
-        if (!data.success) throw new Error(data.message || 'Failed');
-        cookies = data.cookies || [];
-        renderCookies();
-        document.getElementById('cookieSub').textContent = cookies.length + ' available';
-    } catch(e) {
-        document.getElementById('cookieGrid').innerHTML =
-            '<div class="kb-cookie-loading" style="color:var(--red)">Failed to load accounts — ' + e.message + '</div>';
-    }
+function selectSpeed(el) {
+    document.querySelectorAll('.speed-opt').forEach(o => o.classList.remove('selected'));
+    el.classList.add('selected');
+    selectedSpeed = el.dataset.speed;
 }
 
-function renderCookies() {
-    const grid = document.getElementById('cookieGrid');
-    if (!cookies.length) {
-        grid.innerHTML = '<div class="kb-cookie-loading">No saved accounts — <a href="/cookies" style="color:var(--text-muted);margin-left:4px;">add some</a></div>';
+/* ── Link resolve ── */
+function onLinkInput() {
+    document.getElementById('postIdChip').classList.remove('show','error');
+    document.getElementById('linkError').classList.remove('show');
+    resolvedPostId = null;
+}
+
+async function resolvePostId() {
+    const link = document.getElementById('postLink').value.trim();
+    if (!link) {
+        showErr('linkError','linkErrorText','Please enter a Facebook post URL.');
         return;
     }
-    grid.innerHTML = cookies.map((c, i) => {
-        const init = (c.name || 'A').charAt(0).toUpperCase();
-        return '<div class="kb-cookie-item" id="ci-' + i + '" onclick="toggleCookie(' + i + ')">' +
-            '<div class="kb-cookie-av">' + init +
-            '<div class="kb-cookie-check"><svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg></div></div>' +
-            '<div class="kb-cookie-name">' + (c.name || 'Account').split(' ')[0] + '</div>' +
-            '<div class="kb-cookie-uid">' + (c.uid ? c.uid.toString().slice(-5) : '—') + '</div>' +
-            '</div>';
+    const btn = document.getElementById('resolveBtn');
+    const content = document.getElementById('resolveBtnContent');
+    btn.disabled = true;
+    content.innerHTML = SPINNER;
+
+    document.getElementById('linkError').classList.remove('show');
+
+    const data = await fetch('/share/get-post-id', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ link })
+    }).then(r => r.json()).catch(() => null);
+
+    btn.disabled = false;
+    content.innerHTML = 'Resolve';
+
+    const chip = document.getElementById('postIdChip');
+    if (data?.success && data.postId) {
+        resolvedPostId = data.postId;
+        document.getElementById('postIdText').textContent = data.postId;
+        chip.classList.remove('error'); chip.classList.add('show');
+        toast(`Post ID resolved: ${data.postId}`, 'success');
+    } else {
+        resolvedPostId = null;
+        chip.className = 'post-id-chip show error';
+        chip.innerHTML = `<svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><circle cx="12" cy="12" r="10"/><line x1="15" y1="9" x2="9" y2="15"/><line x1="9" y1="9" x2="15" y2="15"/></svg> Could not resolve post ID`;
+        showErr('linkError','linkErrorText', data?.message || 'Failed to resolve post ID. Check the link.');
+    }
+}
+
+/* ── Accounts ── */
+function fbAvatarColor(name) {
+    const colors = ['#1877f2','#4267B2','#5865f2','#7c3aed','#0891b2','#0f766e'];
+    return colors[(name||'?').charCodeAt(0) % colors.length];
+}
+
+function renderAccounts() {
+    const list = document.getElementById('acctList');
+    const visible = cookies.filter(c => c.status === 'active' || c.status === 'restricted');
+
+    if (!visible.length && !cookies.length) {
+        list.innerHTML = `<div class="no-cookies-msg">
+            <svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.3"><rect x="3" y="3" width="18" height="18" rx="2"/><path d="M3 9h18M9 21V9"/></svg>
+            No cookies added yet.
+            <a href="/cookies" class="no-cookies-link">Go add cookies →</a>
+        </div>`;
+        document.getElementById('selectedCount').textContent = 'No accounts';
+        return;
+    }
+
+    if (!visible.length) {
+        list.innerHTML = `<div class="no-cookies-msg">
+            <span>All your cookies are expired or blocked.</span>
+            <a href="/cookies" class="no-cookies-link">Manage cookies →</a>
+        </div>`;
+        return;
+    }
+
+    list.innerHTML = visible.map(c => {
+        const sel = selectedIds.has(c.id);
+        const bg  = fbAvatarColor(c.name);
+        const letter = (c.name||'?').charAt(0).toUpperCase();
+        return `
+        <div class="acct-row${sel ? ' selected' : ''}" id="acct-${c.id}" onclick="toggleAcct('${c.id}')">
+            <div class="acct-ck"></div>
+            <div class="acct-avatar" style="background:${bg};color:#fff;">${letter}</div>
+            <div class="acct-info">
+                <div class="acct-name">${esc(c.name)}</div>
+                <div class="acct-uid">${esc(c.uid)}</div>
+            </div>
+            <div class="acct-right">
+                <span class="acct-status-dot" style="background:${c.status==='active'?'#22c55e':'#eab308'};"></span>
+                <span class="acct-status-label">${c.status}</span>
+            </div>
+        </div>`;
     }).join('');
+
+    updateSelectedCount();
 }
 
-function toggleCookie(i) {
-    const el = document.getElementById('ci-' + i);
-    el.classList.toggle('sel');
-    updateSelCount();
+function toggleAcct(id) {
+    if (selectedIds.has(id)) selectedIds.delete(id);
+    else selectedIds.add(id);
+    renderAccounts();
 }
 
-function selectAllCookies() {
-    const items  = document.querySelectorAll('.kb-cookie-item');
-    const allSel = Array.from(items).every(el => el.classList.contains('sel'));
-    items.forEach(el => allSel ? el.classList.remove('sel') : el.classList.add('sel'));
-    updateSelCount();
+function toggleSelectAll() {
+    const active = cookies.filter(c => c.status === 'active' || c.status === 'restricted');
+    const allSelected = active.every(c => selectedIds.has(c.id));
+    if (allSelected) { selectedIds.clear(); }
+    else { active.forEach(c => selectedIds.add(c.id)); }
+    renderAccounts();
 }
 
-function updateSelCount() {
-    const n = document.querySelectorAll('.kb-cookie-item.sel').length;
-    document.getElementById('selCount').textContent = n;
+function updateSelectedCount() {
+    const total  = cookies.filter(c => c.status === 'active' || c.status === 'restricted').length;
+    const selCnt = selectedIds.size;
+    document.getElementById('selectedCount').textContent = `${selCnt} of ${total} selected`;
+    const btn = document.getElementById('selectAllBtn');
+    btn.textContent = selCnt === total && total > 0 ? 'Deselect All' : 'Select All';
 }
 
-function getSelected() {
-    return Array.from(document.querySelectorAll('.kb-cookie-item.sel'))
-        .map(el => cookies[parseInt(el.id.replace('ci-', ''))]);
+/* ── Error helpers ── */
+function showErr(boxId, textId, msg) {
+    document.getElementById(textId).textContent = msg;
+    document.getElementById(boxId).classList.add('show');
+}
+function hideErr(boxId) { document.getElementById(boxId).classList.remove('show'); }
+function esc(s) { return (s||'').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;'); }
+
+/* ── Log helpers ── */
+function addLog(type, account, msg) {
+    logLines.push({ type, account, msg, time: new Date().toLocaleTimeString('en',{hour12:true,hour:'2-digit',minute:'2-digit',second:'2-digit'}) });
+    renderLog();
 }
 
-/* ====================================================
-   ERROR
-==================================================== */
-function showError(msg) {
-    const box = document.getElementById('errBox');
-    document.getElementById('errTxt').textContent = msg;
-    box.classList.add('show');
-    setTimeout(() => box.classList.remove('show'), 5000);
-}
-function hideError() { document.getElementById('errBox').classList.remove('show'); }
-
-/* ====================================================
-   START BUTTON STATE
-==================================================== */
-function setStartLoading(loading) {
-    const btn  = document.getElementById('startBtn');
-    const spin = document.getElementById('startSpin');
-    const ico  = document.getElementById('startIco');
-    const txt  = document.getElementById('startTxt');
-    btn.disabled       = loading;
-    spin.style.display = loading ? 'block' : 'none';
-    ico.style.display  = loading ? 'none'  : '';
-    txt.textContent    = loading ? 'Preparing…' : 'Launch boost';
-}
-
-/* ====================================================
-   LOG
-==================================================== */
-const seenLogs = new Set();
-
-function addLog(type, message, key) {
-    const logKey = key || (type + ':' + message);
-    if (key && seenLogs.has(logKey)) return;
-    if (key) seenLogs.add(logKey);
-
+function renderLog() {
     const box = document.getElementById('logBox');
-    const empty = box.querySelector('.kb-log-empty');
-    if (empty) empty.remove();
+    const empty = document.getElementById('logEmpty');
+    if (!logLines.length) { if(empty) empty.style.display = 'flex'; return; }
+    if(empty) empty.style.display = 'none';
 
-    const time = new Date().toLocaleTimeString([], { hour:'2-digit', minute:'2-digit', second:'2-digit' });
-    const div  = document.createElement('div');
-    div.className = 'kb-log-entry ' + type;
-    div.innerHTML =
-        '<span class="kb-log-time">' + time + '</span>' +
-        '<span class="kb-log-msg ' + type + '">' + message + '</span>';
-    box.insertBefore(div, box.firstChild);
+    const html = logLines.slice(-150).reverse().map(l => `
+        <div class="log-entry">
+            <span class="log-time">${l.time}</span>
+            <span class="log-acct">${esc(l.account)}</span>
+            <span class="log-msg ${l.type}">${esc(l.msg)}</span>
+        </div>`).join('');
+    box.innerHTML = html + (logLines.length ? '' : `<div class="log-empty" id="logEmpty"><svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.3"><path d="M14 2H6a2 2 0 00-2 2v16a2 2 0 002 2h12a2 2 0 002-2V8z"/><polyline points="14 2 14 8 20 8"/></svg><span>No activity yet</span></div>`);
 }
 
-function clearLog() {
-    document.getElementById('logBox').innerHTML = '<div class="kb-log-empty">Log cleared.</div>';
-    seenLogs.clear();
+function clearLog() { logLines = []; document.getElementById('logBox').innerHTML = `<div class="log-empty" id="logEmpty"><svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.3"><path d="M14 2H6a2 2 0 00-2 2v16a2 2 0 002 2h12a2 2 0 002-2V8z"/><polyline points="14 2 14 8 20 8"/></svg><span>No activity yet</span></div>`; }
+
+/* ── Session status UI ── */
+function setSessionStatus(status) {
+    const badge = document.getElementById('sessionStatusBadge');
+    const text  = document.getElementById('sessionStatusText');
+    badge.className = `session-status ss-${status}`;
+    badge.innerHTML = `<span class="ss-dot"></span><span id="sessionStatusText">${status.charAt(0).toUpperCase()+status.slice(1)}</span>`;
 }
 
-/* ====================================================
-   STATUS BADGE
-==================================================== */
-function setStatus(state, label) {
-    const badge = document.getElementById('statusBadge');
-    badge.className = 'kb-status-badge ' + state;
-    badge.textContent = label;
+function updateProgress(success, target) {
+    const pct  = target ? Math.min(100, Math.round((success / target) * 100)) : 0;
+    const fill = document.getElementById('progFill');
+    fill.style.width = target ? `${pct}%` : '0%';
+    document.getElementById('progLabel').textContent = target ? `${success} / ${target}` : `${success} shares`;
+    document.getElementById('progPct').textContent   = target ? `${pct}%` : '—';
 }
 
-/* ====================================================
-   MAIN — START BOOST
-==================================================== */
-let currentSession = null;
-let pollInterval   = null;
+/* ── Poll session ── */
+async function pollSession() {
+    if (!sessionId) return;
+    const data = await fetch(`/share/session/${sessionId}`, { headers: authHeaders() }).then(r=>r.json()).catch(()=>null);
+    if (!data?.success) return;
 
-async function startBoost() {
-    hideError();
+    document.getElementById('sessSuccess').textContent = data.successCount;
+    document.getElementById('sessFail').textContent    = data.failCount;
+    document.getElementById('sessTarget').textContent  = data.targetCount || '∞';
 
-    const selected    = getSelected();
-    const postLink    = document.getElementById('postLink').value.trim();
-    const targetShares= parseInt(document.getElementById('targetShares').value) || 0;
-    const customerName= document.getElementById('customerName').value.trim() || 'Guest';
-    const referenceNote = document.getElementById('referenceNote').value.trim();
-    const speed       = getSpeed();
-    const method      = getMethod();
+    updateProgress(data.successCount, data.targetCount);
 
-    /* validation */
-    if (!postLink)            { showError('Post link is required'); return; }
-    if (targetShares < 1)     { showError('Enter a valid target share count'); return; }
-    if (!selected.length)     { showError('Select at least one account'); return; }
+    // Render new logs
+    const existing = logLines.length;
+    const newLogs  = data.logs || [];
+    if (newLogs.length > existing) {
+        newLogs.slice(existing).forEach(l => {
+            const t = l.success ? 'ok' : 'fail';
+            addLog(t, l.account, l.message);
+        });
+    } else if (newLogs.length && logLines.length === 0) {
+        newLogs.forEach(l => addLog(l.success ? 'ok' : 'fail', l.account, l.message));
+    }
 
-    setStartLoading(true);
+    if (data.status === 'completed' || data.status === 'stopped') {
+        clearInterval(pollTimer); pollTimer = null;
+        setSessionStatus(data.status);
+        const fill = document.getElementById('progFill');
+        fill.className = `prog-fill ${data.status === 'completed' ? 'done' : 'stopped'}`;
 
-    try {
-        /* fill receipt */
-        document.getElementById('rcLink').textContent    = postLink;
-        document.getElementById('rcTarget').textContent  = targetShares;
-        document.getElementById('rcAccounts').textContent= selected.length;
-        document.getElementById('rcSpeed').textContent   = speed.charAt(0).toUpperCase() + speed.slice(1);
-        document.getElementById('rcMethod').textContent  = method.toUpperCase();
-
-        /* switch to progress view */
-        document.getElementById('formSection').style.display     = 'none';
-        document.getElementById('progressSection').style.display = '';
-        setStatus('running', 'Running');
-
-        addLog('info', 'Connecting to system…');
-
-        /* ── Step 1: extract tokens ───────────────────────── */
-        const validAccounts = [];
-        for (const c of selected) {
-            try {
-                const r = await fetch('/share/extract-token', {
-                    method: 'POST',
-                    headers: { 'Content-Type': 'application/json' },
-                    body: JSON.stringify({ cookie: c.cookie, method })
-                });
-                const d = await r.json();
-                if (d.success) {
-                    validAccounts.push({ ...c, token: d.token });
-                    addLog('success', 'Token OK — ' + (c.name || 'account'));
-                } else {
-                    addLog('error', 'Token invalid — ' + (c.name || 'account'));
-                }
-            } catch {
-                addLog('error', 'Network error — ' + (c.name || 'account'));
-            }
-        }
-
-        if (!validAccounts.length) {
-            addLog('error', 'No valid tokens — check your cookies');
-            setStatus('failed', 'Failed');
-            document.getElementById('stopBtn').style.display = 'none';
-            document.getElementById('newBtn').classList.add('show');
-            setStartLoading(false);
-            return;
-        }
-
-        addLog('info', validAccounts.length + ' account(s) verified');
-
-        /* ── Step 2: create order ─────────────────────────── */
-        try {
-            await fetch('/api/admin/orders', {
+        // Mark complete on server
+        if (data.status === 'completed' && data.successCount > 0) {
+            await apiFetch('/api/share/complete', {
                 method: 'POST',
-                headers: { 'Content-Type': 'application/json', 'Authorization': 'Bearer ' + token },
-                body: JSON.stringify({ customerName, postLink, quantity: targetShares, referenceNote, amount: 0, speed })
+                body: JSON.stringify({ totalShares: data.successCount })
             });
-        } catch(e) { /* non-critical */ }
+        }
 
-        /* ── Step 3: dispatch batch ───────────────────────── */
-        addLog('info', 'Dispatching batch session…');
+        document.getElementById('startBtn').disabled = false;
+        document.getElementById('startBtnContent').innerHTML = `<span style="display:inline-flex;align-items:center;gap:8px;"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M13 2L3 14h9l-1 8 10-12h-9l1-8z"/></svg>Start Boost</span>`;
+        document.getElementById('stopBtn').classList.remove('show');
 
-        const batchRes  = await fetch('/share/batch', {
+        addLog('info', 'System', `Session ${data.status} — ${data.successCount} shares, ${data.failCount} failed.`);
+        toast(`Boost ${data.status}! ${data.successCount} shares.`, data.status === 'completed' ? 'success' : 'error');
+    }
+}
+
+/* ── Start Boost ── */
+async function startBoost() {
+    hideErr('startError');
+    hideErr('linkError');
+
+    // Validate
+    if (!resolvedPostId) {
+        showErr('startError','startErrorText','Please resolve a valid Facebook post link first.');
+        return;
+    }
+    if (selectedIds.size === 0) {
+        showErr('startError','startErrorText','Select at least one account to boost with.');
+        return;
+    }
+
+    const target = parseInt(document.getElementById('targetCount').value) || null;
+    const btn    = document.getElementById('startBtn');
+    const bContent = document.getElementById('startBtnContent');
+
+    btn.disabled = true;
+    bContent.innerHTML = SPINNER;
+    addLog('info', 'System', `Extracting tokens for ${selectedIds.size} account(s)...`);
+    setSessionStatus('running');
+
+    // Step 1: Extract tokens for all selected cookies
+    const selected = cookies.filter(c => selectedIds.has(c.id));
+    const accounts = [];
+    let extractFails = 0;
+
+    await Promise.all(selected.map(async (c) => {
+        const row = document.getElementById(`acct-${c.id}`);
+        if (row) row.classList.add('extracting');
+
+        const data = await fetch('/share/extract-token', {
             method: 'POST',
             headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify({ accounts: validAccounts, postId: postLink, method, targetCount: targetShares, speed })
-        });
-        const batchData = await batchRes.json();
+            body: JSON.stringify({ cookie: c.cookie, method: selectedMethod === 'smm' ? 'smm' : 'content_management' })
+        }).then(r=>r.json()).catch(()=>null);
 
-        if (!batchData.success) {
-            addLog('error', 'Server rejected batch — ' + (batchData.message || 'unknown'));
-            setStatus('failed', 'Failed');
-            document.getElementById('stopBtn').style.display = 'none';
-            document.getElementById('newBtn').classList.add('show');
-            setStartLoading(false);
-            return;
-        }
+        if (row) row.classList.remove('extracting');
 
-        currentSession = batchData.sessionId;
-        addLog('info', 'Session started — ID: ' + currentSession);
-        startPolling();
-
-    } catch(err) {
-        /* if still on form, show error there */
-        if (document.getElementById('formSection').style.display !== 'none') {
-            setStartLoading(false);
-            showError(err.message || 'Unexpected error');
+        if (data?.success && data.token) {
+            accounts.push({ cookie: c.cookie, token: data.token, name: c.name, uid: c.uid });
+            addLog('ok', c.name, `✓ Token extracted`);
         } else {
-            addLog('error', err.message || 'Unexpected error');
-            setStatus('failed', 'Failed');
-            document.getElementById('stopBtn').style.display = 'none';
-            document.getElementById('newBtn').classList.add('show');
+            extractFails++;
+            addLog('fail', c.name, `✗ Token extraction failed — skipped`);
         }
-        setStartLoading(false);
+    }));
+
+    if (!accounts.length) {
+        btn.disabled = false;
+        bContent.innerHTML = `<span style="display:inline-flex;align-items:center;gap:8px;"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M13 2L3 14h9l-1 8 10-12h-9l1-8z"/></svg>Start Boost</span>`;
+        setSessionStatus('idle');
+        showErr('startError','startErrorText','All selected cookies failed token extraction. They may be expired.');
+        toast('Token extraction failed for all accounts.','error');
+        return;
     }
-}
 
-/* ====================================================
-   POLLING — GET /share/session/:id
-==================================================== */
-function startPolling() {
-    pollInterval = setInterval(async () => {
-        if (!currentSession) return;
-        try {
-            const res  = await fetch('/share/session/' + currentSession);
-            const data = await res.json();
-            if (!data.success) return;
-
-            const target = data.targetCount || 1;
-            const ok     = data.successCount || 0;
-            const fail   = data.failCount    || 0;
-            const total  = ok + fail;
-            const pct    = Math.min(Math.round((ok / target) * 100), 100);
-            const rate   = total > 0 ? Math.round((ok/total)*100) : 0;
-
-            document.getElementById('successCount').textContent = ok;
-            document.getElementById('failCount').textContent    = fail;
-            document.getElementById('rateVal').textContent      = rate + '%';
-            document.getElementById('pctTxt').textContent       = pct + '%';
-            document.getElementById('progFill').style.width     = pct + '%';
-
-            /* stream new log entries */
-            const logs = data.logs || [];
-            logs.slice(-10).forEach(l => {
-                addLog(l.success ? 'success' : 'error',
-                    (l.account || '') + (l.message ? ': ' + l.message : ''),
-                    String(l.time));
-            });
-
-            /* session ended */
-            if (data.status !== 'running') {
-                clearInterval(pollInterval);
-                const done    = data.status === 'completed';
-                const stopped = data.status === 'stopped';
-                setStatus(done ? 'done' : stopped ? 'stopped' : 'failed',
-                          done ? 'Completed' : stopped ? 'Stopped' : 'Failed');
-                document.getElementById('stopBtn').style.display = 'none';
-                document.getElementById('newBtn').classList.add('show');
-
-                /* record completion */
-                try {
-                    await fetch('/api/share/complete', {
-                        method: 'POST',
-                        headers: { 'Content-Type': 'application/json', 'Authorization': 'Bearer ' + token },
-                        body: JSON.stringify({ totalShares: ok })
-                    });
-                } catch(e) { /* non-critical */ }
-
-                addLog(done ? 'success' : 'info',
-                    'Session ' + data.status + ' — ' + ok + ' shares');
-            }
-        } catch(e) { /* poll error — will retry */ }
-    }, 1000);
-}
-
-/* ====================================================
-   STOP SESSION — POST /share/session/:id/stop
-==================================================== */
-async function stopBoost() {
-    if (!currentSession) return;
-    try {
-        await fetch('/share/session/' + currentSession + '/stop', { method: 'POST' });
-        addLog('info', 'Stop signal sent');
-    } catch(e) {
-        toast('Stop request failed');
+    if (extractFails > 0) {
+        addLog('warn', 'System', `${extractFails} account(s) skipped — ${accounts.length} will proceed.`);
     }
+
+    // Notify server (start tracking)
+    await apiFetch('/api/share/start', { method: 'POST' }).catch(()=>{});
+
+    // Step 2: Start batch session
+    addLog('info', 'System', `Starting batch — ${accounts.length} accounts, method: ${selectedMethod}, speed: ${selectedSpeed}${target ? ', target: '+target : ''}`);
+
+    const batchData = await fetch('/share/batch', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ accounts, postId: resolvedPostId, method: selectedMethod, targetCount: target, speed: selectedSpeed })
+    }).then(r=>r.json()).catch(()=>null);
+
+    if (!batchData?.success) {
+        btn.disabled = false;
+        bContent.innerHTML = `<span style="display:inline-flex;align-items:center;gap:8px;"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M13 2L3 14h9l-1 8 10-12h-9l1-8z"/></svg>Start Boost</span>`;
+        setSessionStatus('idle');
+        showErr('startError','startErrorText', batchData?.message || 'Failed to start batch session.');
+        return;
+    }
+
+    sessionId = batchData.sessionId;
+    document.getElementById('sessTarget').textContent = target || '∞';
+    document.getElementById('stopBtn').classList.add('show');
+
+    addLog('info', 'System', `Session started — ID: ${sessionId}`);
+    toast(`Boost started! ${accounts.length} accounts active.`, 'success');
+
+    // Step 3: Poll every 1.5s
+    logLines = logLines; // keep existing
+    pollTimer = setInterval(pollSession, 1500);
 }
 
-/* ====================================================
-   RESET FORM
-==================================================== */
-function resetForm() {
-    clearInterval(pollInterval);
-    currentSession = null;
-    seenLogs.clear();
-
-    /* reset UI */
-    document.getElementById('progressSection').style.display = 'none';
-    document.getElementById('formSection').style.display     = '';
-
-    document.getElementById('stopBtn').style.display = '';
-    document.getElementById('newBtn').classList.remove('show');
-    document.getElementById('progFill').style.width    = '0%';
-    document.getElementById('pctTxt').textContent      = '0%';
-    document.getElementById('successCount').textContent = '0';
-    document.getElementById('failCount').textContent    = '0';
-    document.getElementById('rateVal').textContent      = '0%';
-    setStatus('running', 'Running');
-    setStartLoading(false);
-
-    /* reset inputs */
-    ['postLink','targetShares','customerName','referenceNote'].forEach(id => {
-        document.getElementById(id).value = '';
-    });
-    document.querySelectorAll('.kb-cookie-item.sel').forEach(el => el.classList.remove('sel'));
-    updateSelCount();
-    clearLog();
-
-    /* scroll to top */
-    window.scrollTo({ top: 0, behavior: 'smooth' });
+/* ── Stop session ── */
+async function stopSession() {
+    if (!sessionId) return;
+    await fetch(`/share/session/${sessionId}/stop`, { method: 'POST', headers: authHeaders() }).catch(()=>{});
+    clearInterval(pollTimer); pollTimer = null;
+    setSessionStatus('stopped');
+    document.getElementById('stopBtn').classList.remove('show');
+    document.getElementById('startBtn').disabled = false;
+    document.getElementById('startBtnContent').innerHTML = `<span style="display:inline-flex;align-items:center;gap:8px;"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M13 2L3 14h9l-1 8 10-12h-9l1-8z"/></svg>Start Boost</span>`;
+    document.getElementById('progFill').className = 'prog-fill stopped';
+    addLog('warn', 'System', 'Session manually stopped by user.');
+    toast('Session stopped.', 'info');
 }
 
-/* ====================================================
-   INIT
-==================================================== */
+/* ── Load cookies (GET /api/user/cookies) ── */
+async function loadCookies() {
+    const data = await apiFetch('/api/user/cookies');
+    if (!data?.success) { toast('Failed to load cookies.', 'error'); return; }
+    cookies = data.cookies || [];
+    renderAccounts();
+}
+
+/* ── Enter to resolve link ── */
+document.getElementById('postLink').addEventListener('keydown', e => {
+    if (e.key === 'Enter') resolvePostId();
+});
+
+/* ── Init ── */
 loadCookies();
 </script>
+
 </body>
 </html>
