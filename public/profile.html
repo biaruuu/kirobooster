@@ -2,270 +2,1014 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>Kiro Profile</title>
-    <script src="https://cdn.tailwindcss.com"></script>
-    <link href="https://fonts.googleapis.com/css2?family=Karla:wght@400;500;700&family=Poppins:wght@400;600;700&display=swap" rel="stylesheet">
-    
-    <script>
-        tailwind.config = {
-            theme: {
-                extend: {
-                    fontFamily: {
-                        'sans': ['Karla', 'sans-serif'],
-                        'header': ['Poppins', 'sans-serif'],
-                    },
-                    colors: {
-                        'kiro-blue': '#007DFE',
-                        'kiro-dark': '#0055aa',
-                        'kiro-bg': '#F4F7F9',
-                        'success': '#22C55E',
-                        'error': '#DC2626',
-                        'warning': '#F59E0B',
-                    },
-                    boxShadow: {
-                        'card': '0 4px 12px rgba(0,0,0,0.05)',
-                        'floating': '0 10px 25px -5px rgba(0, 125, 254, 0.4)',
-                    }
-                }
-            }
-        }
-    </script>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>KiroBoost - Profile</title>
+    <link rel="shortcut icon" href="img/fav-icon.png" type="image/x-icon">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet">
+
     <style>
-        body { background-color: #F4F7F9; -webkit-tap-highlight-color: transparent; overscroll-behavior-y: none; }
-        
-        #app-wrapper {
-            max-width: 480px;
-            margin: 0 auto;
-            background-color: #ffffff;
-            min-height: 100vh;
-            position: relative;
-            padding-bottom: 90px;
-            box-shadow: 0 0 20px rgba(0,0,0,0.05);
+        *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; font-family: 'Outfit', sans-serif !important; }
+        *::selection { background: #4C4948 !important; color: #fff; }
+
+        :root {
+            --bg:       #000000;
+            --surface:  #0d0d0d;
+            --card:     #111111;
+            --card2:    #161616;
+            --border:   rgba(255,255,255,0.08);
+            --border2:  rgba(255,255,255,0.12);
+            --muted:    #B4B4B4;
+            --muted2:   #666;
+            --green:    #23a55a;
+            --red:      #ef4444;
+            --blue:     #5865f2;
         }
 
-        /* Smooth Tap Effect */
-        .tap-effect:active { background-color: #f3f4f6; transition: background-color 0.1s; }
-        
-        /* Animations */
-        .fade-in { animation: fadeIn 0.4s ease-out; }
-        @keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
+        html, body { min-height: 100vh; background: var(--bg); color: #fff; overflow-x: hidden; }
+        ::-webkit-scrollbar { width: 5px; } ::-webkit-scrollbar-track { background: #000; } ::-webkit-scrollbar-thumb { background: #333; border-radius: 3px; }
 
-        .no-scrollbar::-webkit-scrollbar { display: none; }
+        /* ── Navbar ── */
+        #topnav {
+            position: sticky; top: 0; z-index: 200;
+            background: rgba(0,0,0,0.92);
+            border-bottom: 1px solid var(--border);
+            backdrop-filter: blur(12px);
+            display: flex; align-items: center; justify-content: space-between;
+            padding: 0 1.5rem; height: 60px;
+        }
+        .kiro-logo { display: inline-flex; align-items: baseline; letter-spacing: -0.04em; user-select: none; }
+        .logo-kiro  { font-weight: 800; color: #fff; font-style: italic; font-size: 1.4rem; }
+        .logo-boost { font-weight: 300; color: rgba(255,255,255,0.4); font-size: 1.4rem; }
+        .nav-back {
+            display: flex; align-items: center; gap: 6px;
+            color: var(--muted); font-size: 0.82rem; font-weight: 600;
+            text-decoration: none; transition: color .2s;
+            background: none; border: none; cursor: pointer;
+        }
+        .nav-back:hover { color: #fff; }
+
+        /* ── Layout ── */
+        #page { max-width: 860px; margin: 0 auto; padding: 2rem 1.25rem 4rem; display: flex; flex-direction: column; gap: 1.25rem; }
+
+        /* ══════════════════════════════════════
+           DISCORD PROFILE CARD
+        ══════════════════════════════════════ */
+        .profile-card {
+            background: var(--card);
+            border: 1px solid var(--border);
+            border-radius: 16px;
+            overflow: hidden;
+            position: relative;
+        }
+
+        /* Banner */
+        .profile-banner {
+            height: 130px;
+            background: #1a1a2e;
+            position: relative;
+            cursor: pointer;
+            transition: filter .2s;
+            overflow: hidden;
+        }
+        .profile-banner img { width: 100%; height: 100%; object-fit: cover; display: block; }
+        .banner-overlay {
+            position: absolute; inset: 0;
+            background: rgba(0,0,0,0);
+            display: flex; align-items: center; justify-content: center;
+            opacity: 0; transition: all .2s;
+        }
+        .profile-banner:hover .banner-overlay { background: rgba(0,0,0,0.45); opacity: 1; }
+        .banner-edit-hint { color: #fff; font-size: 0.78rem; font-weight: 600; display: flex; align-items: center; gap: 6px; }
+
+        /* Avatar block */
+        .profile-avatar-block {
+            padding: 0 1.5rem;
+            position: relative;
+            margin-top: -50px;
+            margin-bottom: .5rem;
+            display: flex; align-items: flex-end; justify-content: space-between;
+        }
+
+        .avatar-wrap {
+            position: relative;
+            width: 96px; height: 96px;
+            flex-shrink: 0;
+        }
+
+        .profile-avatar {
+            width: 96px; height: 96px;
+            border-radius: 50%;
+            background: #222;
+            border: 5px solid var(--card);
+            overflow: hidden;
+            display: flex; align-items: center; justify-content: center;
+            font-size: 2.2rem; font-weight: 800; color: #fff;
+            cursor: pointer;
+            position: relative;
+            transition: filter .2s;
+        }
+        .profile-avatar img { width: 100%; height: 100%; object-fit: cover; }
+        .avatar-edit-overlay {
+            position: absolute; inset: 0; border-radius: 50%;
+            background: rgba(0,0,0,0); display: flex; align-items: center; justify-content: center;
+            opacity: 0; transition: all .2s;
+        }
+        .profile-avatar:hover .avatar-edit-overlay { background: rgba(0,0,0,0.55); opacity: 1; }
+        .avatar-edit-hint { color: #fff; font-size: 0.6rem; font-weight: 700; text-transform: uppercase; letter-spacing: .05em; text-align: center; }
+
+        /* Status dot on avatar */
+        .avatar-status {
+            position: absolute; bottom: 4px; right: 4px;
+            width: 16px; height: 16px; border-radius: 50%;
+            background: var(--green);
+            border: 3px solid var(--card);
+            z-index: 2;
+        }
+        .avatar-status.offline { background: #555; }
+
+        /* Avatar border styles */
+        .avatar-border-none   .profile-avatar { border-color: var(--card) !important; }
+        .avatar-border-white  .profile-avatar { border-color: #ffffff !important; }
+        .avatar-border-gold   .profile-avatar { border-color: #f59e0b !important; }
+        .avatar-border-blue   .profile-avatar { border-color: #3b82f6 !important; }
+        .avatar-border-green  .profile-avatar { border-color: #22c55e !important; }
+        .avatar-border-purple .profile-avatar { border-color: #a855f7 !important; }
+        .avatar-border-red    .profile-avatar { border-color: #ef4444 !important; }
+        .avatar-border-animated .profile-avatar {
+            border-color: transparent !important;
+            border: none !important;
+        }
+        .avatar-border-animated::before {
+            content: '';
+            position: absolute; inset: -3px;
+            border-radius: 50%;
+            background: conic-gradient(#f59e0b, #ef4444, #a855f7, #3b82f6, #22c55e, #f59e0b);
+            animation: spin-border 2s linear infinite;
+            z-index: -1;
+        }
+        @keyframes spin-border { to { transform: rotate(360deg); } }
+
+        /* Edit btn area */
+        .avatar-actions { display: flex; gap: 8px; padding-bottom: 8px; }
+
+        .btn-edit-profile {
+            background: transparent;
+            border: 1.5px solid var(--border2);
+            color: #fff;
+            font-size: 0.8rem;
+            font-weight: 700;
+            padding: .35rem .85rem;
+            border-radius: 8px;
+            cursor: pointer;
+            transition: background .2s, border-color .2s;
+            display: flex; align-items: center; gap: 6px;
+        }
+        .btn-edit-profile:hover { background: rgba(255,255,255,.06); border-color: rgba(255,255,255,.25); }
+        .btn-edit-profile.active { background: rgba(255,255,255,.1); border-color: rgba(255,255,255,.3); }
+
+        /* Profile info */
+        .profile-info { padding: 0 1.5rem 1.5rem; }
+
+        .profile-name {
+            font-size: 1.35rem; font-weight: 800;
+            letter-spacing: -0.03em;
+            display: flex; align-items: center; gap: 8px; flex-wrap: wrap;
+        }
+
+        .profile-handle { font-size: 0.85rem; color: var(--muted2); font-weight: 400; margin-top: 1px; }
+
+        /* Badges row */
+        .badges-row { display: flex; flex-wrap: wrap; gap: 6px; margin-top: .75rem; }
+
+        .badge-disc {
+            display: inline-flex; align-items: center; gap: 5px;
+            padding: 3px 10px;
+            border-radius: 20px;
+            font-size: 0.72rem; font-weight: 700;
+            background: rgba(255,255,255,0.06);
+            border: 1px solid var(--border);
+            color: var(--muted);
+        }
+        .badge-disc.admin   { background: rgba(88,101,242,.15); border-color: rgba(88,101,242,.3); color: #a5b4fc; }
+        .badge-disc.active  { background: rgba(35,165,90,.12); border-color: rgba(35,165,90,.25); color: #86efac; }
+        .badge-disc.booster { background: rgba(245,158,11,.12); border-color: rgba(245,158,11,.25); color: #fde68a; }
+
+        /* Divider */
+        .profile-divider { height: 1px; background: var(--border); margin: 1rem 1.5rem; }
+
+        /* About Me / Status sections */
+        .profile-section { padding: 0 1.5rem; margin-bottom: 1rem; }
+        .section-label {
+            font-size: 0.68rem; font-weight: 800;
+            text-transform: uppercase; letter-spacing: .08em;
+            color: var(--muted2); margin-bottom: .45rem;
+        }
+        .section-value { font-size: 0.875rem; color: #ccc; line-height: 1.6; }
+        .section-value.empty { color: #444; font-style: italic; font-size: 0.8rem; }
+
+        /* Member since */
+        .member-since { font-size: 0.78rem; color: #444; display: flex; align-items: center; gap: 5px; }
+
+        /* Stats row in profile card */
+        .profile-stats {
+            display: flex; gap: 1.5rem;
+            padding: 0 1.5rem 1.25rem;
+            flex-wrap: wrap;
+        }
+        .pstat { display: flex; flex-direction: column; gap: 1px; }
+        .pstat-val { font-size: 1.1rem; font-weight: 800; letter-spacing: -0.03em; }
+        .pstat-key { font-size: 0.7rem; color: var(--muted2); font-weight: 500; text-transform: uppercase; letter-spacing: .05em; }
+
+        /* ══════════════════════════════════════
+           EDIT PANEL (slide-in drawer)
+        ══════════════════════════════════════ */
+        #editPanel {
+            background: var(--card);
+            border: 1px solid var(--border);
+            border-radius: 16px;
+            overflow: hidden;
+            display: none;
+        }
+        #editPanel.open { display: block; }
+
+        .edit-header {
+            display: flex; align-items: center; justify-content: space-between;
+            padding: 1rem 1.25rem;
+            border-bottom: 1px solid var(--border);
+        }
+        .edit-title { font-size: 0.9rem; font-weight: 700; }
+
+        .edit-body { padding: 1.25rem; display: flex; flex-direction: column; gap: 1.1rem; }
+
+        /* Field groups */
+        .field-group { display: flex; flex-direction: column; gap: 6px; }
+        .field-label { font-size: 0.72rem; font-weight: 700; text-transform: uppercase; letter-spacing: .07em; color: var(--muted2); }
+
+        .field-input {
+            background: rgba(255,255,255,0.04);
+            border: 1px solid var(--border);
+            border-radius: 8px;
+            color: #fff;
+            padding: .6rem .85rem;
+            font-size: 0.875rem;
+            font-weight: 400;
+            width: 100%;
+            transition: border-color .2s;
+            outline: none;
+            resize: none;
+        }
+        .field-input:focus { border-color: rgba(255,255,255,.3); background: rgba(255,255,255,.06); }
+        .field-input::placeholder { color: #444; }
+        .field-hint { font-size: 0.7rem; color: #444; margin-top: 2px; }
+        .char-count { font-size: 0.68rem; color: #444; text-align: right; margin-top: 2px; }
+
+        /* Color row */
+        .color-row { display: flex; align-items: center; gap: 10px; flex-wrap: wrap; }
+        .color-swatch {
+            width: 30px; height: 30px;
+            border-radius: 6px;
+            border: 2px solid transparent;
+            cursor: pointer;
+            transition: transform .15s, border-color .15s;
+            flex-shrink: 0;
+        }
+        .color-swatch:hover { transform: scale(1.12); }
+        .color-swatch.selected { border-color: #fff !important; }
+
+        .color-picker-wrap { display: flex; align-items: center; gap: 8px; }
+        input[type="color"] {
+            width: 30px; height: 30px;
+            border-radius: 6px;
+            border: 1px solid var(--border);
+            background: none;
+            cursor: pointer;
+            padding: 1px;
+        }
+        .color-hex {
+            background: rgba(255,255,255,0.04);
+            border: 1px solid var(--border);
+            border-radius: 6px;
+            color: #fff;
+            padding: .3rem .6rem;
+            font-size: 0.8rem;
+            width: 90px;
+            outline: none;
+        }
+        .color-hex:focus { border-color: rgba(255,255,255,.3); }
+
+        /* Border selector */
+        .border-options { display: flex; gap: 8px; flex-wrap: wrap; }
+        .border-opt {
+            width: 38px; height: 38px;
+            border-radius: 50%;
+            background: #222;
+            cursor: pointer;
+            display: flex; align-items: center; justify-content: center;
+            font-size: 0.6rem; font-weight: 700;
+            transition: transform .15s;
+            position: relative;
+        }
+        .border-opt:hover { transform: scale(1.1); }
+        .border-opt.selected::after {
+            content: '✓';
+            position: absolute; inset: 0;
+            background: rgba(0,0,0,0.6);
+            border-radius: 50%;
+            display: flex; align-items: center; justify-content: center;
+            font-size: .7rem;
+        }
+        .border-opt-inner {
+            width: 28px; height: 28px;
+            border-radius: 50%;
+            background: #333;
+            border: 3px solid transparent;
+        }
+
+        /* Upload zone */
+        .upload-zone {
+            border: 1.5px dashed var(--border2);
+            border-radius: 10px;
+            padding: 1rem;
+            text-align: center;
+            cursor: pointer;
+            transition: border-color .2s, background .2s;
+            display: flex; align-items: center; gap: 12px;
+        }
+        .upload-zone:hover { border-color: rgba(255,255,255,.3); background: rgba(255,255,255,.03); }
+        .upload-zone-icon { width: 36px; height: 36px; border-radius: 8px; background: rgba(255,255,255,.06); display: flex; align-items: center; justify-content: center; color: var(--muted); flex-shrink: 0; }
+        .upload-zone-text { text-align: left; }
+        .upload-zone-title { font-size: 0.82rem; font-weight: 600; }
+        .upload-zone-sub { font-size: 0.72rem; color: var(--muted2); }
+
+        .remove-link { font-size: 0.72rem; color: #ef4444; cursor: pointer; margin-top: 4px; display: inline-block; }
+        .remove-link:hover { text-decoration: underline; }
+
+        /* Save button */
+        .btn-save {
+            background: #fff; color: #000;
+            font-size: 0.875rem; font-weight: 700;
+            border: none; border-radius: 8px;
+            padding: .65rem 1.25rem;
+            cursor: pointer; width: 100%;
+            height: 46px;
+            display: flex; align-items: center; justify-content: center; gap: 8px;
+            transition: background .2s;
+        }
+        .btn-save:hover:not(:disabled) { background: #e0e0e0; }
+        .btn-save:disabled { opacity: .7; cursor: not-allowed; }
+
+        /* Spinner */
+        .geist-spinner { display: inline-flex; align-items: center; justify-content: center; animation: spin .8s linear infinite; }
+        @keyframes spin { to { transform: rotate(360deg); } }
+
+        /* ── Toast ── */
+        #toast {
+            position: fixed; bottom: 1.5rem; right: 1.5rem;
+            background: #111; border: 1px solid var(--border);
+            border-radius: 10px; padding: .65rem 1rem;
+            font-size: 0.82rem; font-weight: 500;
+            display: flex; align-items: center; gap: 8px;
+            z-index: 9999; max-width: 300px;
+            transform: translateY(20px); opacity: 0;
+            transition: transform .3s, opacity .3s;
+            pointer-events: none;
+        }
+        #toast.show { transform: translateY(0); opacity: 1; }
+        #toast.success { border-color: rgba(34,197,94,.3); color: #86efac; }
+        #toast.error   { border-color: rgba(239,68,68,.3);  color: #fca5a5; }
+
+        /* ── Responsive ── */
+        @media (max-width: 600px) {
+            #page { padding: 1rem .75rem 3rem; }
+            .profile-avatar-block { padding: 0 1rem; margin-top: -40px; }
+            .profile-avatar { width: 80px; height: 80px; font-size: 1.8rem; }
+            .avatar-wrap { width: 80px; height: 80px; }
+            .profile-banner { height: 100px; }
+            .profile-info, .profile-section, .profile-stats { padding-left: 1rem; padding-right: 1rem; }
+            .profile-divider { margin: .75rem 1rem; }
+        }
     </style>
 </head>
 <body>
 
-    <input type="file" id="imageInput" class="hidden" accept="image/*" onchange="handleImageUpload(event)">
+<!-- ═══ NAVBAR ═══ -->
+<nav id="topnav">
+    <a href="/home" class="text-decoration-none">
+        <span class="kiro-logo">
+            <span class="logo-kiro">Kiro</span><span class="logo-boost">Boost</span>
+        </span>
+    </a>
+    <a href="/home" class="nav-back">
+        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="15 18 9 12 15 6"/></svg>
+        Back to Home
+    </a>
+</nav>
 
-    <div id="app-wrapper">
-        
-        <header class="bg-kiro-blue pt-10 pb-8 px-6">
-            
-            <div class="flex items-center justify-between mb-6">
-                <div class="flex items-center gap-4">
-                    <div onclick="changeAvatar()" class="w-[70px] h-[70px] bg-white rounded-full flex items-center justify-center text-kiro-blue font-header font-bold text-2xl relative overflow-hidden cursor-pointer shadow-lg border-2 border-white/20">
-                        <span id="avatarText">--</span>
-                        <img id="avatarImg" class="hidden w-full h-full object-cover" alt="Profile">
-                    </div>
-                    
-                    <div class="text-white">
-                        <h1 id="userName" class="font-header font-bold text-xl leading-tight mb-0.5">Loading...</h1>
-                        <p id="userPhone" class="text-sm font-medium opacity-90 mb-1.5">--</p>
-                        
-                        <div class="flex items-center gap-1.5 bg-white/20 w-fit px-2.5 py-0.5 rounded-full backdrop-blur-sm border border-white/10">
-                            <div class="bg-white rounded-full p-0.5">
-                                <svg class="w-2.5 h-2.5 text-kiro-blue" fill="currentColor" viewBox="0 0 20 20"><path fill-rule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clip-rule="evenodd"/></svg>
-                            </div>
-                            <span id="userStatus" class="text-[10px] font-bold uppercase tracking-wider">Fully Verified</span>
-                        </div>
+<!-- ═══ PAGE ═══ -->
+<div id="page">
+
+    <!-- ══ PROFILE CARD ══ -->
+    <div class="profile-card" id="profileCard">
+
+        <!-- Banner -->
+        <div class="profile-banner" id="profileBanner" onclick="triggerBannerUpload()">
+            <div class="banner-overlay">
+                <div class="banner-edit-hint">
+                    <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M23 19a2 2 0 01-2 2H3a2 2 0 01-2-2V8a2 2 0 012-2h4l2-3h6l2 3h4a2 2 0 012 2z"/><circle cx="12" cy="13" r="4"/></svg>
+                    Change Banner
+                </div>
+            </div>
+        </div>
+
+        <!-- Avatar + actions row -->
+        <div class="profile-avatar-block">
+            <div class="avatar-wrap" id="avatarWrap">
+                <div class="profile-avatar" id="profileAvatar" onclick="triggerAvatarUpload()">
+                    <span id="avatarInitial">?</span>
+                    <div class="avatar-edit-overlay">
+                        <div class="avatar-edit-hint">Change<br>Avatar</div>
                     </div>
                 </div>
-                
-                <button class="text-white/80 hover:text-white transition">
-                    <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"></path></svg>
+                <div class="avatar-status" id="avatarStatusDot"></div>
+            </div>
+            <div class="avatar-actions">
+                <button class="btn-edit-profile" id="editToggleBtn" onclick="toggleEdit()">
+                    <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M11 4H4a2 2 0 00-2 2v14a2 2 0 002 2h14a2 2 0 002-2v-7"/><path d="M18.5 2.5a2.121 2.121 0 013 3L12 15l-4 1 1-4 9.5-9.5z"/></svg>
+                    Edit Profile
                 </button>
             </div>
+        </div>
 
-            <div class="flex gap-3">
-                <a href="/limits" class="flex-1 text-center py-2.5 bg-transparent border border-white/40 text-white rounded-full text-sm font-bold hover:bg-white/10 transition active:scale-95">
-                    View Benefits
-                </a>
-                <button onclick="alert('Activity history coming soon!')" class="flex-1 text-center py-2.5 bg-white text-kiro-blue rounded-full text-sm font-bold shadow-sm hover:bg-gray-50 transition active:scale-95">
-                    My Activity
-                </button>
+        <!-- Name / handle -->
+        <div class="profile-info">
+            <div class="profile-name" id="profileName">—</div>
+            <div class="profile-handle" id="profileHandle">@—</div>
+
+            <!-- Badges -->
+            <div class="badges-row" id="badgesRow"></div>
+        </div>
+
+        <div class="profile-divider"></div>
+
+        <!-- About Me -->
+        <div class="profile-section">
+            <div class="section-label">About Me</div>
+            <div class="section-value" id="profileBio"></div>
+        </div>
+
+        <!-- Status -->
+        <div class="profile-section" id="statusSection" style="display:none;">
+            <div class="section-label">Status</div>
+            <div class="section-value" id="profileStatusText"></div>
+        </div>
+
+        <div class="profile-divider"></div>
+
+        <!-- Stats -->
+        <div class="profile-stats">
+            <div class="pstat">
+                <div class="pstat-val" id="pstatShares">—</div>
+                <div class="pstat-key">Total Shares</div>
             </div>
-
-        </header>
-
-        <main class="bg-kiro-bg min-h-full pb-6 pt-2">
-            
-            <div class="bg-white flex flex-col divide-y divide-gray-50 mb-3 shadow-sm">
-                <a href="/limits" class="tap-effect flex items-center justify-between px-6 py-4 transition-colors">
-                    <div class="flex items-center gap-4">
-                        <svg class="w-6 h-6 text-kiro-blue" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M3 10h18M7 15h1m4 0h1m-7 4h12a3 3 0 003-3V8a3 3 0 00-3-3H6a3 3 0 00-3 3v8a3 3 0 003 3z"></path></svg>
-                        <span class="text-gray-800 font-semibold text-sm font-header">Profile Limits</span>
-                    </div>
-                    <svg class="w-4 h-4 text-gray-300" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M9 5l7 7-7 7"></path></svg>
-                </a>
-
-                <a href="/cookies" class="tap-effect flex items-center justify-between px-6 py-4 transition-colors">
-                    <div class="flex items-center gap-4">
-                        <svg class="w-6 h-6 text-kiro-blue" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M8 7h12m0 0l-4-4m4 4l-4 4m0 6H4m0 0l4 4m-4-4l4-4"></path></svg>
-                        <span class="text-gray-800 font-semibold text-sm font-header">My Linked Accounts</span>
-                    </div>
-                    <svg class="w-4 h-4 text-gray-300" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M9 5l7 7-7 7"></path></svg>
-                </a>
+            <div class="pstat">
+                <div class="pstat-val" id="pstatCookies">—</div>
+                <div class="pstat-key">Cookies</div>
             </div>
+        </div>
 
-            <div class="bg-white flex flex-col divide-y divide-gray-50 mb-3 shadow-sm">
-                <div onclick="openSettings()" class="tap-effect flex items-center justify-between px-6 py-4 cursor-pointer">
-                    <div class="flex items-center gap-4">
-                        <svg class="w-6 h-6 text-kiro-blue" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M10.325 4.317c.426-1.756 2.924-1.756 3.35 0a1.724 1.724 0 002.573 1.066c1.543-.94 3.31.826 2.37 2.37a1.724 1.724 0 001.065 2.572c1.756.426 1.756 2.924 0 3.35a1.724 1.724 0 00-1.066 2.573c.94 1.543-.826 3.31-2.37 2.37a1.724 1.724 0 00-2.572 1.065c-.426 1.756-2.924 1.756-3.35 0a1.724 1.724 0 00-2.573-1.066c-1.543.94-3.31-.826-2.37-2.37a1.724 1.724 0 00-1.065-2.572c-1.756-.426-1.756-2.924 0-3.35a1.724 1.724 0 001.066-2.573c-.94-1.543.826-3.31 2.37-2.37.996.608 2.296.07 2.572-1.065z"></path><path stroke-linecap="round" stroke-linejoin="round" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"></path></svg>
-                        <span class="text-gray-800 font-semibold text-sm font-header">Settings</span>
-                    </div>
-                    <svg class="w-4 h-4 text-gray-300" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M9 5l7 7-7 7"></path></svg>
-                </div>
-
-                <a href="#" class="tap-effect flex items-center justify-between px-6 py-4 transition-colors">
-                    <div class="flex items-center gap-4">
-                        <svg class="w-6 h-6 text-kiro-blue" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M8.228 9c.549-1.165 2.03-2 3.772-2 2.21 0 4 1.343 4 3 0 1.4-1.278 2.575-3.006 2.907-.542.104-.994.54-.994 1.093m0 3h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg>
-                        <span class="text-gray-800 font-semibold text-sm font-header">Help</span>
-                    </div>
-                    <svg class="w-4 h-4 text-gray-300" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M9 5l7 7-7 7"></path></svg>
-                </a>
+        <!-- Member since -->
+        <div class="profile-section" style="padding-bottom: 1.25rem;">
+            <div class="section-label">Member Since</div>
+            <div class="member-since" id="memberSince">
+                <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="4" width="18" height="18" rx="2" ry="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/></svg>
+                <span id="memberSinceText">—</span>
             </div>
-
-            <div class="bg-white shadow-sm mt-4">
-                <div class="tap-effect flex items-center justify-center py-4 cursor-pointer" onclick="logout()">
-                    <span class="text-kiro-blue font-bold text-sm font-header">Log Out</span>
-                </div>
-            </div>
-
-            <p class="text-center text-[10px] text-gray-400 mt-8 font-mono">v1.0</p>
-
-        </main>
-
-        <nav class="fixed bottom-0 w-full max-w-[480px] bg-white border-t border-gray-100 pb-5 pt-2 px-4 flex justify-between items-end z-50 text-[10px] font-medium text-gray-400">
-            <a href="/home" class="flex flex-col items-center w-1/5 hover:text-kiro-blue transition">
-                <svg class="w-6 h-6 mb-1" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 12l2-2m0 0l7-7 7 7M5 10v10a1 1 0 001 1h3m10-11l2 2m-2-2v10a1 1 0 01-1 1h-3m-6 0a1 1 0 001-1v-4a1 1 0 011-1h2a1 1 0 011 1v4a1 1 0 001 1m-6 0h6"/></svg>
-                <span>Home</span>
-            </a>
-            <a href="/inbox" class="flex flex-col items-center w-1/5 hover:text-kiro-blue transition">
-                <svg class="w-6 h-6 mb-1" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 8l7.89 5.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z"/></svg>
-                <span>Inbox</span>
-            </a>
-            <div class="w-1/5 relative flex justify-center group cursor-pointer tap-effect">
-                <a href="/boost" class="absolute -top-8 bg-gradient-to-br from-[#007DFE] to-[#0055aa] w-14 h-14 rounded-2xl flex items-center justify-center text-white shadow-floating transform transition-all duration-300 group-hover:-translate-y-1">
-                    <svg class="w-7 h-7" fill="currentColor" viewBox="0 0 24 24"><path d="M13 10V3L4 14h7v7l9-11h-7z"/></svg>
-                </a>
-                <span class="mt-7 text-kiro-blue font-bold">Kiro</span>
-            </div>
-            <a href="/transactions" class="flex flex-col items-center w-1/5 hover:text-kiro-blue transition">
-                <svg class="w-6 h-6 mb-1" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2"/></svg>
-                <span>Orders</span>
-            </a>
-            <a href="/profile" class="flex flex-col items-center w-1/5 text-kiro-blue">
-                <svg class="w-6 h-6 mb-1" fill="currentColor" viewBox="0 0 24 24"><path d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z"/></svg>
-                <span>Profile</span>
-            </a>
-        </nav>
+        </div>
 
     </div>
 
-    <script>
-        const token = localStorage.getItem('kb_token');
-        if (!token) window.location.href = '/login';
+    <!-- ══ EDIT PANEL ══ -->
+    <div id="editPanel">
 
-        let user = JSON.parse(localStorage.getItem('kb_user') || '{}');
+        <div class="edit-header">
+            <span class="edit-title">Edit Profile</span>
+            <button onclick="toggleEdit()" style="background:none;border:none;color:var(--muted);cursor:pointer;display:flex;align-items:center;">
+                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
+            </button>
+        </div>
 
-        // LOAD PROFILE DATA
-        async function loadProfile() {
-            try {
-                const res = await fetch('/api/user/stats', {
-                    headers: { 'Authorization': `Bearer ${token}` }
-                });
-                const data = await res.json();
-                
-                if (data.success) {
-                    const stats = data.stats;
-                    user = { ...user, ...stats };
-                    localStorage.setItem('kb_user', JSON.stringify(user));
-                    
-                    document.getElementById('userName').textContent = stats.username;
-                    document.getElementById('userPhone').textContent = stats.plan === 'premium' ? 'Premium Member' : 'Free Member';
-                    document.getElementById('avatarText').textContent = stats.username.substring(0, 2).toUpperCase();
-                    
-                    if (stats.profileImage) {
-                        document.getElementById('avatarImg').src = stats.profileImage;
-                        document.getElementById('avatarImg').classList.remove('hidden');
-                        document.getElementById('avatarText').classList.add('hidden');
-                    }
-                    
-                    const statusEl = document.getElementById('userStatus');
-                    if (stats.isActive) {
-                        statusEl.textContent = 'Fully Verified';
-                    } else {
-                        statusEl.textContent = 'Basic Level';
-                        // Adjust badge style for unverified
-                        statusEl.parentElement.classList.remove('bg-white/20');
-                        statusEl.parentElement.classList.add('bg-black/20');
-                    }
-                }
-            } catch (err) {
-                console.error('Load error:', err);
-                // Fallback to cache if offline
-                if(user.username) document.getElementById('userName').textContent = user.username;
-            }
+        <div class="edit-body">
+
+            <!-- Avatar upload -->
+            <div class="field-group">
+                <div class="field-label">Avatar</div>
+                <div class="upload-zone" onclick="triggerAvatarUpload()">
+                    <div class="upload-zone-icon">
+                        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M20 21v-2a4 4 0 00-4-4H8a4 4 0 00-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>
+                    </div>
+                    <div class="upload-zone-text">
+                        <div class="upload-zone-title">Upload Avatar</div>
+                        <div class="upload-zone-sub">PNG, JPG, GIF, WEBP · max 5MB</div>
+                    </div>
+                </div>
+                <span class="remove-link" id="removeAvatarBtn" style="display:none;" onclick="removeAvatar()">✕ Remove avatar</span>
+            </div>
+
+            <!-- Banner upload -->
+            <div class="field-group">
+                <div class="field-label">Banner Image / GIF</div>
+                <div class="upload-zone" onclick="triggerBannerUpload()">
+                    <div class="upload-zone-icon">
+                        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M23 19a2 2 0 01-2 2H3a2 2 0 01-2-2V8a2 2 0 012-2h4l2-3h6l2 3h4a2 2 0 012 2z"/><circle cx="12" cy="13" r="4"/></svg>
+                    </div>
+                    <div class="upload-zone-text">
+                        <div class="upload-zone-title">Upload Banner</div>
+                        <div class="upload-zone-sub">PNG, JPG, GIF, WEBP · supports animated GIF</div>
+                    </div>
+                </div>
+                <span class="remove-link" id="removeBannerBtn" style="display:none;" onclick="removeBanner()">✕ Remove banner image</span>
+            </div>
+
+            <!-- Banner color -->
+            <div class="field-group">
+                <div class="field-label">Banner Color</div>
+                <div class="color-row">
+                    <div class="color-swatch" style="background:#1a1a2e;" data-color="#1a1a2e" onclick="selectBannerColor(this)"></div>
+                    <div class="color-swatch" style="background:#0f0f0f;" data-color="#0f0f0f" onclick="selectBannerColor(this)"></div>
+                    <div class="color-swatch" style="background:#1e1b4b;" data-color="#1e1b4b" onclick="selectBannerColor(this)"></div>
+                    <div class="color-swatch" style="background:#1c1917;" data-color="#1c1917" onclick="selectBannerColor(this)"></div>
+                    <div class="color-swatch" style="background:#0c1a0c;" data-color="#0c1a0c" onclick="selectBannerColor(this)"></div>
+                    <div class="color-swatch" style="background:#1a0c0c;" data-color="#1a0c0c" onclick="selectBannerColor(this)"></div>
+                    <div class="color-picker-wrap">
+                        <input type="color" id="bannerColorPicker" value="#1a1a2e" oninput="onBannerColorPick(this.value)">
+                        <input type="text" class="color-hex" id="bannerColorHex" value="#1a1a2e" placeholder="#000000"
+                               oninput="onBannerColorHex(this.value)" maxlength="7">
+                    </div>
+                </div>
+            </div>
+
+            <!-- Accent color -->
+            <div class="field-group">
+                <div class="field-label">Accent Color <span style="font-size:.65rem;color:#444;">(avatar border glow)</span></div>
+                <div class="color-row">
+                    <div class="color-swatch" style="background:#ffffff;" data-color="#ffffff" onclick="selectAccentColor(this)"></div>
+                    <div class="color-swatch" style="background:#5865f2;" data-color="#5865f2" onclick="selectAccentColor(this)"></div>
+                    <div class="color-swatch" style="background:#22c55e;" data-color="#22c55e" onclick="selectAccentColor(this)"></div>
+                    <div class="color-swatch" style="background:#f59e0b;" data-color="#f59e0b" onclick="selectAccentColor(this)"></div>
+                    <div class="color-swatch" style="background:#ef4444;" data-color="#ef4444" onclick="selectAccentColor(this)"></div>
+                    <div class="color-swatch" style="background:#a855f7;" data-color="#a855f7" onclick="selectAccentColor(this)"></div>
+                    <div class="color-picker-wrap">
+                        <input type="color" id="accentColorPicker" value="#ffffff" oninput="onAccentColorPick(this.value)">
+                        <input type="text" class="color-hex" id="accentColorHex" value="#ffffff" placeholder="#ffffff"
+                               oninput="onAccentColorHex(this.value)" maxlength="7">
+                    </div>
+                </div>
+            </div>
+
+            <!-- Avatar border -->
+            <div class="field-group">
+                <div class="field-label">Avatar Border</div>
+                <div class="border-options" id="borderOptions">
+                    <div class="border-opt selected" data-border="none" onclick="selectBorder(this)" title="None">
+                        <div class="border-opt-inner" style="border-color:transparent;"></div>
+                    </div>
+                    <div class="border-opt" data-border="white" onclick="selectBorder(this)" title="White">
+                        <div class="border-opt-inner" style="border-color:#fff;"></div>
+                    </div>
+                    <div class="border-opt" data-border="gold" onclick="selectBorder(this)" title="Gold">
+                        <div class="border-opt-inner" style="border-color:#f59e0b;"></div>
+                    </div>
+                    <div class="border-opt" data-border="blue" onclick="selectBorder(this)" title="Blue">
+                        <div class="border-opt-inner" style="border-color:#3b82f6;"></div>
+                    </div>
+                    <div class="border-opt" data-border="green" onclick="selectBorder(this)" title="Green">
+                        <div class="border-opt-inner" style="border-color:#22c55e;"></div>
+                    </div>
+                    <div class="border-opt" data-border="purple" onclick="selectBorder(this)" title="Purple">
+                        <div class="border-opt-inner" style="border-color:#a855f7;"></div>
+                    </div>
+                    <div class="border-opt" data-border="red" onclick="selectBorder(this)" title="Red">
+                        <div class="border-opt-inner" style="border-color:#ef4444;"></div>
+                    </div>
+                    <div class="border-opt" data-border="animated" onclick="selectBorder(this)" title="Animated Rainbow">
+                        <div class="border-opt-inner" style="background:conic-gradient(#f59e0b,#ef4444,#a855f7,#3b82f6,#22c55e,#f59e0b);border:none;"></div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Bio -->
+            <div class="field-group">
+                <div class="field-label">About Me</div>
+                <textarea class="field-input" id="editBio" rows="3" placeholder="Write something about yourself..." maxlength="300"
+                          oninput="countChars('editBio','bioCount',300)"></textarea>
+                <div class="char-count"><span id="bioCount">0</span>/300</div>
+            </div>
+
+            <!-- Status -->
+            <div class="field-group">
+                <div class="field-label">Status</div>
+                <input type="text" class="field-input" id="editStatus" placeholder="What are you up to?" maxlength="100"
+                       oninput="countChars('editStatus','statusCount',100)">
+                <div class="char-count"><span id="statusCount">0</span>/100</div>
+            </div>
+
+            <!-- Save -->
+            <button class="btn-save" id="saveBtn" onclick="saveProfile()">
+                <span id="saveBtnContent">Save Changes</span>
+            </button>
+
+        </div>
+    </div>
+
+</div><!-- /page -->
+
+<!-- Hidden file inputs -->
+<input type="file" id="avatarInput" accept="image/*" style="display:none;" onchange="handleAvatarUpload(this)">
+<input type="file" id="bannerInput" accept="image/*" style="display:none;" onchange="handleBannerUpload(this)">
+
+<!-- Toast -->
+<div id="toast"></div>
+
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
+
+<script>
+'use strict';
+
+/* ── Auth ── */
+const TOKEN    = localStorage.getItem('token') || localStorage.getItem('kb_token');
+const USERNAME = localStorage.getItem('username');
+const ROLE     = localStorage.getItem('userRole');
+if (!TOKEN) { window.location.href = '/login'; }
+
+function authHeaders() {
+    return { 'Authorization': `Bearer ${TOKEN}`, 'Content-Type': 'application/json' };
+}
+
+async function apiFetch(url, opts = {}) {
+    const res = await fetch(url, { ...opts, headers: { ...authHeaders(), ...(opts.headers||{}) } });
+    if (res.status === 401) { logout(); return null; }
+    return res.json();
+}
+
+/* ── Local state ── */
+let state = {
+    username: USERNAME || '',
+    bio: '', status: '', avatarBorder: 'none',
+    bannerColor: '#1a1a2e', bannerImage: null,
+    accentColor: '#ffffff',
+    profileImage: null, profileImageUrl: null,
+    badges: [], totalShares: 0, cookieCount: 0,
+    createdAt: '', isActive: true
+};
+
+let editOpen = false;
+
+/* ── Toast ── */
+function toast(msg, type = 'success') {
+    const el = document.getElementById('toast');
+    const icon = type === 'success'
+        ? `<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="20 6 9 17 4 12"/></svg>`
+        : `<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/></svg>`;
+    el.className = `show ${type}`;
+    el.innerHTML = icon + msg;
+    clearTimeout(el._t);
+    el._t = setTimeout(() => { el.className = ''; }, 3200);
+}
+
+/* ── Spinner ── */
+const SPINNER = `<span class="geist-spinner"><svg height="16" stroke-linejoin="round" viewBox="0 0 16 16" width="16" style="color:currentColor"><g clip-path="url(#csp)"><path d="M8 0V4" stroke="currentColor" stroke-width="1.5"/><path opacity=".5" d="M8 16V12" stroke="currentColor" stroke-width="1.5"/><path opacity=".9" d="M3.29773 1.52783L5.64887 4.7639" stroke="currentColor" stroke-width="1.5"/><path opacity=".1" d="M12.7023 1.52783L10.3511 4.7639" stroke="currentColor" stroke-width="1.5"/><path opacity=".4" d="M12.7023 14.472L10.3511 11.236" stroke="currentColor" stroke-width="1.5"/><path opacity=".6" d="M3.29773 14.472L5.64887 11.236" stroke="currentColor" stroke-width="1.5"/><path opacity=".2" d="M15.6085 5.52783L11.8043 6.7639" stroke="currentColor" stroke-width="1.5"/><path opacity=".7" d="M0.391602 10.472L4.19583 9.23598" stroke="currentColor" stroke-width="1.5"/><path opacity=".3" d="M15.6085 10.4722L11.8043 9.2361" stroke="currentColor" stroke-width="1.5"/><path opacity=".8" d="M0.391602 5.52783L4.19583 6.7639" stroke="currentColor" stroke-width="1.5"/></g><defs><clipPath id="csp"><rect width="16" height="16" fill="white"/></clipPath></defs></svg></span>`;
+
+function fmt(n) {
+    if (n >= 1_000_000) return (n/1_000_000).toFixed(1)+'M';
+    if (n >= 1_000)     return (n/1_000).toFixed(1)+'k';
+    return String(n);
+}
+
+function initials(name) { return (name||'?').substring(0,2).toUpperCase(); }
+
+/* ── Render profile card ── */
+function renderProfile() {
+    const s = state;
+
+    // Name + handle
+    document.getElementById('profileName').textContent   = s.username;
+    document.getElementById('profileHandle').textContent = '@' + s.username.toLowerCase();
+
+    // Avatar
+    const avEl   = document.getElementById('profileAvatar');
+    const initEl = document.getElementById('avatarInitial');
+    if (s.profileImage || s.profileImageUrl) {
+        const src = s.profileImage || s.profileImageUrl;
+        avEl.innerHTML = `<img src="${src}" alt=""><div class="avatar-edit-overlay"><div class="avatar-edit-hint">Change<br>Avatar</div></div>`;
+        document.getElementById('removeAvatarBtn').style.display = 'inline-block';
+    } else {
+        initEl.textContent = initials(s.username);
+        document.getElementById('removeAvatarBtn').style.display = 'none';
+    }
+
+    // Avatar border class
+    const wrap = document.getElementById('avatarWrap');
+    wrap.className = `avatar-wrap avatar-border-${s.avatarBorder || 'none'}`;
+
+    // Apply accent color to avatar border override (if custom border selected)
+    if (s.avatarBorder === 'none' && s.accentColor) {
+        document.getElementById('profileAvatar').style.borderColor = 'var(--card)';
+    }
+
+    // Banner
+    const banner = document.getElementById('profileBanner');
+    banner.style.background = '';
+    banner.innerHTML = `<div class="banner-overlay"><div class="banner-edit-hint"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M23 19a2 2 0 01-2 2H3a2 2 0 01-2-2V8a2 2 0 012-2h4l2-3h6l2 3h4a2 2 0 012 2z"/><circle cx="12" cy="13" r="4"/></svg> Change Banner</div></div>`;
+    if (s.bannerImage) {
+        const img = document.createElement('img');
+        img.src = s.bannerImage;
+        banner.insertBefore(img, banner.firstChild);
+        document.getElementById('removeBannerBtn').style.display = 'inline-block';
+    } else {
+        banner.style.background = s.bannerColor || '#1a1a2e';
+        document.getElementById('removeBannerBtn').style.display = 'none';
+    }
+
+    // Bio
+    const bioEl = document.getElementById('profileBio');
+    if (s.bio) { bioEl.textContent = s.bio; bioEl.className = 'section-value'; }
+    else { bioEl.textContent = 'No bio set yet.'; bioEl.className = 'section-value empty'; }
+
+    // Status text
+    const statusSec = document.getElementById('statusSection');
+    const statusEl  = document.getElementById('profileStatusText');
+    if (s.status && s.status !== 'online') {
+        statusEl.textContent = s.status;
+        statusEl.className = 'section-value';
+        statusSec.style.display = 'block';
+    } else {
+        statusSec.style.display = 'none';
+    }
+
+    // Badges
+    const badgesRow = document.getElementById('badgesRow');
+    const badges = [];
+    if (s.isActive) badges.push(`<span class="badge-disc active">✦ Active</span>`);
+    if (ROLE === 'admin') badges.push(`<span class="badge-disc admin">⚡ Admin</span>`);
+    if (s.totalShares > 1000) badges.push(`<span class="badge-disc booster">🚀 Booster</span>`);
+    (s.badges || []).forEach(b => badges.push(`<span class="badge-disc">${b}</span>`));
+    badgesRow.innerHTML = badges.join('');
+
+    // Stats
+    document.getElementById('pstatShares').textContent  = fmt(s.totalShares || 0);
+    document.getElementById('pstatCookies').textContent = s.cookieCount || 0;
+
+    // Member since
+    document.getElementById('memberSinceText').textContent = s.createdAt || '—';
+
+    // Status dot
+    const dot = document.getElementById('avatarStatusDot');
+    dot.className = 'avatar-status' + (s.isActive ? '' : ' offline');
+
+    // Sync edit panel fields
+    document.getElementById('editBio').value    = s.bio || '';
+    document.getElementById('editStatus').value = (s.status === 'online' ? '' : s.status) || '';
+    document.getElementById('bioCount').textContent    = (s.bio || '').length;
+    document.getElementById('statusCount').textContent = (s.status === 'online' ? '' : (s.status || '')).length;
+
+    // Sync color pickers
+    document.getElementById('bannerColorPicker').value = s.bannerColor || '#1a1a2e';
+    document.getElementById('bannerColorHex').value    = s.bannerColor || '#1a1a2e';
+    document.getElementById('accentColorPicker').value = s.accentColor || '#ffffff';
+    document.getElementById('accentColorHex').value    = s.accentColor || '#ffffff';
+
+    // Sync border
+    document.querySelectorAll('.border-opt').forEach(o => {
+        o.classList.toggle('selected', o.dataset.border === (s.avatarBorder || 'none'));
+    });
+}
+
+/* ── Toggle edit panel ── */
+function toggleEdit() {
+    editOpen = !editOpen;
+    const panel = document.getElementById('editPanel');
+    const btn   = document.getElementById('editToggleBtn');
+    panel.classList.toggle('open', editOpen);
+    btn.classList.toggle('active', editOpen);
+    if (editOpen) panel.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+}
+
+/* ── Char counter ── */
+function countChars(inputId, countId, max) {
+    const len = document.getElementById(inputId).value.length;
+    document.getElementById(countId).textContent = len;
+}
+
+/* ── Color pickers ── */
+function onBannerColorPick(v) {
+    state.bannerColor = v;
+    state.bannerImage = null;
+    document.getElementById('bannerColorHex').value = v;
+    document.getElementById('removeBannerBtn').style.display = 'none';
+    renderProfile();
+}
+function onBannerColorHex(v) {
+    if (/^#[0-9a-fA-F]{6}$/.test(v)) { state.bannerColor = v; document.getElementById('bannerColorPicker').value = v; renderProfile(); }
+}
+function selectBannerColor(el) {
+    state.bannerColor = el.dataset.color;
+    state.bannerImage = null;
+    document.getElementById('bannerColorPicker').value = el.dataset.color;
+    document.getElementById('bannerColorHex').value    = el.dataset.color;
+    document.getElementById('removeBannerBtn').style.display = 'none';
+    renderProfile();
+}
+
+function onAccentColorPick(v) {
+    state.accentColor = v;
+    document.getElementById('accentColorHex').value = v;
+    renderProfile();
+}
+function onAccentColorHex(v) {
+    if (/^#[0-9a-fA-F]{6}$/.test(v)) { state.accentColor = v; document.getElementById('accentColorPicker').value = v; renderProfile(); }
+}
+function selectAccentColor(el) {
+    state.accentColor = el.dataset.color;
+    document.getElementById('accentColorPicker').value = el.dataset.color;
+    document.getElementById('accentColorHex').value    = el.dataset.color;
+    renderProfile();
+}
+
+/* ── Avatar border ── */
+function selectBorder(el) {
+    document.querySelectorAll('.border-opt').forEach(o => o.classList.remove('selected'));
+    el.classList.add('selected');
+    state.avatarBorder = el.dataset.border;
+    renderProfile();
+}
+
+/* ── Avatar upload ── */
+function triggerAvatarUpload() { document.getElementById('avatarInput').click(); }
+
+function handleAvatarUpload(input) {
+    const file = input.files[0];
+    if (!file) return;
+    if (file.size > 5 * 1024 * 1024) { toast('File too large. Max 5MB.', 'error'); return; }
+    const reader = new FileReader();
+    reader.onload = async e => {
+        const base64 = e.target.result;
+        const data = await apiFetch('/api/user/profile/image', {
+            method: 'POST',
+            body: JSON.stringify({ imageData: base64 })
+        });
+        if (data?.success) {
+            state.profileImage = base64;
+            state.profileImageUrl = null;
+            renderProfile();
+            toast('Avatar updated!');
+        } else {
+            toast(data?.message || 'Failed to update avatar.', 'error');
         }
+    };
+    reader.readAsDataURL(file);
+    input.value = '';
+}
 
-        // IMAGE UPLOAD HANDLER
-        function changeAvatar() {
-            document.getElementById('imageInput').click();
+async function removeAvatar() {
+    const data = await apiFetch('/api/user/profile/image', { method: 'DELETE' });
+    if (data?.success) {
+        state.profileImage = null;
+        state.profileImageUrl = null;
+        renderProfile();
+        toast('Avatar removed.');
+    } else {
+        toast('Failed to remove avatar.', 'error');
+    }
+}
+
+/* ── Banner upload ── */
+function triggerBannerUpload() { document.getElementById('bannerInput').click(); }
+
+function handleBannerUpload(input) {
+    const file = input.files[0];
+    if (!file) return;
+    if (file.size > 50 * 1024 * 1024) { toast('File too large. Max 50MB.', 'error'); return; }
+    const reader = new FileReader();
+    reader.onload = async e => {
+        const base64 = e.target.result;
+        const data = await apiFetch('/api/user/profile/banner', {
+            method: 'POST',
+            body: JSON.stringify({ imageData: base64 })
+        });
+        if (data?.success) {
+            state.bannerImage = base64;
+            renderProfile();
+            toast('Banner updated!');
+        } else {
+            toast(data?.message || 'Failed to update banner.', 'error');
         }
+    };
+    reader.readAsDataURL(file);
+    input.value = '';
+}
 
-        async function handleImageUpload(event) {
-            const file = event.target.files[0];
-            if (!file) return;
+async function removeBanner() {
+    const data = await apiFetch('/api/user/profile/banner', { method: 'DELETE' });
+    if (data?.success) {
+        state.bannerImage = null;
+        renderProfile();
+        toast('Banner removed.');
+    } else {
+        toast('Failed to remove banner.', 'error');
+    }
+}
 
-            const reader = new FileReader();
-            reader.onload = async (e) => {
-                const imageData = e.target.result;
-                // Instant UI Update
-                document.getElementById('avatarImg').src = imageData;
-                document.getElementById('avatarImg').classList.remove('hidden');
-                document.getElementById('avatarText').classList.add('hidden');
-                
-                try {
-                    await fetch('/api/user/profile/image', {
-                        method: 'POST',
-                        headers: { 
-                            'Content-Type': 'application/json',
-                            'Authorization': `Bearer ${token}`
-                        },
-                        body: JSON.stringify({ imageData })
-                    });
-                } catch (err) {
-                    alert('Failed to save image');
-                }
-            };
-            reader.readAsDataURL(file);
-        }
+/* ── Save profile (PUT /api/user/profile) ── */
+async function saveProfile() {
+    const btn     = document.getElementById('saveBtn');
+    const content = document.getElementById('saveBtnContent');
 
-        // SETTINGS ALERT
-        function openSettings() {
-            alert('Settings functionality coming soon in v1.1');
-        }
+    const bio         = document.getElementById('editBio').value.trim();
+    const statusInput = document.getElementById('editStatus').value.trim();
 
-        // LOGOUT
-        function logout() {
-            if (confirm('Are you sure you want to log out?')) {
-                localStorage.clear();
-                window.location.href = '/login';
-            }
-        }
+    btn.disabled = true;
+    content.innerHTML = SPINNER;
 
-        loadProfile();
-    </script>
+    const payload = {
+        bio,
+        status:       statusInput || 'online',
+        avatarBorder: state.avatarBorder,
+        bannerColor:  state.bannerColor,
+        accentColor:  state.accentColor
+    };
+
+    const data = await apiFetch('/api/user/profile', {
+        method: 'PUT',
+        body: JSON.stringify(payload)
+    });
+
+    btn.disabled = false;
+    content.innerHTML = 'Save Changes';
+
+    if (data?.success) {
+        // Merge updated profile into state
+        Object.assign(state, {
+            bio:          data.profile.bio,
+            status:       data.profile.status,
+            avatarBorder: data.profile.avatarBorder,
+            bannerColor:  data.profile.bannerColor,
+            bannerImage:  data.profile.bannerImage,
+            accentColor:  data.profile.accentColor,
+            badges:       data.profile.badges || []
+        });
+        renderProfile();
+        toast('Profile saved!');
+    } else {
+        toast(data?.message || 'Failed to save profile.', 'error');
+    }
+}
+
+/* ── Logout ── */
+function logout() {
+    ['token','kb_token','userRole','username','kb_user'].forEach(k => localStorage.removeItem(k));
+    window.location.href = '/login';
+}
+
+/* ── Load data on init  (GET /api/user/stats) ── */
+async function init() {
+    if (USERNAME) {
+        document.getElementById('profileName').textContent   = USERNAME;
+        document.getElementById('profileHandle').textContent = '@' + USERNAME.toLowerCase();
+        document.getElementById('avatarInitial').textContent = initials(USERNAME);
+    }
+
+    const data = await apiFetch('/api/user/stats');
+    if (!data || !data.success) { toast('Failed to load profile.', 'error'); return; }
+
+    const s = data.stats;
+    Object.assign(state, {
+        username:       s.username,
+        bio:            s.bio || '',
+        status:         s.status || 'online',
+        avatarBorder:   s.avatarBorder || 'none',
+        bannerColor:    s.bannerColor || '#1a1a2e',
+        bannerImage:    s.bannerImage || null,
+        accentColor:    s.accentColor || '#ffffff',
+        badges:         s.badges || [],
+        profileImage:   s.profileImage || null,
+        profileImageUrl: s.profileImageUrl || null,
+        totalShares:    s.totalShares || 0,
+        cookieCount:    s.cookieCount || 0,
+        isActive:       s.isActive !== false
+    });
+
+    // Member since — load from public profile endpoint for createdAt
+    const pub = await apiFetch(`/api/user/profile/${s.username}`);
+    if (pub?.success) { state.createdAt = pub.profile.createdAt || '—'; }
+
+    renderProfile();
+}
+
+init();
+</script>
+
 </body>
 </html>
