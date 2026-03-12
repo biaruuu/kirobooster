@@ -3,1137 +3,996 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>KiroBoost — Dashboard</title>
+    <title>KiroBoost — Facebook SMM Panel</title>
+    <meta name="description" content="KiroBoost is the fastest Facebook share booster. Grow your reach with real accounts, instant delivery, and powerful batch tools.">
 
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Geist:wght@300;400;500;600;700;800&family=Geist+Mono:wght@400;500&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Geist:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
 
     <style>
-        /* ══════════════════════════════════════════════════════
-           DESIGN TOKENS — identical to login / register / index
-        ══════════════════════════════════════════════════════ */
+        /* ───── Tokens ───────────────────────────────────────── */
         :root {
-            --bg:        #000;
-            --surface:   #0a0a0a;
-            --s2:        #111;
-            --s3:        #161616;
-            --border:    #1f1f1f;
-            --bstrong:   #2e2e2e;
-            --text:      #ededed;
-            --muted:     #888;
-            --faint:     #444;
-            --accent:    #fff;
-            --adim:      #e8e8e8;
-            --green:     #22c55e;
-            --gbg:       rgba(34,197,94,.09);
-            --gb:        rgba(34,197,94,.2);
-            --red:       #ef4444;
-            --rbg:       rgba(239,68,68,.09);
-            --rb:        rgba(239,68,68,.2);
-            --amber:     #f59e0b;
-            --abg:       rgba(245,158,11,.09);
-            --ab:        rgba(245,158,11,.2);
+            --bg:            #000;
+            --surface:       #0a0a0a;
+            --surface-2:     #111;
+            --surface-3:     #161616;
+            --border:        #1f1f1f;
+            --border-strong: #2e2e2e;
+            --text:          #ededed;
+            --text-muted:    #888;
+            --text-faint:    #484848;
             --r-sm: 6px;
             --r-md: 10px;
             --r-lg: 14px;
+            --r-xl: 20px;
             --font: 'Geist', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
-            --mono: 'Geist Mono', 'SF Mono', monospace;
             --ease: 0.15s ease;
-            --nav:  56px;
-            --bot:  62px;
         }
 
         *, *::before, *::after { box-sizing: border-box; }
         html { scroll-behavior: smooth; }
+
         body {
             font-family: var(--font);
             background: var(--bg);
             color: var(--text);
-            margin: 0; padding: 0;
-            -webkit-font-smoothing: antialiased;
             min-height: 100svh;
+            display: flex;
+            flex-direction: column;
+            -webkit-font-smoothing: antialiased;
+            margin: 0; padding: 0;
             overflow-x: hidden;
         }
-        ::selection { background:#fff; color:#000; }
+
+        ::selection { background: #fff; color: #000; }
 
         /* Grid overlay */
-        #go {
-            position: fixed; inset: 0; z-index: 0; pointer-events: none;
+        .kb-grid {
+            position: fixed; inset: 0; pointer-events: none; z-index: 0;
             background-image:
-                linear-gradient(rgba(255,255,255,.022) 1px, transparent 1px),
-                linear-gradient(90deg,rgba(255,255,255,.022) 1px, transparent 1px);
+                linear-gradient(rgba(255,255,255,0.025) 1px, transparent 1px),
+                linear-gradient(90deg, rgba(255,255,255,0.025) 1px, transparent 1px);
             background-size: 48px 48px;
         }
 
-        /* ══════════════════════════════════════════════════════
-           TOP NAV
-        ══════════════════════════════════════════════════════ */
-        .nav {
-            position: fixed; inset: 0 0 auto; z-index: 300;
-            height: var(--nav);
-            background: rgba(0,0,0,.88);
-            backdrop-filter: blur(20px); -webkit-backdrop-filter: blur(20px);
+        /* ───── Nav ──────────────────────────────────────────── */
+        .kb-nav {
+            position: sticky; top: 0; z-index: 200;
+            background: rgba(0,0,0,0.85);
+            backdrop-filter: blur(16px);
+            -webkit-backdrop-filter: blur(16px);
             border-bottom: 1px solid var(--border);
         }
-        .nav-inner {
+        .kb-nav-inner {
             max-width: 1200px; margin: 0 auto;
-            padding: 0 24px; height: 100%;
-            display: flex; align-items: center; gap: 8px;
+            padding: 0 24px; height: 56px;
+            display: flex; align-items: center; justify-content: space-between;
+            position: relative;
         }
-        .brand {
-            display: flex; align-items: center; gap: 8px;
-            text-decoration: none; color: var(--text);
-            font-size: 14.5px; font-weight: 600;
-            letter-spacing: -.025em; flex-shrink: 0;
-        }
-        .brand:hover { opacity: .75; color: var(--text); }
-        .brand-icon {
-            width: 26px; height: 26px; background: #fff;
-            border-radius: 6px; flex-shrink: 0;
-            display: flex; align-items: center; justify-content: center;
-        }
-        .nav-right { display:flex; align-items:center; gap:8px; margin-left:auto; }
-
-        .user-chip {
-            display: flex; align-items: center; gap: 7px;
-            padding: 3px 10px 3px 3px;
-            background: var(--s2); border: 1px solid var(--border);
-            border-radius: 99px; text-decoration: none;
-            transition: border-color var(--ease), background var(--ease);
-        }
-        .user-chip:hover { border-color: var(--bstrong); background: var(--s3); }
-
-        .av {
-            width: 28px; height: 28px;
-            background: var(--s3); border: 1px solid var(--bstrong);
-            border-radius: 50%; overflow: hidden;
-            display: flex; align-items: center; justify-content: center;
-            font-size: 11px; font-weight: 700; color: var(--text);
-            flex-shrink: 0;
-        }
-        .av img { width:100%; height:100%; object-fit:cover; border-radius:50%; }
-        .av.has-border { border: 2px solid var(--accent); }
-
-        .chip-name {
-            font-size: 12px; font-weight: 500; color: var(--muted);
-            max-width: 100px; overflow: hidden;
-            text-overflow: ellipsis; white-space: nowrap;
-        }
-
-        .logout-btn {
-            display: flex; align-items: center; gap: 5px;
-            font-size: 12px; font-family: var(--font); font-weight: 500;
-            color: var(--faint); background: none; border: none;
-            padding: 5px 9px; border-radius: var(--r-sm);
-            cursor: pointer;
-            transition: color var(--ease), background var(--ease);
-        }
-        .logout-btn:hover { color: var(--red); background: var(--rbg); }
-
-        /* ══════════════════════════════════════════════════════
-           LAYOUT SHELL
-        ══════════════════════════════════════════════════════ */
-        .layout {
-            display: flex; min-height: 100svh;
-            padding-top: var(--nav); position: relative; z-index: 1;
-        }
-
-        /* ── SIDEBAR ── */
-        .sidebar {
-            width: 218px; flex-shrink: 0;
-            position: sticky; top: var(--nav);
-            height: calc(100svh - var(--nav));
-            background: var(--surface);
-            border-right: 1px solid var(--border);
-            padding: 16px 0; overflow-y: auto;
-            display: flex; flex-direction: column;
-        }
-        .sb-sec { padding: 0 10px; margin-bottom: 2px; }
-        .sb-lbl {
-            font-size: 10px; font-weight: 600; letter-spacing: .09em;
-            text-transform: uppercase; color: var(--faint);
-            padding: 6px 8px 4px;
-        }
-        .sb-a {
+        .kb-brand {
             display: flex; align-items: center; gap: 9px;
-            padding: 7px 9px; border-radius: var(--r-sm);
-            font-size: 13px; font-weight: 500; color: var(--muted);
-            text-decoration: none; background: none; border: none;
-            cursor: pointer; width: 100%;
+            text-decoration: none; color: var(--text);
+            font-size: 15px; font-weight: 600; letter-spacing: -0.025em;
+        }
+        .kb-brand:hover { color: var(--text); opacity: 0.75; }
+        .kb-brand-mark {
+            width: 27px; height: 27px; background: #fff; border-radius: 6px;
+            display: flex; align-items: center; justify-content: center; flex-shrink: 0;
+        }
+        .kb-nav-center {
+            position: absolute; left: 50%; transform: translateX(-50%);
+            display: flex; align-items: center; gap: 2px;
+        }
+        .kb-nav-link {
+            font-size: 13px; color: var(--text-muted); text-decoration: none;
+            padding: 6px 12px; border-radius: var(--r-sm); font-weight: 500;
+            transition: color var(--ease), background var(--ease);
+            white-space: nowrap;
+        }
+        .kb-nav-link:hover { color: var(--text); background: var(--surface-2); }
+        .kb-nav-end { display: flex; align-items: center; gap: 6px; }
+        .kb-nav-ghost {
+            font-size: 13px; color: var(--text-muted); text-decoration: none;
+            padding: 6px 10px; border-radius: var(--r-sm); font-weight: 500;
             transition: color var(--ease), background var(--ease);
         }
-        .sb-a:hover  { color:var(--text); background:var(--s2); }
-        .sb-a.active { color:var(--text); background:var(--s3); }
-        .sb-a svg { flex-shrink: 0; }
-        .sb-badge {
-            margin-left: auto;
-            background: var(--red); color: #fff;
-            font-size: 10px; font-weight: 700;
-            min-width: 16px; height: 16px; padding: 0 4px;
-            border-radius: 99px;
-            display: flex; align-items: center; justify-content: center;
-            font-family: var(--mono);
-        }
-        .sb-div { height:1px; background:var(--border); margin: 8px 10px; }
-
-        /* ── MAIN ── */
-        .main { flex:1; min-width:0; padding: 28px 28px 100px; }
-
-        /* ══════════════════════════════════════════════════════
-           GREETING
-        ══════════════════════════════════════════════════════ */
-        .greeting { margin-bottom: 24px; }
-        .g-eye {
-            font-size: 11px; font-weight: 500; letter-spacing: .08em;
-            text-transform: uppercase; color: var(--faint); margin-bottom: 5px;
-        }
-        .g-h1 {
-            font-size: clamp(20px, 3vw, 28px);
-            font-weight: 700; letter-spacing: -.035em;
-            color: var(--text); margin-bottom: 3px;
-        }
-        .g-sub { font-size: 13px; color: var(--muted); }
-
-        /* ══════════════════════════════════════════════════════
-           BOOST CTA BANNER
-        ══════════════════════════════════════════════════════ */
-        .cta-banner {
-            display: flex; align-items: center;
-            justify-content: space-between; gap: 16px;
-            padding: 18px 20px;
-            background: var(--surface); border: 1px solid var(--border);
-            border-radius: var(--r-lg); margin-bottom: 20px;
-        }
-        .cta-txt h3 {
-            font-size: 14px; font-weight: 600;
-            letter-spacing: -.02em; color: var(--text); margin-bottom: 3px;
-        }
-        .cta-txt p { font-size: 12px; color: var(--muted); margin: 0; }
-        .btn-w {
-            display: inline-flex; align-items: center; gap: 6px;
-            font-size: 12.5px; font-family: var(--font); font-weight: 500;
+        .kb-nav-ghost:hover { color: var(--text); background: var(--surface-2); }
+        .kb-nav-cta {
+            font-size: 13px; font-family: var(--font); font-weight: 500;
             color: #000; background: #fff; border: none;
-            padding: 7px 16px; border-radius: var(--r-sm);
-            text-decoration: none; white-space: nowrap;
-            cursor: pointer; flex-shrink: 0;
-            transition: background var(--ease);
+            padding: 6px 14px; border-radius: var(--r-sm);
+            text-decoration: none; transition: background var(--ease);
+            white-space: nowrap; display: inline-flex; align-items: center;
         }
-        .btn-w:hover { background: var(--adim); color: #000; }
+        .kb-nav-cta:hover { background: #ededed; color: #000; }
+        .kb-menu-btn {
+            display: none; background: none; border: 1px solid var(--border);
+            border-radius: var(--r-sm); padding: 6px 8px; color: var(--text-muted);
+            cursor: pointer; transition: all var(--ease); align-items: center;
+        }
+        .kb-menu-btn:hover { border-color: var(--border-strong); color: var(--text); }
+        .kb-mobile-menu {
+            display: none; border-top: 1px solid var(--border);
+            background: var(--surface); padding: 10px 16px 14px;
+        }
+        .kb-mobile-menu.open { display: block; }
+        .kb-mobile-menu a {
+            display: block; font-size: 14px; color: var(--text-muted);
+            text-decoration: none; padding: 10px 12px; border-radius: var(--r-sm);
+            font-weight: 500; transition: color var(--ease), background var(--ease);
+        }
+        .kb-mobile-menu a:hover { color: var(--text); background: var(--surface-2); }
+        .kb-mobile-menu .kb-nav-cta {
+            display: block; margin-top: 10px; text-align: center;
+            padding: 10px; width: 100%; justify-content: center;
+        }
 
-        /* ══════════════════════════════════════════════════════
-           STAT CARDS
-        ══════════════════════════════════════════════════════ */
-        .stats-row {
-            display: grid; grid-template-columns: repeat(4,1fr);
+        /* ───── Page wrapper ─────────────────────────────────── */
+        .kb-page { position: relative; z-index: 1; flex: 1; display: flex; flex-direction: column; }
+
+        /* ───── Section helpers ───────────────────────────────── */
+        .kb-wrap { max-width: 1200px; margin: 0 auto; padding: 0 24px; }
+        .kb-section { padding: 80px 24px; max-width: 1200px; margin: 0 auto; }
+        .kb-rule {
+            width: 100%; height: 1px; max-width: 1200px; margin: 0 auto;
+            background: linear-gradient(90deg, transparent, var(--border) 20%, var(--border) 80%, transparent);
+        }
+
+        .kb-section-eyebrow {
+            font-size: 11px; font-weight: 500; letter-spacing: 0.1em;
+            text-transform: uppercase; color: var(--text-faint);
+            margin-bottom: 12px; display: flex; align-items: center; gap: 8px;
+        }
+        .kb-section-eyebrow::before {
+            content: ''; width: 16px; height: 1px; background: var(--text-faint);
+        }
+        .kb-section-h2 {
+            font-size: clamp(26px, 4vw, 40px); font-weight: 700;
+            letter-spacing: -0.035em; color: var(--text);
+            margin-bottom: 10px; line-height: 1.1;
+        }
+        .kb-section-lead {
+            font-size: 15px; color: var(--text-muted);
+            max-width: 440px; line-height: 1.65;
+        }
+
+        /* ───── Hero ─────────────────────────────────────────── */
+        .kb-hero {
+            padding: 96px 24px 72px;
+            text-align: center; max-width: 1200px; margin: 0 auto;
+        }
+        .kb-hero-badge {
+            display: inline-flex; align-items: center; gap: 7px;
+            font-size: 12px; font-weight: 500; color: var(--text-muted);
+            border: 1px solid var(--border); background: var(--surface-2);
+            padding: 5px 14px; border-radius: 99px; margin-bottom: 28px;
+            animation: fadeUp 0.5s ease both;
+        }
+        .kb-live-dot {
+            width: 6px; height: 6px; border-radius: 50%;
+            background: #22c55e; box-shadow: 0 0 6px #22c55e; flex-shrink: 0;
+            animation: blink 2s ease infinite;
+        }
+        @keyframes blink { 0%,100% { opacity: 1; } 50% { opacity: 0.35; } }
+
+        .kb-hero-h1 {
+            font-size: clamp(38px, 6.5vw, 76px); font-weight: 800;
+            letter-spacing: -0.045em; line-height: 1.02; color: var(--text);
+            margin-bottom: 20px; animation: fadeUp 0.55s 0.05s ease both;
+        }
+        .kb-hero-h1 em { font-style: normal; color: var(--text-faint); }
+
+        .kb-hero-lead {
+            font-size: clamp(15px, 2vw, 18px); color: var(--text-muted);
+            font-weight: 400; max-width: 520px; margin: 0 auto 36px;
+            line-height: 1.65; animation: fadeUp 0.55s 0.1s ease both;
+        }
+        .kb-hero-btns {
+            display: flex; align-items: center; justify-content: center;
+            gap: 10px; flex-wrap: wrap; animation: fadeUp 0.55s 0.15s ease both;
+        }
+
+        /* Shared button styles */
+        .kb-btn-primary {
+            font-family: var(--font); font-size: 14px; font-weight: 600;
+            color: #000; background: #fff; border: none;
+            padding: 10px 22px; border-radius: var(--r-sm); cursor: pointer;
+            text-decoration: none; display: inline-flex; align-items: center;
+            gap: 7px; transition: background var(--ease), transform 0.1s;
+            letter-spacing: -0.01em;
+        }
+        .kb-btn-primary:hover { background: #ededed; color: #000; }
+        .kb-btn-primary:active { transform: scale(0.985); }
+
+        .kb-btn-ghost {
+            font-family: var(--font); font-size: 14px; font-weight: 500;
+            color: var(--text-muted); background: transparent;
+            border: 1px solid var(--border); padding: 10px 22px;
+            border-radius: var(--r-sm); cursor: pointer; text-decoration: none;
+            display: inline-flex; align-items: center; gap: 7px;
+            transition: all var(--ease); letter-spacing: -0.01em;
+        }
+        .kb-btn-ghost:hover { border-color: var(--border-strong); color: var(--text); background: var(--surface-2); }
+
+        /* ───── Stats bar ─────────────────────────────────────── */
+        .kb-stats-wrap { padding: 0 24px 56px; max-width: 1200px; margin: 0 auto; }
+        .kb-stats-grid {
+            display: grid; grid-template-columns: repeat(4, 1fr);
             gap: 1px; background: var(--border);
-            border: 1px solid var(--border);
-            border-radius: var(--r-lg); overflow: hidden;
-            margin-bottom: 20px;
+            border: 1px solid var(--border); border-radius: var(--r-lg); overflow: hidden;
         }
-        .sc {
-            background: var(--surface); padding: 18px 18px;
+        .kb-stat {
+            background: var(--surface); padding: 28px 20px; text-align: center;
             transition: background var(--ease);
         }
-        .sc:hover { background: var(--s2); }
-        .sc-lbl {
-            font-size: 11px; font-weight: 500; color: var(--faint);
-            letter-spacing: .04em; margin-bottom: 7px;
-            display: flex; align-items: center; gap: 6px;
+        .kb-stat:hover { background: var(--surface-2); }
+        .kb-stat-val {
+            font-size: 30px; font-weight: 700; letter-spacing: -0.04em;
+            color: var(--text); margin-bottom: 5px; line-height: 1;
         }
-        .sc-val {
-            font-size: 26px; font-weight: 700;
-            letter-spacing: -.04em; color: var(--text);
-            font-variant-numeric: tabular-nums; line-height: 1; margin-bottom: 3px;
+        .kb-stat-lbl {
+            font-size: 11.5px; color: var(--text-faint); font-weight: 500;
+            text-transform: uppercase; letter-spacing: 0.06em;
         }
-        .sc-sub { font-size: 11px; color: var(--faint); }
-        .dot-g { width:6px;height:6px;border-radius:50%;background:var(--green);flex-shrink:0; }
-        .dot-r { width:6px;height:6px;border-radius:50%;background:var(--red);flex-shrink:0; }
 
-        /* ══════════════════════════════════════════════════════
-           QUICK ACTIONS
-        ══════════════════════════════════════════════════════ */
-        .sec-hd {
-            font-size: 11px; font-weight: 600; color: var(--faint);
-            letter-spacing: .08em; text-transform: uppercase;
-            margin-bottom: 12px;
-            display: flex; align-items: center; gap: 10px;
+        /* ───── Features ─────────────────────────────────────── */
+        .kb-feat-grid {
+            display: grid; grid-template-columns: repeat(3, 1fr);
+            gap: 1px; background: var(--border);
+            border: 1px solid var(--border); border-radius: var(--r-lg);
+            overflow: hidden; margin-top: 48px;
         }
-        .sec-hd::after { content:''; flex:1; height:1px; background:var(--border); }
+        .kb-feat {
+            background: var(--surface); padding: 28px 26px 30px;
+            transition: background var(--ease);
+        }
+        .kb-feat:hover { background: var(--surface-2); }
+        .kb-feat-icon {
+            width: 36px; height: 36px; border: 1px solid var(--border-strong);
+            border-radius: var(--r-sm); display: flex; align-items: center;
+            justify-content: center; color: var(--text-muted);
+            margin-bottom: 16px; background: var(--surface-2);
+        }
+        .kb-feat h3 {
+            font-size: 14px; font-weight: 600; color: var(--text);
+            margin-bottom: 8px; letter-spacing: -0.02em;
+        }
+        .kb-feat p { font-size: 13px; color: var(--text-muted); line-height: 1.62; margin: 0; }
 
-        .acts {
-            display: grid; grid-template-columns: repeat(4,1fr);
-            gap: 10px; margin-bottom: 20px;
+        /* ───── Steps ─────────────────────────────────────────── */
+        .kb-steps-grid {
+            display: grid; grid-template-columns: repeat(4, 1fr);
+            gap: 24px; margin-top: 48px;
         }
-        .act {
-            display: flex; flex-direction: column;
-            align-items: center; gap: 8px; padding: 15px 8px;
+        .kb-step-num {
+            font-size: 11px; font-weight: 600; color: var(--text-faint);
+            letter-spacing: 0.08em; margin-bottom: 12px;
+        }
+        .kb-step-line {
+            width: 100%; height: 1px; background: var(--border);
+            margin-bottom: 20px; position: relative;
+        }
+        .kb-step-line::before {
+            content: ''; position: absolute; left: 0; top: -3px;
+            width: 7px; height: 7px; border-radius: 50%; background: var(--text-faint);
+        }
+        .kb-step h3 { font-size: 14px; font-weight: 600; color: var(--text); margin-bottom: 8px; letter-spacing: -0.02em; }
+        .kb-step p  { font-size: 13px; color: var(--text-muted); line-height: 1.62; margin: 0; }
+
+        /* ───── Split layout ─────────────────────────────────── */
+        .kb-split { display: grid; grid-template-columns: 1fr 1fr; gap: 64px; align-items: center; }
+        .kb-split-flip { direction: rtl; }
+        .kb-split-flip > * { direction: ltr; }
+
+        .kb-check-list { display: flex; flex-direction: column; gap: 10px; margin-top: 22px; }
+        .kb-check-item { display: flex; align-items: center; gap: 10px; font-size: 13px; color: var(--text-muted); }
+        .kb-check-item svg { flex-shrink: 0; color: #22c55e; }
+
+        /* Terminal */
+        .kb-term {
             background: var(--surface); border: 1px solid var(--border);
-            border-radius: var(--r-md); text-decoration: none;
-            color: var(--muted); font-size: 11.5px; font-weight: 500;
-            text-align: center; cursor: pointer; position: relative;
-            transition: color var(--ease), background var(--ease), border-color var(--ease);
+            border-radius: var(--r-lg); overflow: hidden;
+            font-family: 'SF Mono', 'Fira Code', 'Menlo', monospace;
         }
-        .act:hover { color:var(--text); background:var(--s2); border-color:var(--bstrong); }
-        .act-icon {
-            width: 33px; height: 33px;
-            background: var(--s2); border: 1px solid var(--bstrong);
-            border-radius: var(--r-sm);
-            display: flex; align-items: center; justify-content: center;
-            color: var(--faint);
-            transition: border-color var(--ease), color var(--ease);
+        .kb-term-bar {
+            display: flex; align-items: center; gap: 7px;
+            padding: 10px 14px; border-bottom: 1px solid var(--border);
+            background: var(--surface-2);
         }
-        .act:hover .act-icon { border-color:var(--faint); color:var(--muted); }
-        .act-badge {
-            position: absolute; top: 7px; right: 7px;
-            min-width: 14px; height: 14px; padding: 0 3px;
-            background: var(--red); border: 1.5px solid var(--bg);
-            border-radius: 99px; font-size: 9px; font-weight: 700;
-            color: #fff; display: flex; align-items: center; justify-content: center;
-            font-family: var(--mono);
-        }
+        .dot { width: 10px; height: 10px; border-radius: 50%; }
+        .dot-r { background: #ff5f57; } .dot-y { background: #febc2e; } .dot-g { background: #28c840; }
+        .kb-term-body { padding: 18px 16px; font-size: 12.5px; line-height: 1.8; }
+        .c-dim   { color: var(--text-faint); }
+        .c-muted { color: var(--text-muted); }
+        .c-text  { color: var(--text); }
+        .c-green { color: #22c55e; }
+        .c-blue  { color: #60a5fa; }
+        .c-amber { color: #f59e0b; }
 
-        /* ══════════════════════════════════════════════════════
-           CONTENT CARDS
-        ══════════════════════════════════════════════════════ */
-        .row2 { display:grid; grid-template-columns:1fr 1fr; gap:16px; margin-bottom:20px; }
-
-        .card {
-            background: var(--surface);
-            border: 1px solid var(--border);
+        /* Dashboard mockup */
+        .kb-dash {
+            background: var(--surface); border: 1px solid var(--border);
             border-radius: var(--r-lg); overflow: hidden;
         }
-        .card-hd {
-            display: flex; align-items: center;
-            justify-content: space-between;
-            padding: 13px 18px; border-bottom: 1px solid var(--border);
+        .kb-dash-bar {
+            display: flex; align-items: center; justify-content: space-between;
+            padding: 10px 14px; border-bottom: 1px solid var(--border);
+            background: var(--surface-2);
         }
-        .card-hd-t { font-size:13px; font-weight:600; color:var(--text); letter-spacing:-.015em; }
-        .card-hd-l {
-            font-size:11px; color:var(--faint);
-            text-decoration:none; font-weight:500;
-            transition: color var(--ease);
+        .kb-dash-bar span { font-size: 12px; color: var(--text-muted); }
+        .kb-dash-body { padding: 14px; }
+        .kb-order-row {
+            display: flex; align-items: center; justify-content: space-between;
+            padding: 9px 0; border-bottom: 1px solid var(--border);
         }
-        .card-hd-l:hover { color:var(--muted); }
-        .card-body { padding: 16px 18px; }
+        .kb-order-row:last-child { border-bottom: none; }
+        .kb-order-left { display: flex; align-items: center; gap: 10px; }
+        .kb-avatar {
+            width: 28px; height: 28px; border-radius: 50%;
+            background: var(--border-strong); display: flex; align-items: center;
+            justify-content: center; font-size: 11px; font-weight: 600;
+            color: var(--text-muted); flex-shrink: 0;
+        }
+        .kb-order-name { font-size: 12.5px; color: var(--text); font-weight: 500; }
+        .kb-order-meta { font-size: 11px; color: var(--text-faint); margin-top: 1px; }
+        .kb-badge {
+            font-size: 10.5px; font-weight: 600;
+            padding: 3px 8px; border-radius: 99px;
+        }
+        .b-green { background: rgba(34,197,94,0.1); color: #22c55e; }
+        .b-amber { background: rgba(245,158,11,0.1); color: #f59e0b; }
+        .b-blue  { background: rgba(96,165,250,0.1); color: #60a5fa; }
+        .b-faint { background: var(--surface-3); color: var(--text-faint); }
 
-        /* Detail rows */
-        .dr {
-            display: flex; align-items: center;
-            justify-content: space-between;
-            padding: 10px 0; border-bottom: 1px solid var(--border);
+        /* ───── Reviews ──────────────────────────────────────── */
+        .kb-reviews-grid {
+            display: grid; grid-template-columns: repeat(3, 1fr);
+            gap: 1px; background: var(--border);
+            border: 1px solid var(--border); border-radius: var(--r-lg);
+            overflow: hidden; margin-top: 48px;
         }
-        .dr:first-child { padding-top:0; }
-        .dr:last-child  { border-bottom:none; padding-bottom:0; }
-        .dr-k { font-size:12px; color:var(--faint); font-weight:500; }
-        .dr-v {
-            font-size:12px; color:var(--text); font-weight:500;
-            font-family:var(--mono);
-            max-width:150px; overflow:hidden; text-overflow:ellipsis; white-space:nowrap;
+        .kb-review {
+            background: var(--surface); padding: 26px 24px;
+            transition: background var(--ease);
         }
+        .kb-review:hover { background: var(--surface-2); }
+        .kb-stars { display: flex; gap: 2px; margin-bottom: 14px; color: #f59e0b; }
+        .kb-review-text {
+            font-size: 13.5px; color: var(--text-muted);
+            line-height: 1.65; margin-bottom: 18px; font-style: italic;
+        }
+        .kb-review-author { display: flex; align-items: center; gap: 10px; }
+        .kb-review-avatar {
+            width: 30px; height: 30px; border-radius: 50%;
+            background: var(--border-strong); display: flex; align-items: center;
+            justify-content: center; font-size: 12px; font-weight: 600;
+            color: var(--text-muted); flex-shrink: 0; font-style: normal;
+        }
+        .kb-review-name { font-size: 12.5px; font-weight: 600; color: var(--text); font-style: normal; }
+        .kb-review-role { font-size: 11px; color: var(--text-faint); font-style: normal; }
 
-        /* Chips */
-        .chip {
-            display: inline-flex; align-items: center; gap:5px;
-            font-size:11px; font-weight:500;
-            padding:2px 9px; border-radius:99px;
+        /* ───── CTA ──────────────────────────────────────────── */
+        .kb-cta-wrap { padding: 0 24px 80px; max-width: 1200px; margin: 0 auto; }
+        .kb-cta {
+            background: var(--surface); border: 1px solid var(--border);
+            border-radius: var(--r-xl); padding: 64px 48px; text-align: center;
+            position: relative; overflow: hidden;
         }
-        .chip::before { content:''; width:5px;height:5px;border-radius:50%;flex-shrink:0; }
-        .chip-g  { background:var(--gbg); color:var(--green); border:1px solid var(--gb); }
-        .chip-g::before  { background:var(--green); }
-        .chip-r  { background:var(--rbg); color:var(--red);   border:1px solid var(--rb); }
-        .chip-r::before  { background:var(--red); }
-        .chip-am { background:var(--abg); color:var(--amber); border:1px solid var(--ab); }
-        .chip-am::before { background:var(--amber); }
-        .chip-n  { background:var(--s2);  color:var(--muted); border:1px solid var(--bstrong); }
-        .chip-n::before  { display:none; }
-
-        /* Share chart */
-        .bar-chart {
-            display: flex; align-items: flex-end; gap: 3px;
-            height: 64px; margin-top: 4px;
+        .kb-cta::before {
+            content: ''; position: absolute; top: -80px; left: 50%;
+            transform: translateX(-50%); width: 400px; height: 200px;
+            background: radial-gradient(ellipse, rgba(255,255,255,0.04) 0%, transparent 70%);
+            pointer-events: none;
         }
-        .bar {
-            flex: 1; background: var(--s3);
-            border-radius: 2px 2px 0 0; min-height: 3px;
-            transition: background var(--ease); cursor: default; position: relative;
+        .kb-cta h2 {
+            font-size: clamp(24px, 4vw, 38px); font-weight: 700;
+            letter-spacing: -0.035em; color: var(--text);
+            margin-bottom: 12px; position: relative;
         }
-        .bar.lit { background: var(--bstrong); }
-        .bar.lit:hover { background: var(--faint); }
-        .chart-row {
-            display:flex; justify-content:space-between; margin-top:6px;
+        .kb-cta p {
+            font-size: 15px; color: var(--text-muted);
+            margin-bottom: 32px; position: relative;
         }
-        .chart-lbl { font-size:10px; color:var(--faint); font-family:var(--mono); }
-
-        /* Tooltip for bars */
-        .bar[data-tip]:hover::after {
-            content: attr(data-tip);
-            position: absolute; bottom: calc(100% + 5px); left: 50%;
-            transform: translateX(-50%);
-            background: var(--s2); border: 1px solid var(--border);
-            color: var(--text); font-size: 10px; font-family: var(--mono);
-            padding: 2px 6px; border-radius: 4px; white-space: nowrap;
-            pointer-events: none; z-index: 10;
-        }
-
-        /* Inbox items */
-        .msg {
-            display: flex; align-items: flex-start; gap: 10px;
-            padding: 11px 0; border-bottom: 1px solid var(--border);
-        }
-        .msg:first-child { padding-top:0; }
-        .msg:last-child  { border-bottom:none; padding-bottom:0; }
-        .msg-icon {
-            width: 28px; height: 28px;
-            background: var(--s2); border: 1px solid var(--bstrong);
-            border-radius: var(--r-sm); flex-shrink: 0; margin-top:1px;
+        .kb-cta-btns {
             display: flex; align-items: center; justify-content: center;
-            color: var(--faint);
-        }
-        .msg-t {
-            font-size:12.5px; font-weight:500; color:var(--text); margin-bottom:2px;
-            overflow:hidden; display:-webkit-box;
-            -webkit-line-clamp:1; -webkit-box-orient:vertical;
-        }
-        .msg-s { font-size:11px; color:var(--faint); }
-        .unread-dot {
-            width:6px;height:6px;background:var(--accent);
-            border-radius:50%;flex-shrink:0;margin-top:5px;
+            gap: 10px; flex-wrap: wrap; position: relative;
         }
 
-        /* Empty */
-        .empty {
-            display:flex; flex-direction:column;
-            align-items:center; justify-content:center;
-            padding:28px 16px; gap:6px;
+        /* ───── Footer ───────────────────────────────────────── */
+        .kb-footer { border-top: 1px solid var(--border); position: relative; z-index: 1; }
+        .kb-footer-main {
+            max-width: 1200px; margin: 0 auto; padding: 48px 24px 40px;
+            display: grid; grid-template-columns: 1.5fr 1fr 1fr 1fr; gap: 40px;
         }
-        .empty svg { color:var(--faint); margin-bottom:4px; }
-        .empty p { font-size:12px; color:var(--faint); margin:0; text-align:center; }
+        .kb-footer-brand p {
+            font-size: 13px; color: var(--text-faint);
+            margin-top: 12px; line-height: 1.6; max-width: 220px;
+        }
+        .kb-footer-col h4 {
+            font-size: 11.5px; font-weight: 600; color: var(--text-muted);
+            text-transform: uppercase; letter-spacing: 0.07em; margin-bottom: 14px;
+        }
+        .kb-footer-col ul { list-style: none; padding: 0; margin: 0; display: flex; flex-direction: column; gap: 9px; }
+        .kb-footer-col a { font-size: 13px; color: var(--text-faint); text-decoration: none; transition: color var(--ease); }
+        .kb-footer-col a:hover { color: var(--text-muted); }
+        .kb-footer-bar {
+            border-top: 1px solid var(--border); padding: 16px 24px;
+        }
+        .kb-footer-bar-inner {
+            max-width: 1200px; margin: 0 auto;
+            display: flex; align-items: center; justify-content: space-between;
+            flex-wrap: wrap; gap: 8px;
+        }
+        .kb-footer-copy { font-size: 12px; color: var(--text-faint); }
+        .kb-footer-links { display: flex; align-items: center; gap: 14px; }
+        .kb-footer-links a { font-size: 12px; color: var(--text-faint); text-decoration: none; transition: color var(--ease); }
+        .kb-footer-links a:hover { color: var(--text-muted); }
 
-        /* Skeleton */
-        .sk {
-            display:inline-block; background:var(--s2);
-            border-radius:4px; animation:skP 1.5s ease-in-out infinite;
+        /* ───── Scroll reveal ────────────────────────────────── */
+        .reveal {
+            opacity: 0; transform: translateY(18px);
+            transition: opacity 0.5s ease, transform 0.5s ease;
         }
-        @keyframes skP { 0%,100%{opacity:1} 50%{opacity:.3} }
+        .reveal.visible { opacity: 1; transform: translateY(0); }
 
-        /* Badges row */
-        .badges-row {
-            display: flex; flex-wrap: wrap; gap: 4px; margin-top: 2px;
-        }
-        .badge-item {
-            font-size: 10px; font-weight: 500;
-            background: var(--s2); border: 1px solid var(--bstrong);
-            color: var(--muted); padding: 1px 7px; border-radius: 99px;
-        }
-
-        /* ══════════════════════════════════════════════════════
-           BOTTOM NAV (mobile)
-        ══════════════════════════════════════════════════════ */
-        .bot-nav {
-            display: none; position: fixed; bottom:0; left:0; right:0;
-            z-index: 200; height: var(--bot);
-            background: rgba(0,0,0,.92);
-            backdrop-filter: blur(20px); -webkit-backdrop-filter: blur(20px);
-            border-top: 1px solid var(--border);
-        }
-        .bot-inner { display:flex; align-items:stretch; height:100%; }
-        .bot-a {
-            flex:1; display:flex; flex-direction:column;
-            align-items:center; justify-content:center; gap:3px;
-            text-decoration:none; color:var(--faint);
-            font-size:10px; font-weight:500;
-            transition:color var(--ease); position:relative;
-            padding-bottom: env(safe-area-inset-bottom, 0px);
-        }
-        .bot-a:hover { color:var(--muted); }
-        .bot-a.active { color:var(--text); }
-        .bot-fab-wrap {
-            flex:1; display:flex; align-items:center; justify-content:center;
-            padding-bottom: env(safe-area-inset-bottom, 0px);
-        }
-        .bot-fab {
-            width:44px; height:44px; background:#fff;
-            border-radius:var(--r-md); display:flex;
-            align-items:center; justify-content:center;
-            color:#000; text-decoration:none;
-            transition:background var(--ease), transform .1s;
-            box-shadow: 0 0 0 1px rgba(255,255,255,.12);
-        }
-        .bot-fab:hover { background:var(--adim); }
-        .bot-fab:active { transform:scale(.93); }
-        .bot-unread {
-            position:absolute; top:8px; right:50%;
-            transform:translateX(10px);
-            width:7px; height:7px;
-            background:var(--red); border:1.5px solid var(--bg);
-            border-radius:50%;
+        /* ───── Keyframes ────────────────────────────────────── */
+        @keyframes fadeUp {
+            from { opacity: 0; transform: translateY(16px); }
+            to   { opacity: 1; transform: translateY(0); }
         }
 
-        /* ══════════════════════════════════════════════════════
-           FADE IN
-        ══════════════════════════════════════════════════════ */
-        .fd { opacity:0; transform:translateY(14px); animation:fdIn .38s cubic-bezier(.16,1,.3,1) forwards; }
-        .d1 { animation-delay:.07s; }
-        .d2 { animation-delay:.14s; }
-        .d3 { animation-delay:.21s; }
-        .d4 { animation-delay:.28s; }
-        @keyframes fdIn { to { opacity:1; transform:none; } }
-
-        /* ══════════════════════════════════════════════════════
-           RESPONSIVE
-        ══════════════════════════════════════════════════════ */
-        @media (max-width:1024px) {
-            .stats-row { grid-template-columns:repeat(2,1fr); }
+        /* ───── Responsive ───────────────────────────────────── */
+        @media (max-width: 1024px) {
+            .kb-nav-center { display: none; }
+            .kb-footer-main { grid-template-columns: 1fr 1fr; gap: 32px; }
+            .kb-steps-grid { grid-template-columns: repeat(2, 1fr); }
         }
-        @media (max-width:768px) {
-            .sidebar  { display:none; }
-            .bot-nav  { display:flex; }
-            .main     { padding:18px 16px 84px; }
-            .stats-row{ grid-template-columns:repeat(2,1fr); }
-            .row2     { grid-template-columns:1fr; }
-            .acts     { gap:8px; }
-            .act      { padding:12px 6px; font-size:11px; gap:6px; }
-            .act-icon { width:30px; height:30px; }
-            .nav-inner{ padding:0 16px; }
-            .chip-name{ max-width:72px; }
-            .logout-btn span { display:none; }
-            .cta-banner { flex-direction:column; align-items:flex-start; gap:10px; }
-            .btn-w    { width:100%; justify-content:center; }
+        @media (max-width: 768px) {
+            .kb-menu-btn { display: flex; }
+            .kb-nav-end .kb-nav-ghost { display: none; }
+            .kb-hero { padding: 60px 20px 52px; }
+            .kb-section { padding: 56px 20px; }
+            .kb-stats-grid { grid-template-columns: repeat(2, 1fr); }
+            .kb-feat-grid, .kb-reviews-grid { grid-template-columns: 1fr; }
+            .kb-split { grid-template-columns: 1fr; gap: 32px; }
+            .kb-split-flip { direction: ltr; }
+            .kb-cta { padding: 40px 22px; }
+            .kb-stats-wrap { padding: 0 20px 48px; }
+            .kb-cta-wrap { padding: 0 20px 60px; }
         }
-        @media (max-width:400px) {
-            .acts { grid-template-columns:repeat(4,1fr); gap:6px; }
-            .act  { padding:10px 3px; font-size:10px; }
-            .act-icon { width:28px; height:28px; }
-            .sc-val { font-size:22px; }
+        @media (max-width: 540px) {
+            .kb-steps-grid { grid-template-columns: 1fr; }
+            .kb-footer-main { grid-template-columns: 1fr; gap: 28px; }
+            .kb-footer-brand p { max-width: 100%; }
+            .kb-hero-btns { flex-direction: column; align-items: stretch; }
+            .kb-btn-primary, .kb-btn-ghost { justify-content: center; }
         }
     </style>
 </head>
 <body>
-<div id="go"></div>
 
-<!-- ══════════════════════════════════════════════════════════
-     TOP NAV
-══════════════════════════════════════════════════════════ -->
-<nav class="nav">
-    <div class="nav-inner">
-        <a href="/" class="brand">
-            <div class="brand-icon">
-                <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="#000" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+<div class="kb-grid"></div>
+
+<!-- ── Nav ──────────────────────────────────────────────────── -->
+<nav class="kb-nav">
+    <div class="kb-nav-inner">
+        <a href="/" class="kb-brand">
+            <div class="kb-brand-mark">
+                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#000" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
                     <path d="M13 2L3 14h9l-1 8 10-12h-9l1-8z"/>
                 </svg>
             </div>
             KiroBoost
         </a>
-        <div class="nav-right">
-            <a href="/profile" class="user-chip">
-                <div class="av" id="navAv"><span id="navInit">—</span></div>
-                <span class="chip-name" id="navName">Loading</span>
-            </a>
-            <button class="logout-btn" onclick="doLogout()">
-                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                    <path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"/>
-                    <polyline points="16 17 21 12 16 7"/>
-                    <line x1="21" y1="12" x2="9" y2="12"/>
+
+        <div class="kb-nav-center">
+            <a class="kb-nav-link" href="#features">Features</a>
+            <a class="kb-nav-link" href="#howitworks">How it works</a>
+            <a class="kb-nav-link" href="#dashboard">Dashboard</a>
+            <a class="kb-nav-link" href="#reviews">Reviews</a>
+        </div>
+
+        <div class="kb-nav-end">
+            <a href="/login" class="kb-nav-ghost">Log in</a>
+            <a href="/register" class="kb-nav-cta">Get started</a>
+            <button class="kb-menu-btn" onclick="toggleMenu()" aria-label="Toggle menu">
+                <svg id="menuIcon" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                    <line x1="3" y1="6" x2="21" y2="6"/>
+                    <line x1="3" y1="12" x2="21" y2="12"/>
+                    <line x1="3" y1="18" x2="21" y2="18"/>
                 </svg>
-                <span>Log out</span>
             </button>
         </div>
     </div>
-</nav>
 
-<!-- ══════════════════════════════════════════════════════════
-     LAYOUT
-══════════════════════════════════════════════════════════ -->
-<div class="layout">
-
-    <!-- SIDEBAR -->
-    <aside class="sidebar">
-        <div class="sb-sec">
-            <div class="sb-lbl">Main</div>
-            <a href="/home" class="sb-a active">
-                <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                    <path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/>
-                    <polyline points="9 22 9 12 15 12 15 22"/>
-                </svg>
-                Dashboard
-            </a>
-            <a href="/boost" class="sb-a">
-                <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                    <path d="M13 2L3 14h9l-1 8 10-12h-9l1-8z"/>
-                </svg>
-                Boost
-            </a>
-            <a href="/cookies" class="sb-a">
-                <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                    <rect x="2" y="7" width="20" height="14" rx="2"/>
-                    <path d="M16 7V5a2 2 0 0 0-2-2h-4a2 2 0 0 0-2 2v2"/>
-                </svg>
-                Accounts
-            </a>
-        </div>
-        <div class="sb-div"></div>
-        <div class="sb-sec">
-            <div class="sb-lbl">Activity</div>
-            <a href="/inbox" class="sb-a" id="sbInbox">
-                <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                    <path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"/>
-                    <polyline points="22,6 12,13 2,6"/>
-                </svg>
-                Inbox
-                <span class="sb-badge" id="sbBadge" style="display:none"></span>
-            </a>
-            <a href="/transactions" class="sb-a">
-                <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                    <path d="M9 5H7a2 2 0 0 0-2 2v12a2 2 0 0 0 2 2h10a2 2 0 0 0 2-2V7a2 2 0 0 0-2-2h-2"/>
-                    <rect x="9" y="3" width="6" height="4" rx="2"/>
-                </svg>
-                Orders
-            </a>
-            <a href="/limits" class="sb-a">
-                <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                    <line x1="18" y1="20" x2="18" y2="10"/>
-                    <line x1="12" y1="20" x2="12" y2="4"/>
-                    <line x1="6"  y1="20" x2="6"  y2="14"/>
-                </svg>
-                Limits
-            </a>
-        </div>
-        <div class="sb-div"></div>
-        <div class="sb-sec">
-            <div class="sb-lbl">Account</div>
-            <a href="/profile" class="sb-a">
-                <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                    <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/>
-                    <circle cx="12" cy="7" r="4"/>
-                </svg>
-                Profile
-            </a>
-            <a href="/admin" class="sb-a" id="sbAdmin" style="display:none">
-                <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                    <path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/>
-                </svg>
-                Admin
-            </a>
-        </div>
-        <div style="margin-top:auto;padding:12px 10px 0;">
-            <div class="sb-div" style="margin:0 0 8px;"></div>
-            <button class="sb-a" onclick="doLogout()" style="border:none;background:none;cursor:pointer;color:var(--faint);width:100%;">
-                <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                    <path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"/>
-                    <polyline points="16 17 21 12 16 7"/>
-                    <line x1="21" y1="12" x2="9" y2="12"/>
-                </svg>
-                Log out
-            </button>
-        </div>
-    </aside>
-
-    <!-- MAIN CONTENT -->
-    <main class="main">
-
-        <!-- Greeting -->
-        <div class="greeting fd">
-            <div class="g-eye">Dashboard</div>
-            <h1 class="g-h1">Good to see you, <span id="gName">—</span></h1>
-            <p class="g-sub" id="gSub">Loading your account…</p>
-        </div>
-
-        <!-- Boost CTA -->
-        <div class="cta-banner fd d1">
-            <div class="cta-txt">
-                <h3>Ready to run a share session?</h3>
-                <p>Drop a post link, pick a speed mode, and go.</p>
-            </div>
-            <a href="/boost" class="btn-w">
-                Launch Boost
-                <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
-                    <line x1="5" y1="12" x2="19" y2="12"/><polyline points="12 5 19 12 12 19"/>
-                </svg>
-            </a>
-        </div>
-
-        <!-- Stat cards — from GET /api/user/stats -->
-        <div class="stats-row fd d1">
-            <div class="sc">
-                <div class="sc-lbl"><span id="dotSt" class="dot-r"></span> Account Status</div>
-                <div class="sc-val" id="stSt"><span class="sk" style="width:60px;height:20px;"></span></div>
-                <div class="sc-sub" id="stStSub">—</div>
-            </div>
-            <div class="sc">
-                <div class="sc-lbl">Saved Cookies</div>
-                <div class="sc-val" id="stCk"><span class="sk" style="width:40px;height:26px;"></span></div>
-                <div class="sc-sub" id="stCkSub">accounts</div>
-            </div>
-            <div class="sc">
-                <div class="sc-lbl">Total Shares</div>
-                <div class="sc-val" id="stTot"><span class="sk" style="width:48px;height:26px;"></span></div>
-                <div class="sc-sub">all time</div>
-            </div>
-            <div class="sc">
-                <div class="sc-lbl">Last 30 Days</div>
-                <div class="sc-val" id="stRec"><span class="sk" style="width:40px;height:26px;"></span></div>
-                <div class="sc-sub">shares</div>
-            </div>
-        </div>
-
-        <!-- Quick Actions -->
-        <div class="fd d2">
-            <div class="sec-hd">Quick Actions</div>
-            <div class="acts">
-
-                <a href="/boost" class="act">
-                    <div class="act-icon">
-                        <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M13 2L3 14h9l-1 8 10-12h-9l1-8z"/></svg>
-                    </div>
-                    Boost
-                </a>
-
-                <a href="/cookies" class="act">
-                    <div class="act-icon">
-                        <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="2" y="7" width="20" height="14" rx="2"/><path d="M16 7V5a2 2 0 0 0-2-2h-4a2 2 0 0 0-2 2v2"/></svg>
-                    </div>
-                    Accounts
-                </a>
-
-                <a href="/transactions" class="act">
-                    <div class="act-icon">
-                        <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M9 5H7a2 2 0 0 0-2 2v12a2 2 0 0 0 2 2h10a2 2 0 0 0 2-2V7a2 2 0 0 0-2-2h-2"/><rect x="9" y="3" width="6" height="4" rx="2"/></svg>
-                    </div>
-                    Orders
-                </a>
-
-                <a href="/inbox" class="act" id="actInbox">
-                    <div class="act-icon">
-                        <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"/><polyline points="22,6 12,13 2,6"/></svg>
-                    </div>
-                    Inbox
-                </a>
-
-                <a href="/limits" class="act">
-                    <div class="act-icon">
-                        <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="18" y1="20" x2="18" y2="10"/><line x1="12" y1="20" x2="12" y2="4"/><line x1="6" y1="20" x2="6" y2="14"/></svg>
-                    </div>
-                    Limits
-                </a>
-
-                <a href="/profile" class="act">
-                    <div class="act-icon">
-                        <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>
-                    </div>
-                    Profile
-                </a>
-
-                <a href="/admin" class="act" id="actAdmin" style="display:none">
-                    <div class="act-icon">
-                        <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg>
-                    </div>
-                    Admin
-                </a>
-
-                <a href="/" class="act">
-                    <div class="act-icon">
-                        <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/></svg>
-                    </div>
-                    About
-                </a>
-
-            </div>
-        </div>
-
-        <!-- Two-col: Account details + Share chart -->
-        <div class="row2 fd d3">
-
-            <!-- Account details — data from stats + cached kb_user -->
-            <div class="card">
-                <div class="card-hd">
-                    <span class="card-hd-t">Account Details</span>
-                    <a href="/profile" class="card-hd-l">Edit profile →</a>
-                </div>
-                <div class="card-body">
-                    <div class="dr">
-                        <span class="dr-k">Username</span>
-                        <span class="dr-v" id="dUser">—</span>
-                    </div>
-                    <div class="dr">
-                        <span class="dr-k">Status</span>
-                        <span id="dSt"><span class="sk" style="width:58px;height:18px;border-radius:99px;"></span></span>
-                    </div>
-                    <div class="dr">
-                        <span class="dr-k">Cookies</span>
-                        <span class="dr-v" id="dCk">—</span>
-                    </div>
-                    <div class="dr">
-                        <span class="dr-k">Facebook</span>
-                        <span class="dr-v" id="dFb" title="">—</span>
-                    </div>
-                    <div class="dr">
-                        <span class="dr-k">Role</span>
-                        <span id="dRole"><span class="chip chip-n">user</span></span>
-                    </div>
-                    <div class="dr" id="dBadgesRow" style="display:none">
-                        <span class="dr-k">Badges</span>
-                        <div class="badges-row" id="dBadges"></div>
-                    </div>
-                </div>
-            </div>
-
-            <!-- Share chart — built from shareHistory[{date,count}] in stats -->
-            <div class="card">
-                <div class="card-hd">
-                    <span class="card-hd-t">Share Activity</span>
-                    <span class="card-hd-l">30-day history</span>
-                </div>
-                <div class="card-body">
-                    <div style="display:flex;align-items:baseline;gap:8px;margin-bottom:14px;">
-                        <span style="font-size:28px;font-weight:700;letter-spacing:-.04em;color:var(--text);font-variant-numeric:tabular-nums;" id="chartN">—</span>
-                        <span style="font-size:12px;color:var(--faint);">shares in 30 days</span>
-                    </div>
-                    <div class="bar-chart" id="barChart"></div>
-                    <div class="chart-row">
-                        <span class="chart-lbl" id="chartStart">30d ago</span>
-                        <span class="chart-lbl">today</span>
-                    </div>
-                </div>
-            </div>
-
-        </div>
-
-        <!-- Inbox preview — from GET /api/user/inbox?limit=4 -->
-        <div class="card fd d4">
-            <div class="card-hd">
-                <span class="card-hd-t">Recent Messages</span>
-                <a href="/inbox" class="card-hd-l">View all →</a>
-            </div>
-            <div class="card-body" id="inboxWrap">
-                <!-- skeleton -->
-                <div class="msg">
-                    <div class="msg-icon"><span class="sk" style="width:28px;height:28px;display:block;border-radius:6px;"></span></div>
-                    <div style="flex:1">
-                        <div class="sk" style="width:55%;height:13px;margin-bottom:6px;"></div>
-                        <div class="sk" style="width:35%;height:10px;"></div>
-                    </div>
-                </div>
-            </div>
-        </div>
-
-    </main>
-</div>
-
-<!-- ══════════════════════════════════════════════════════════
-     BOTTOM NAV (mobile only)
-══════════════════════════════════════════════════════════ -->
-<nav class="bot-nav">
-    <div class="bot-inner">
-        <a href="/home" class="bot-a active">
-            <svg width="20" height="20" viewBox="0 0 24 24" fill="currentColor"><path d="M10 20v-6h4v6h5v-8h3L12 3 2 12h3v8z"/></svg>
-            Home
-        </a>
-        <a href="/inbox" class="bot-a" id="botInbox">
-            <div style="position:relative;line-height:0;">
-                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"/><polyline points="22,6 12,13 2,6"/></svg>
-                <span class="bot-unread" id="botDot" style="display:none;"></span>
-            </div>
-            Inbox
-        </a>
-        <div class="bot-fab-wrap">
-            <a href="/boost" class="bot-fab">
-                <svg width="20" height="20" viewBox="0 0 24 24" fill="currentColor"><path d="M13 10V3L4 14h7v7l9-11h-7z"/></svg>
-            </a>
-        </div>
-        <a href="/transactions" class="bot-a">
-            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M9 5H7a2 2 0 0 0-2 2v12a2 2 0 0 0 2 2h10a2 2 0 0 0 2-2V7a2 2 0 0 0-2-2h-2"/><rect x="9" y="3" width="6" height="4" rx="2"/></svg>
-            Orders
-        </a>
-        <a href="/profile" class="bot-a">
-            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>
-            Profile
-        </a>
+    <div class="kb-mobile-menu" id="mobileMenu">
+        <a href="#features" onclick="closeMenu()">Features</a>
+        <a href="#howitworks" onclick="closeMenu()">How it works</a>
+        <a href="#dashboard" onclick="closeMenu()">Dashboard</a>
+        <a href="#reviews" onclick="closeMenu()">Reviews</a>
+        <a href="/login" onclick="closeMenu()">Log in</a>
+        <a href="/register" class="kb-nav-cta" onclick="closeMenu()">Get started — it's free</a>
     </div>
 </nav>
+
+<div class="kb-page">
+
+    <!-- ── Hero ─────────────────────────────────────────────── -->
+    <section class="kb-hero">
+        <div class="kb-hero-badge">
+            <span class="kb-live-dot"></span>
+            Batch engine v2 — now live
+        </div>
+        <h1 class="kb-hero-h1">
+            Boost your Facebook reach<br>
+            <em>in seconds.</em>
+        </h1>
+        <p class="kb-hero-lead">
+            KiroBoost is a high-performance SMM panel built for Facebook sharing.
+            Add accounts, set a target, and watch your posts go viral — automatically.
+        </p>
+        <div class="kb-hero-btns">
+            <a href="/register" class="kb-btn-primary">
+                Start for free
+                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+                    <line x1="5" y1="12" x2="19" y2="12"/>
+                    <polyline points="12 5 19 12 12 19"/>
+                </svg>
+            </a>
+            <a href="#features" class="kb-btn-ghost">See features</a>
+        </div>
+
+        <!-- Rule after hero -->
+        <div style="width:100%; height:1px; background: linear-gradient(90deg, transparent, var(--border) 20%, var(--border) 80%, transparent); margin-top: 72px; animation: fadeUp 0.55s 0.2s ease both;"></div>
+    </section>
+
+    <!-- ── Stats ─────────────────────────────────────────────── -->
+    <div class="kb-stats-wrap reveal">
+        <div class="kb-stats-grid">
+            <div class="kb-stat">
+                <div class="kb-stat-val" id="s1">10k+</div>
+                <div class="kb-stat-lbl">Shares delivered</div>
+            </div>
+            <div class="kb-stat">
+                <div class="kb-stat-val" id="s2">&lt; 1s</div>
+                <div class="kb-stat-lbl">Avg. share time</div>
+            </div>
+            <div class="kb-stat">
+                <div class="kb-stat-val" id="s3">99.9%</div>
+                <div class="kb-stat-lbl">Uptime</div>
+            </div>
+            <div class="kb-stat">
+                <div class="kb-stat-val" id="s4">3</div>
+                <div class="kb-stat-lbl">Share methods</div>
+            </div>
+        </div>
+    </div>
+
+    <div class="kb-rule"></div>
+
+    <!-- ── Features ──────────────────────────────────────────── -->
+    <section class="kb-section reveal" id="features">
+        <div>
+            <div class="kb-section-eyebrow">Features</div>
+            <h2 class="kb-section-h2">Everything you need<br>to grow on Facebook</h2>
+            <p class="kb-section-lead">From single shares to full batch automation — KiroBoost gives you the tools to scale fast.</p>
+        </div>
+        <div class="kb-feat-grid">
+            <div class="kb-feat">
+                <div class="kb-feat-icon">
+                    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M13 2L3 14h9l-1 8 10-12h-9l1-8z"/></svg>
+                </div>
+                <h3>Instant Sharing</h3>
+                <p>Fire shares the moment you submit. No queues, no throttling. Delivery starts in under a second with real session cookies.</p>
+            </div>
+            <div class="kb-feat">
+                <div class="kb-feat-icon">
+                    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="2" y="3" width="20" height="14" rx="2"/><line x1="8" y1="21" x2="16" y2="21"/><line x1="12" y1="17" x2="12" y2="21"/></svg>
+                </div>
+                <h3>Batch Engine</h3>
+                <p>Run hundreds of accounts in parallel. Set a target share count and let the engine distribute the workload automatically.</p>
+            </div>
+            <div class="kb-feat">
+                <div class="kb-feat-icon">
+                    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="22 12 18 12 15 21 9 3 6 12 2 12"/></svg>
+                </div>
+                <h3>Live Session Monitor</h3>
+                <p>Track every share in real-time with a live log feed. See per-account success and failure counts as they happen.</p>
+            </div>
+            <div class="kb-feat">
+                <div class="kb-feat-icon">
+                    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="11" width="18" height="11" rx="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/></svg>
+                </div>
+                <h3>Cookie Management</h3>
+                <p>Add, validate, and organize your Facebook session cookies. Bulk-delete expired ones. No raw credentials ever stored.</p>
+            </div>
+            <div class="kb-feat">
+                <div class="kb-feat-icon">
+                    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="3"/><path d="M12 1v4M12 19v4M4.22 4.22l2.83 2.83M16.95 16.95l2.83 2.83M1 12h4M19 12h4M4.22 19.78l2.83-2.83M16.95 7.05l2.83-2.83"/></svg>
+                </div>
+                <h3>3 Share Methods</h3>
+                <p>Switch between content management, news feed, and business graph API methods to maximize reach and avoid detection.</p>
+            </div>
+            <div class="kb-feat">
+                <div class="kb-feat-icon">
+                    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="4" y1="21" x2="4" y2="14"/><line x1="4" y1="10" x2="4" y2="3"/><line x1="12" y1="21" x2="12" y2="12"/><line x1="12" y1="8" x2="12" y2="3"/><line x1="20" y1="21" x2="20" y2="16"/><line x1="20" y1="12" x2="20" y2="3"/><line x1="1" y1="14" x2="7" y2="14"/><line x1="9" y1="8" x2="15" y2="8"/><line x1="17" y1="16" x2="23" y2="16"/></svg>
+                </div>
+                <h3>Speed Control</h3>
+                <p>Choose between Instant, Fast, and Slow modes. Tune the share rate per account to match your safety requirements.</p>
+            </div>
+        </div>
+    </section>
+
+    <div class="kb-rule"></div>
+
+    <!-- ── How it works ──────────────────────────────────────── -->
+    <section class="kb-section reveal" id="howitworks">
+        <div>
+            <div class="kb-section-eyebrow">How it works</div>
+            <h2 class="kb-section-h2">Up and running<br>in four steps</h2>
+            <p class="kb-section-lead">No technical setup, no installs. Open your browser and start sharing.</p>
+        </div>
+        <div class="kb-steps-grid">
+            <div class="kb-step">
+                <div class="kb-step-num">01</div>
+                <div class="kb-step-line"></div>
+                <h3>Create an account</h3>
+                <p>Register with a username, password, and your Facebook profile link. Activation is instant — no waiting.</p>
+            </div>
+            <div class="kb-step">
+                <div class="kb-step-num">02</div>
+                <div class="kb-step-line"></div>
+                <h3>Add your cookies</h3>
+                <p>Paste Facebook session cookies for each account you want to use. KiroBoost validates them automatically.</p>
+            </div>
+            <div class="kb-step">
+                <div class="kb-step-num">03</div>
+                <div class="kb-step-line"></div>
+                <h3>Paste your post link</h3>
+                <p>Drop in the URL of the Facebook post you want to boost. The engine extracts the post ID in milliseconds.</p>
+            </div>
+            <div class="kb-step">
+                <div class="kb-step-num">04</div>
+                <div class="kb-step-line"></div>
+                <h3>Watch it grow</h3>
+                <p>Hit boost. The live session monitor shows every share as it lands. Stop anytime with a single click.</p>
+            </div>
+        </div>
+    </section>
+
+    <div class="kb-rule"></div>
+
+    <!-- ── Split — terminal ───────────────────────────────────── -->
+    <section class="kb-section reveal" id="dashboard">
+        <div class="kb-split">
+            <div>
+                <div class="kb-section-eyebrow">Live engine</div>
+                <h2 class="kb-section-h2">Real-time logs,<br>zero guesswork</h2>
+                <p class="kb-section-lead">Every share fires through our optimized graph API pipeline. Watch the live log stream in real time.</p>
+                <div class="kb-check-list">
+                    <div class="kb-check-item">
+                        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg>
+                        Parallel multi-account execution
+                    </div>
+                    <div class="kb-check-item">
+                        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg>
+                        Per-account stop on failure — others keep going
+                    </div>
+                    <div class="kb-check-item">
+                        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg>
+                        Session auto-cleanup after 30 minutes
+                    </div>
+                </div>
+            </div>
+
+            <div class="kb-term">
+                <div class="kb-term-bar">
+                    <div class="dot dot-r"></div>
+                    <div class="dot dot-y"></div>
+                    <div class="dot dot-g"></div>
+                </div>
+                <div class="kb-term-body">
+                    <div><span class="c-dim">$</span> <span class="c-text">Batch session started</span></div>
+                    <div><span class="c-dim">›</span> <span class="c-muted">Accounts:</span>   <span class="c-blue">12</span></div>
+                    <div><span class="c-dim">›</span> <span class="c-muted">Target:</span>     <span class="c-blue">240 shares</span></div>
+                    <div><span class="c-dim">›</span> <span class="c-muted">Speed:</span>      <span class="c-amber">instant</span></div>
+                    <div style="margin-top:8px;"></div>
+                    <div><span class="c-green">✓</span> <span class="c-muted">acc_001</span> <span class="c-dim">— share #1 ok</span></div>
+                    <div><span class="c-green">✓</span> <span class="c-muted">acc_002</span> <span class="c-dim">— share #1 ok</span></div>
+                    <div><span class="c-green">✓</span> <span class="c-muted">acc_003</span> <span class="c-dim">— share #1 ok</span></div>
+                    <div><span class="c-green">✓</span> <span class="c-muted">acc_001</span> <span class="c-dim">— share #2 ok</span></div>
+                    <div><span class="c-green">✓</span> <span class="c-muted">acc_004</span> <span class="c-dim">— share #1 ok</span></div>
+                    <div style="margin-top:8px;"></div>
+                    <div><span class="c-muted">Progress:</span> <span class="c-green">18 / 240</span></div>
+                    <div class="c-dim" style="margin-top:4px; letter-spacing: 1.5px;">████░░░░░░░░░░░░░░░ 7%</div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <div class="kb-rule"></div>
+
+    <!-- ── Split — dashboard mockup ──────────────────────────── -->
+    <section class="kb-section reveal">
+        <div class="kb-split kb-split-flip">
+            <div>
+                <div class="kb-section-eyebrow">Order management</div>
+                <h2 class="kb-section-h2">Track every order,<br>every account</h2>
+                <p class="kb-section-lead">Admins get a full order dashboard — statuses, notes, bulk-updates, and user management in one place.</p>
+                <div class="kb-check-list">
+                    <div class="kb-check-item">
+                        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg>
+                        Per-order status: pending, active, completed
+                    </div>
+                    <div class="kb-check-item">
+                        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg>
+                        Inbox broadcasting to all or specific users
+                    </div>
+                    <div class="kb-check-item">
+                        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg>
+                        User activation, deactivation, and deletion
+                    </div>
+                </div>
+            </div>
+
+            <div class="kb-dash">
+                <div class="kb-dash-bar">
+                    <span style="font-weight:500;">Recent Orders</span>
+                    <span>Admin panel</span>
+                </div>
+                <div class="kb-dash-body">
+                    <div class="kb-order-row">
+                        <div class="kb-order-left">
+                            <div class="kb-avatar">KR</div>
+                            <div>
+                                <div class="kb-order-name">kiro_ph</div>
+                                <div class="kb-order-meta">240 shares · fb.com/p/123</div>
+                            </div>
+                        </div>
+                        <span class="kb-badge b-green">Completed</span>
+                    </div>
+                    <div class="kb-order-row">
+                        <div class="kb-order-left">
+                            <div class="kb-avatar">JM</div>
+                            <div>
+                                <div class="kb-order-name">juan_mn</div>
+                                <div class="kb-order-meta">500 shares · fb.com/p/456</div>
+                            </div>
+                        </div>
+                        <span class="kb-badge b-amber">Processing</span>
+                    </div>
+                    <div class="kb-order-row">
+                        <div class="kb-order-left">
+                            <div class="kb-avatar">AL</div>
+                            <div>
+                                <div class="kb-order-name">ali_bd</div>
+                                <div class="kb-order-meta">100 shares · fb.com/p/789</div>
+                            </div>
+                        </div>
+                        <span class="kb-badge b-blue">Pending</span>
+                    </div>
+                    <div class="kb-order-row">
+                        <div class="kb-order-left">
+                            <div class="kb-avatar">SN</div>
+                            <div>
+                                <div class="kb-order-name">sana_pk</div>
+                                <div class="kb-order-meta">80 shares · fb.com/p/321</div>
+                            </div>
+                        </div>
+                        <span class="kb-badge b-faint">Draft</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <div class="kb-rule"></div>
+
+    <!-- ── Reviews ────────────────────────────────────────────── -->
+    <section class="kb-section reveal" id="reviews">
+        <div>
+            <div class="kb-section-eyebrow">Reviews</div>
+            <h2 class="kb-section-h2">Trusted by boosters<br>across Southeast Asia</h2>
+            <p class="kb-section-lead">Real feedback from real KiroBoost users.</p>
+        </div>
+        <div class="kb-reviews-grid">
+            <div class="kb-review">
+                <div class="kb-stars">
+                    <svg width="13" height="13" viewBox="0 0 24 24" fill="currentColor"><path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/></svg>
+                    <svg width="13" height="13" viewBox="0 0 24 24" fill="currentColor"><path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/></svg>
+                    <svg width="13" height="13" viewBox="0 0 24 24" fill="currentColor"><path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/></svg>
+                    <svg width="13" height="13" viewBox="0 0 24 24" fill="currentColor"><path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/></svg>
+                    <svg width="13" height="13" viewBox="0 0 24 24" fill="currentColor"><path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/></svg>
+                </div>
+                <p class="kb-review-text">"The batch engine is wild. I ran 50 accounts on the same post and had 1,000 shares in under 5 minutes. The live log made it easy to spot which cookies had expired."</p>
+                <div class="kb-review-author">
+                    <div class="kb-review-avatar">MR</div>
+                    <div>
+                        <div class="kb-review-name">Marco R.</div>
+                        <div class="kb-review-role">Content creator, Philippines</div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="kb-review">
+                <div class="kb-stars">
+                    <svg width="13" height="13" viewBox="0 0 24 24" fill="currentColor"><path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/></svg>
+                    <svg width="13" height="13" viewBox="0 0 24 24" fill="currentColor"><path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/></svg>
+                    <svg width="13" height="13" viewBox="0 0 24 24" fill="currentColor"><path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/></svg>
+                    <svg width="13" height="13" viewBox="0 0 24 24" fill="currentColor"><path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/></svg>
+                    <svg width="13" height="13" viewBox="0 0 24 24" fill="currentColor"><path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/></svg>
+                </div>
+                <p class="kb-review-text">"Finally a panel with a real UI. The speed control is something I haven't seen elsewhere — switching between instant and slow lets me manage account safety properly."</p>
+                <div class="kb-review-author">
+                    <div class="kb-review-avatar">AH</div>
+                    <div>
+                        <div class="kb-review-name">Aditya H.</div>
+                        <div class="kb-review-role">SMM reseller, Indonesia</div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="kb-review">
+                <div class="kb-stars">
+                    <svg width="13" height="13" viewBox="0 0 24 24" fill="currentColor"><path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/></svg>
+                    <svg width="13" height="13" viewBox="0 0 24 24" fill="currentColor"><path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/></svg>
+                    <svg width="13" height="13" viewBox="0 0 24 24" fill="currentColor"><path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/></svg>
+                    <svg width="13" height="13" viewBox="0 0 24 24" fill="currentColor"><path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/></svg>
+                    <svg width="13" height="13" viewBox="0 0 24 24" fill="currentColor"><path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/></svg>
+                </div>
+                <p class="kb-review-text">"Cookie management alone is worth it. I used to juggle spreadsheets — now I manage everything from one dashboard. The admin inbox messaging is a great touch too."</p>
+                <div class="kb-review-author">
+                    <div class="kb-review-avatar">ZK</div>
+                    <div>
+                        <div class="kb-review-name">Zara K.</div>
+                        <div class="kb-review-role">Page manager, Malaysia</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <div class="kb-rule"></div>
+
+    <!-- ── CTA ────────────────────────────────────────────────── -->
+    <div class="kb-cta-wrap reveal" style="padding-top: 64px;">
+        <div class="kb-cta">
+            <h2>Start boosting today.</h2>
+            <p>Free to join. No credit card. Just create an account and start sharing.</p>
+            <div class="kb-cta-btns">
+                <a href="/register" class="kb-btn-primary">
+                    Create free account
+                    <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+                        <line x1="5" y1="12" x2="19" y2="12"/>
+                        <polyline points="12 5 19 12 12 19"/>
+                    </svg>
+                </a>
+                <a href="/login" class="kb-btn-ghost">Already have an account</a>
+            </div>
+        </div>
+    </div>
+
+    <!-- ── Footer ─────────────────────────────────────────────── -->
+    <footer class="kb-footer">
+        <div class="kb-footer-main">
+            <div class="kb-footer-brand">
+                <a href="/" class="kb-brand">
+                    <div class="kb-brand-mark">
+                        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#000" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+                            <path d="M13 2L3 14h9l-1 8 10-12h-9l1-8z"/>
+                        </svg>
+                    </div>
+                    KiroBoost
+                </a>
+                <p>The fastest Facebook share booster. Built for scale, designed for simplicity.</p>
+            </div>
+            <div class="kb-footer-col">
+                <h4>Product</h4>
+                <ul>
+                    <li><a href="#features">Features</a></li>
+                    <li><a href="#howitworks">How it works</a></li>
+                    <li><a href="#dashboard">Dashboard</a></li>
+                    <li><a href="/register">Sign up</a></li>
+                </ul>
+            </div>
+            <div class="kb-footer-col">
+                <h4>Account</h4>
+                <ul>
+                    <li><a href="/login">Log in</a></li>
+                    <li><a href="/register">Register</a></li>
+                    <li><a href="/home">Dashboard</a></li>
+                    <li><a href="/profile">Profile</a></li>
+                </ul>
+            </div>
+            <div class="kb-footer-col">
+                <h4>Support</h4>
+                <ul>
+                    <li><a href="#">Contact admin</a></li>
+                    <li><a href="#">FAQ</a></li>
+                    <li><a href="#">Privacy</a></li>
+                    <li><a href="#">Terms</a></li>
+                </ul>
+            </div>
+        </div>
+        <div class="kb-footer-bar">
+            <div class="kb-footer-bar-inner">
+                <span class="kb-footer-copy">© 2025 KiroBoost. All rights reserved.</span>
+                <div class="kb-footer-links">
+                    <a href="#">Privacy</a>
+                    <a href="#">Terms</a>
+                    <a href="#">Support</a>
+                </div>
+            </div>
+        </div>
+    </footer>
+
+</div><!-- /.kb-page -->
 
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
 <script>
-/* ═══════════════════════════════════════════════════════════
-   AUTH GUARD
-═══════════════════════════════════════════════════════════ */
-const TOKEN = localStorage.getItem('kb_token');
-if (!TOKEN) window.location.replace('/login');
-
-/* ═══════════════════════════════════════════════════════════
-   HELPERS
-═══════════════════════════════════════════════════════════ */
-const $   = id => document.getElementById(id);
-const fmt = n  => {
-    if (n == null || isNaN(n)) return '0';
-    if (n >= 1_000_000) return (n / 1_000_000).toFixed(1) + 'M';
-    if (n >= 1_000)     return (n / 1_000).toFixed(1) + 'k';
-    return String(n);
-};
-const ago = str => {
-    const s = Math.floor((Date.now() - new Date(str)) / 1000);
-    if (s < 60)    return 'just now';
-    if (s < 3600)  return Math.floor(s / 60)  + 'm ago';
-    if (s < 86400) return Math.floor(s / 3600) + 'h ago';
-    return Math.floor(s / 86400) + 'd ago';
-};
-
-function doLogout() {
-    localStorage.removeItem('kb_token');
-    localStorage.removeItem('kb_user');
-    window.location.replace('/login');
-}
-
-/* ═══════════════════════════════════════════════════════════
-   RENDER STATS
-   stats object = response from GET /api/user/stats → .stats
-   isAdmin & facebook come from cached kb_user (set on login)
-═══════════════════════════════════════════════════════════ */
-function renderStats(stats, cached) {
-    const username  = stats.username  || '—';
-    const active    = !!stats.isActive;
-    const cookies   = stats.cookieCount ?? 0;
-    const total     = stats.totalShares ?? 0;
-    const history   = Array.isArray(stats.shareHistory) ? stats.shareHistory : [];
-    const recent    = history.reduce((s, d) => s + (d.count || 0), 0);
-
-    // isAdmin + facebook from login cache (not in stats response)
-    const isAdmin   = !!(cached.isAdmin);
-    const facebook  = cached.facebook || '—';
-
-    // Profile image — stats has profileImage (base64) or profileImageUrl
-    const imgSrc    = stats.bannerImage ? null : (stats.profileImage || stats.profileImageUrl || null);
-
-    /* ── Nav chip ── */
-    $('navInit').textContent = username.charAt(0).toUpperCase();
-    if (imgSrc) {
-        $('navAv').innerHTML = `<img src="${imgSrc}" alt="">`;
-    }
-    if (stats.avatarBorder && stats.avatarBorder !== 'none') {
-        $('navAv').style.border = `2px solid ${stats.accentColor || '#fff'}`;
-    }
-    $('navName').textContent = username;
-
-    /* ── Greeting ── */
-    $('gName').textContent = username;
-    $('gSub').textContent  = active
-        ? `Account active — ${cookies} cookie${cookies !== 1 ? 's' : ''} saved, ${fmt(total)} total shares.`
-        : 'Your account is inactive. Contact an admin to get activated.';
-
-    /* ── Stat cards ── */
-    $('dotSt').className      = active ? 'dot-g' : 'dot-r';
-    $('stSt').textContent     = active ? 'Active' : 'Inactive';
-    $('stStSub').textContent  = active ? 'Ready to boost' : 'Awaiting activation';
-    $('stCk').textContent     = fmt(cookies);
-    $('stCkSub').textContent  = `${cookies} account${cookies !== 1 ? 's' : ''}`;
-    $('stTot').textContent    = fmt(total);
-    $('stRec').textContent    = fmt(recent);
-    $('chartN').textContent   = fmt(recent);
-
-    /* ── Detail card ── */
-    $('dUser').textContent  = username;
-    $('dSt').innerHTML      = active
-        ? '<span class="chip chip-g">Active</span>'
-        : '<span class="chip chip-r">Inactive</span>';
-    $('dCk').textContent    = `${cookies} saved`;
-    $('dFb').textContent    = facebook;
-    $('dFb').title          = facebook;
-    $('dRole').innerHTML    = isAdmin
-        ? '<span class="chip chip-am">admin</span>'
-        : '<span class="chip chip-n">user</span>';
-
-    // Badges (optional array from stats)
-    if (Array.isArray(stats.badges) && stats.badges.length > 0) {
-        $('dBadgesRow').style.display = '';
-        $('dBadges').innerHTML = stats.badges.map(b =>
-            `<span class="badge-item">${b}</span>`
-        ).join('');
+    // ── Auth-aware CTAs ─────────────────────────────────────────
+    if (localStorage.getItem('kb_token')) {
+        document.querySelectorAll('a[href="/register"]').forEach(el => {
+            el.href = '/home';
+            if (el.textContent.trim().startsWith('Create')) el.textContent = 'Go to dashboard →';
+            if (el.textContent.trim().startsWith('Start')) el.innerHTML = 'Open dashboard <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><line x1="5" y1="12" x2="19" y2="12"/><polyline points="12 5 19 12 12 19"/></svg>';
+        });
     }
 
-    /* ── Admin visibility ── */
-    if (isAdmin) {
-        $('actAdmin').style.display = '';
-        $('sbAdmin').style.display  = '';
+    // ── Mobile menu ─────────────────────────────────────────────
+    const mobileMenu = document.getElementById('mobileMenu');
+    const menuIcon   = document.getElementById('menuIcon');
+    const ICON_OPEN  = `<line x1="3" y1="6" x2="21" y2="6"/><line x1="3" y1="12" x2="21" y2="12"/><line x1="3" y1="18" x2="21" y2="18"/>`;
+    const ICON_CLOSE = `<line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/>`;
+
+    function toggleMenu() {
+        const open = mobileMenu.classList.toggle('open');
+        menuIcon.innerHTML = open ? ICON_CLOSE : ICON_OPEN;
     }
-
-    /* ── Bar chart from real shareHistory[{date,count}] ── */
-    buildChart(history);
-
-    /* ── Date label ── */
-    const d30 = new Date();
-    d30.setDate(d30.getDate() - 29);
-    $('chartStart').textContent = d30.toLocaleDateString('en-US', { month: 'short', day: 'numeric' });
-
-    /* ── Persist merged cache ── */
-    localStorage.setItem('kb_user', JSON.stringify({ ...cached, ...stats }));
-}
-
-/* ═══════════════════════════════════════════════════════════
-   BUILD BAR CHART
-   Uses real shareHistory array from stats API
-   Format: [{date: 'YYYY-MM-DD', count: N}, ...]
-═══════════════════════════════════════════════════════════ */
-function buildChart(history) {
-    const chart = $('barChart');
-    chart.innerHTML = '';
-    const N = 30;
-
-    // Build a date→count map from history
-    const map = {};
-    history.forEach(h => { map[h.date] = (h.count || 0); });
-
-    // Generate last 30 days in order
-    const days = [];
-    for (let i = N - 1; i >= 0; i--) {
-        const d = new Date();
-        d.setDate(d.getDate() - i);
-        const key = d.toISOString().slice(0, 10);
-        days.push({ date: key, count: map[key] || 0 });
+    function closeMenu() {
+        mobileMenu.classList.remove('open');
+        menuIcon.innerHTML = ICON_OPEN;
     }
-
-    const maxCount = Math.max(...days.map(d => d.count), 1);
-
-    days.forEach(day => {
-        const bar = document.createElement('div');
-        bar.className = 'bar' + (day.count > 0 ? ' lit' : '');
-        const pct = (day.count / maxCount) * 100;
-        bar.style.height = day.count > 0 ? Math.max(pct, 6) + '%' : '6%';
-        bar.dataset.tip  = `${day.date}: ${day.count}`;
-        chart.appendChild(bar);
+    document.addEventListener('click', e => {
+        if (!e.target.closest('.kb-nav')) closeMenu();
     });
-}
 
-/* ═══════════════════════════════════════════════════════════
-   RENDER INBOX
-   Uses GET /api/user/inbox?limit=4
-   Response: { success, messages:[{messageId,title,content,isRead,date,time,createdAt}], unreadCount }
-═══════════════════════════════════════════════════════════ */
-function renderInbox(messages, unreadCount) {
-    const hasUnread = (unreadCount || 0) > 0;
+    // ── Scroll reveal ───────────────────────────────────────────
+    const obs = new IntersectionObserver(entries => {
+        entries.forEach(e => {
+            if (e.isIntersecting) { e.target.classList.add('visible'); obs.unobserve(e.target); }
+        });
+    }, { threshold: 0.06, rootMargin: '0px 0px -40px 0px' });
+    document.querySelectorAll('.reveal').forEach(el => obs.observe(el));
 
-    if (hasUnread) {
-        $('sbBadge').style.display = '';
-        $('sbBadge').textContent   = unreadCount > 99 ? '99+' : unreadCount;
-        $('botDot').style.display  = '';
-
-        // Badge on action tile
-        const dot = document.createElement('span');
-        dot.className   = 'act-badge';
-        dot.textContent = unreadCount > 9 ? '9+' : unreadCount;
-        $('actInbox').appendChild(dot);
-    }
-
-    const wrap = $('inboxWrap');
-
-    if (!messages || messages.length === 0) {
-        wrap.innerHTML = `
-            <div class="empty">
-                <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
-                    <path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"/>
-                    <polyline points="22,6 12,13 2,6"/>
-                </svg>
-                <p>No messages yet</p>
-            </div>`;
-        return;
-    }
-
-    wrap.innerHTML = messages.slice(0, 4).map(m => `
-        <div class="msg">
-            <div class="msg-icon">
-                <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                    <path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"/>
-                    <polyline points="22,6 12,13 2,6"/>
-                </svg>
-            </div>
-            <div style="flex:1;min-width:0;">
-                <div class="msg-t">${escHtml(m.title || 'Message')}</div>
-                <div class="msg-s">${m.date || ''} ${m.time || ''}</div>
-            </div>
-            ${!m.isRead ? '<span class="unread-dot"></span>' : ''}
-        </div>`).join('');
-}
-
-function escHtml(s) {
-    return String(s)
-        .replace(/&/g, '&amp;')
-        .replace(/</g, '&lt;')
-        .replace(/>/g, '&gt;')
-        .replace(/"/g, '&quot;');
-}
-
-/* ═══════════════════════════════════════════════════════════
-   MAIN LOAD — hits both endpoints defined in main.js
-═══════════════════════════════════════════════════════════ */
-async function loadDashboard() {
-    const hdrs   = { 'Authorization': `Bearer ${TOKEN}` };
-    const cached = JSON.parse(localStorage.getItem('kb_user') || '{}');
-
-    /* ── 1. GET /api/user/stats (proxied by main.js → server.js) ── */
-    try {
-        const res  = await fetch('/api/user/stats', { headers: hdrs });
-
-        if (res.status === 401) {
-            localStorage.removeItem('kb_token');
-            localStorage.removeItem('kb_user');
-            window.location.replace('/login');
-            return;
+    // ── Stats counter animation ─────────────────────────────────
+    let counted = false;
+    const statsEl = document.querySelector('.kb-stats-wrap');
+    const sObs = new IntersectionObserver(entries => {
+        if (entries[0].isIntersecting && !counted) {
+            counted = true;
+            count(document.getElementById('s1'), 0, 10000, '+',   1400, true);
+            count(document.getElementById('s2'), 0, 1,     's',   900,  false, true);
+            count(document.getElementById('s3'), 0, 99.9,  '%',   1200, false, false, 1);
+            count(document.getElementById('s4'), 0, 3,     '',    800);
         }
+    }, { threshold: 0.3 });
+    if (statsEl) sObs.observe(statsEl);
 
-        const body = await res.json();
-
-        if (body.success && body.stats) {
-            renderStats(body.stats, cached);
-        } else {
-            throw new Error(body.message || 'Stats failed');
-        }
-    } catch (err) {
-        console.error('[home] stats error:', err);
-        // Graceful fallback — use cached login data
-        if (cached.username) {
-            // Build a minimal stats-shape from cached login data
-            renderStats({
-                username:    cached.username,
-                isActive:    cached.isActive,
-                totalShares: cached.totalShares || 0,
-                cookieCount: cached.cookieCount || 0,
-                shareHistory: [],
-                badges:      cached.badges || []
-            }, cached);
-            $('gSub').textContent = 'Showing cached data — refresh to update.';
-        } else {
-            $('gName').textContent = 'there';
-            $('gSub').textContent  = 'Could not connect — check your network.';
-        }
+    function count(el, from, to, suffix, dur, addK, lessThan, dec = 0) {
+        const start = performance.now();
+        (function step(now) {
+            const p   = Math.min((now - start) / dur, 1);
+            const e   = 1 - Math.pow(1 - p, 3);
+            const val = from + (to - from) * e;
+            const fmt = dec > 0 ? val.toFixed(dec) : Math.round(val).toLocaleString();
+            el.textContent = (lessThan ? '< ' : '') + fmt + suffix;
+            if (p < 1) requestAnimationFrame(step);
+            else el.textContent = (lessThan ? '< 1' : (dec > 0 ? to.toFixed(dec) : to.toLocaleString())) + suffix;
+        })(start);
     }
-
-    /* ── 2. GET /api/user/inbox?limit=4&filter=all (proxied by main.js) ── */
-    try {
-        const res  = await fetch('/api/user/inbox?limit=4', { headers: hdrs });
-        const body = await res.json();
-
-        if (body.success) {
-            renderInbox(body.messages, body.unreadCount);
-        }
-    } catch (err) {
-        console.error('[home] inbox error:', err);
-        $('inboxWrap').innerHTML =
-            '<div class="empty"><p>Could not load messages.</p></div>';
-    }
-}
-
-/* ═══════════════════════════════════════════════════════════
-   INIT — instant render from cache, then fetch fresh data
-═══════════════════════════════════════════════════════════ */
-;(function init() {
-    const c = JSON.parse(localStorage.getItem('kb_user') || '{}');
-    if (c.username) {
-        $('navInit').textContent  = c.username.charAt(0).toUpperCase();
-        $('navName').textContent  = c.username;
-        $('gName').textContent    = c.username;
-    }
-    loadDashboard();
-})();
 </script>
 </body>
 </html>
