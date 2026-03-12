@@ -2,8 +2,8 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>KiroBoost — Home</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>KiroBoost — Dashboard</title>
 
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
     <link rel="preconnect" href="https://fonts.googleapis.com">
@@ -11,1154 +11,1129 @@
     <link href="https://fonts.googleapis.com/css2?family=Geist:wght@300;400;500;600;700;800&family=Geist+Mono:wght@400;500&display=swap" rel="stylesheet">
 
     <style>
-        /* ───── Design Tokens ──────────────────────────────── */
+        /* ══════════════════════════════════════════════════════
+           DESIGN TOKENS — identical to login / register / index
+        ══════════════════════════════════════════════════════ */
         :root {
-            --bg:            #000000;
-            --surface:       #0a0a0a;
-            --surface-2:     #111111;
-            --surface-3:     #161616;
-            --border:        #1f1f1f;
-            --border-strong: #2e2e2e;
-            --text:          #ededed;
-            --text-muted:    #888888;
-            --text-faint:    #444444;
-            --accent:        #ffffff;
-            --accent-dim:    #e8e8e8;
-            --green:         #22c55e;
-            --green-bg:      rgba(34,197,94,0.08);
-            --green-border:  rgba(34,197,94,0.18);
-            --red:           #ef4444;
-            --amber:         #f59e0b;
+            --bg:        #000;
+            --surface:   #0a0a0a;
+            --s2:        #111;
+            --s3:        #161616;
+            --border:    #1f1f1f;
+            --bstrong:   #2e2e2e;
+            --text:      #ededed;
+            --muted:     #888;
+            --faint:     #444;
+            --accent:    #fff;
+            --adim:      #e8e8e8;
+            --green:     #22c55e;
+            --gbg:       rgba(34,197,94,.09);
+            --gb:        rgba(34,197,94,.2);
+            --red:       #ef4444;
+            --rbg:       rgba(239,68,68,.09);
+            --rb:        rgba(239,68,68,.2);
+            --amber:     #f59e0b;
+            --abg:       rgba(245,158,11,.09);
+            --ab:        rgba(245,158,11,.2);
             --r-sm: 6px;
             --r-md: 10px;
             --r-lg: 14px;
             --font: 'Geist', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
             --mono: 'Geist Mono', 'SF Mono', monospace;
             --ease: 0.15s ease;
-            --nav-h: 56px;
-            --bot-h: 62px;
+            --nav:  56px;
+            --bot:  62px;
         }
 
         *, *::before, *::after { box-sizing: border-box; }
-
+        html { scroll-behavior: smooth; }
         body {
             font-family: var(--font);
             background: var(--bg);
             color: var(--text);
             margin: 0; padding: 0;
             -webkit-font-smoothing: antialiased;
-            -webkit-tap-highlight-color: transparent;
-            overflow-x: hidden;
-        }
-
-        ::selection { background: #fff; color: #000; }
-
-        /* Subtle grid */
-        body::after {
-            content: '';
-            position: fixed;
-            inset: 0;
-            background-image:
-                linear-gradient(rgba(255,255,255,0.02) 1px, transparent 1px),
-                linear-gradient(90deg, rgba(255,255,255,0.02) 1px, transparent 1px);
-            background-size: 48px 48px;
-            pointer-events: none;
-            z-index: 0;
-        }
-
-        /* ───── Shell ──────────────────────────────────────── */
-        #shell {
-            max-width: 480px;
-            margin: 0 auto;
             min-height: 100svh;
-            display: flex;
-            flex-direction: column;
-            position: relative;
-            z-index: 1;
-            padding-top: var(--nav-h);
-            padding-bottom: var(--bot-h);
-        }
-
-        /* ───── Top nav ────────────────────────────────────── */
-        .kb-topnav {
-            position: fixed;
-            top: 0;
-            left: 50%;
-            transform: translateX(-50%);
-            width: 100%;
-            max-width: 480px;
-            height: var(--nav-h);
-            z-index: 200;
-            background: rgba(0,0,0,0.9);
-            backdrop-filter: blur(16px);
-            -webkit-backdrop-filter: blur(16px);
-            border-bottom: 1px solid var(--border);
-            display: flex;
-            align-items: center;
-            justify-content: space-between;
-            padding: 0 16px;
-        }
-
-        .kb-topnav-brand {
-            display: flex;
-            align-items: center;
-            gap: 7px;
-            text-decoration: none;
-            color: var(--text);
-            font-size: 14px;
-            font-weight: 600;
-            letter-spacing: -0.025em;
-        }
-        .kb-topnav-brand:hover { color: var(--text); opacity: 0.75; }
-
-        .kb-brand-mark {
-            width: 24px; height: 24px;
-            background: #fff;
-            border-radius: 5px;
-            display: flex; align-items: center; justify-content: center;
-            flex-shrink: 0;
-        }
-
-        .kb-topnav-right {
-            display: flex;
-            align-items: center;
-            gap: 8px;
-        }
-
-        .kb-icon-btn {
-            width: 32px; height: 32px;
-            background: var(--surface-2);
-            border: 1px solid var(--border);
-            border-radius: var(--r-sm);
-            display: flex; align-items: center; justify-content: center;
-            color: var(--text-muted);
-            cursor: pointer;
-            text-decoration: none;
-            position: relative;
-            transition: background var(--ease), color var(--ease);
-        }
-        .kb-icon-btn:hover { background: var(--surface-3); color: var(--text); }
-
-        .kb-notif-dot {
-            position: absolute;
-            top: 5px; right: 5px;
-            width: 6px; height: 6px;
-            border-radius: 50%;
-            background: var(--red);
-            border: 1.5px solid var(--bg);
-            display: none;
-        }
-        .kb-notif-dot.show { display: block; }
-
-        /* ───── Scrollable main ────────────────────────────── */
-        .kb-main {
-            flex: 1;
-            overflow-y: auto;
             overflow-x: hidden;
-            -webkit-overflow-scrolling: touch;
         }
-        .kb-main::-webkit-scrollbar { display: none; }
+        ::selection { background:#fff; color:#000; }
 
-        /* ───── Section divider ────────────────────────────── */
-        .kb-divider { height: 1px; background: var(--border); }
-        .kb-gap { height: 8px; background: var(--surface); border-top: 1px solid var(--border); border-bottom: 1px solid var(--border); }
+        /* Grid overlay */
+        #go {
+            position: fixed; inset: 0; z-index: 0; pointer-events: none;
+            background-image:
+                linear-gradient(rgba(255,255,255,.022) 1px, transparent 1px),
+                linear-gradient(90deg,rgba(255,255,255,.022) 1px, transparent 1px);
+            background-size: 48px 48px;
+        }
 
-        /* ───── Hero / stats header ────────────────────────── */
-        .kb-hero-header {
-            padding: 20px 16px 16px;
-            background: var(--surface);
+        /* ══════════════════════════════════════════════════════
+           TOP NAV
+        ══════════════════════════════════════════════════════ */
+        .nav {
+            position: fixed; inset: 0 0 auto; z-index: 300;
+            height: var(--nav);
+            background: rgba(0,0,0,.88);
+            backdrop-filter: blur(20px); -webkit-backdrop-filter: blur(20px);
             border-bottom: 1px solid var(--border);
         }
-
-        .kb-hello-row {
-            display: flex;
-            align-items: center;
-            gap: 10px;
-            margin-bottom: 18px;
+        .nav-inner {
+            max-width: 1200px; margin: 0 auto;
+            padding: 0 24px; height: 100%;
+            display: flex; align-items: center; gap: 8px;
         }
-
-        .kb-avatar {
-            width: 36px; height: 36px;
-            border-radius: 50%;
-            background: var(--surface-2);
-            border: 1px solid var(--border-strong);
+        .brand {
+            display: flex; align-items: center; gap: 8px;
+            text-decoration: none; color: var(--text);
+            font-size: 14.5px; font-weight: 600;
+            letter-spacing: -.025em; flex-shrink: 0;
+        }
+        .brand:hover { opacity: .75; color: var(--text); }
+        .brand-icon {
+            width: 26px; height: 26px; background: #fff;
+            border-radius: 6px; flex-shrink: 0;
             display: flex; align-items: center; justify-content: center;
-            font-size: 14px;
-            font-weight: 600;
-            color: var(--text);
-            letter-spacing: -0.01em;
-            flex-shrink: 0;
-            overflow: hidden;
         }
-        .kb-avatar img { width: 100%; height: 100%; object-fit: cover; }
+        .nav-right { display:flex; align-items:center; gap:8px; margin-left:auto; }
 
-        .kb-hello-text {
-            flex: 1;
-            min-width: 0;
-        }
-        .kb-hello-label {
-            font-size: 11px;
-            color: var(--text-faint);
-            font-weight: 500;
-            letter-spacing: 0.02em;
-        }
-        .kb-hello-name {
-            font-size: 15px;
-            font-weight: 600;
-            color: var(--text);
-            letter-spacing: -0.02em;
-            white-space: nowrap;
-            overflow: hidden;
-            text-overflow: ellipsis;
-        }
-
-        /* Status badge */
-        .kb-status-badge {
-            display: inline-flex;
-            align-items: center;
-            gap: 5px;
-            font-size: 11px;
-            font-weight: 500;
-            padding: 3px 9px;
-            border-radius: 99px;
-        }
-        .kb-status-badge.active {
-            color: var(--green);
-            background: var(--green-bg);
-            border: 1px solid var(--green-border);
-        }
-        .kb-status-badge.active::before {
-            content: '';
-            width: 5px; height: 5px;
-            border-radius: 50%;
-            background: var(--green);
-        }
-        .kb-status-badge.inactive {
-            color: var(--amber);
-            background: rgba(245,158,11,0.08);
-            border: 1px solid rgba(245,158,11,0.18);
-        }
-        .kb-status-badge.inactive::before {
-            content: '';
-            width: 5px; height: 5px;
-            border-radius: 50%;
-            background: var(--amber);
-        }
-
-        /* Stats row */
-        .kb-stats-row {
-            display: grid;
-            grid-template-columns: repeat(3, 1fr);
-            gap: 1px;
-            background: var(--border);
-            border: 1px solid var(--border);
-            border-radius: var(--r-md);
-            overflow: hidden;
-        }
-
-        .kb-stat-cell {
-            background: var(--surface-2);
-            padding: 12px 10px;
-            text-align: center;
-        }
-
-        .kb-stat-n {
-            font-size: 20px;
-            font-weight: 700;
-            letter-spacing: -0.04em;
-            color: var(--text);
-            margin-bottom: 2px;
-            font-variant-numeric: tabular-nums;
-        }
-        .kb-stat-n.is-fraction {
-            font-size: 16px;
-        }
-
-        .kb-stat-l {
-            font-size: 10px;
-            color: var(--text-faint);
-            font-weight: 500;
-            letter-spacing: 0.02em;
-            line-height: 1.3;
-        }
-
-        /* ───── Quick actions ──────────────────────────────── */
-        .kb-section-header {
-            display: flex;
-            align-items: center;
-            justify-content: space-between;
-            padding: 16px 16px 12px;
-        }
-        .kb-section-title {
-            font-size: 12px;
-            font-weight: 600;
-            color: var(--text);
-            letter-spacing: -0.01em;
-        }
-        .kb-section-link {
-            font-size: 11px;
-            color: var(--text-faint);
-            text-decoration: none;
-            transition: color var(--ease);
-        }
-        .kb-section-link:hover { color: var(--text-muted); }
-
-        .kb-actions-grid {
-            display: grid;
-            grid-template-columns: repeat(4, 1fr);
-            gap: 1px;
-            background: var(--border);
-            border-top: 1px solid var(--border);
-            border-bottom: 1px solid var(--border);
-            padding: 0 0 16px;
-        }
-
-        /* Each action takes up a grid cell but is a standalone item */
-        .kb-actions-grid {
-            display: flex;
-            flex-wrap: wrap;
-            padding: 8px 12px 12px;
-            gap: 4px;
-        }
-
-        .kb-action {
-            width: calc(25% - 3px);
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            gap: 6px;
-            padding: 10px 4px;
-            cursor: pointer;
-            text-decoration: none;
-            border-radius: var(--r-md);
-            transition: background var(--ease);
-            position: relative;
-        }
-        .kb-action:hover { background: var(--surface-2); }
-        .kb-action:active { background: var(--surface-3); transform: scale(0.96); transition: transform 0.08s; }
-
-        .kb-action-icon {
-            width: 40px; height: 40px;
-            background: var(--surface-2);
-            border: 1px solid var(--border);
-            border-radius: var(--r-md);
-            display: flex; align-items: center; justify-content: center;
-            color: var(--text-muted);
-            transition: border-color var(--ease), color var(--ease);
-        }
-        .kb-action:hover .kb-action-icon {
-            border-color: var(--border-strong);
-            color: var(--text);
-        }
-
-        .kb-action-boost .kb-action-icon {
-            background: #fff;
-            border-color: #fff;
-            color: #000;
-        }
-
-        .kb-action-label {
-            font-size: 10px;
-            font-weight: 500;
-            color: var(--text-faint);
-            text-align: center;
-            line-height: 1.3;
-            letter-spacing: 0.01em;
-        }
-        .kb-action:hover .kb-action-label { color: var(--text-muted); }
-        .kb-action-boost .kb-action-label { color: var(--text-muted); }
-
-        .kb-action-badge {
-            position: absolute;
-            top: 8px;
-            right: calc(50% - 22px);
-            width: 8px; height: 8px;
-            border-radius: 50%;
-            background: var(--red);
-            border: 1.5px solid var(--bg);
-            display: none;
-        }
-        .kb-action-badge.show { display: block; }
-
-        /* Admin icon — hidden by default */
-        .kb-admin-action { display: none; }
-        .kb-admin-action.visible { display: flex; }
-
-        /* ───── Status cards ───────────────────────────────── */
-        .kb-cards-scroll {
-            display: flex;
-            gap: 10px;
-            overflow-x: auto;
-            padding: 0 16px 16px;
-            -webkit-overflow-scrolling: touch;
-        }
-        .kb-cards-scroll::-webkit-scrollbar { display: none; }
-
-        .kb-card {
-            min-width: 220px;
-            background: var(--surface-2);
-            border: 1px solid var(--border);
-            border-radius: var(--r-lg);
-            overflow: hidden;
-            flex-shrink: 0;
-            transition: border-color var(--ease);
-            cursor: default;
-        }
-        .kb-card:hover { border-color: var(--border-strong); }
-
-        .kb-card-inner {
-            padding: 14px 16px;
-            display: flex;
-            flex-direction: column;
-            gap: 10px;
-            min-height: 110px;
-            position: relative;
-        }
-
-        .kb-card-chip {
-            display: inline-flex;
-            align-items: center;
-            font-size: 10px;
-            font-weight: 600;
-            letter-spacing: 0.06em;
-            color: var(--text-faint);
-            background: var(--surface);
-            border: 1px solid var(--border);
-            padding: 2px 7px;
-            border-radius: 4px;
-            text-transform: uppercase;
-            width: fit-content;
-        }
-
-        .kb-card-h {
-            font-size: 15px;
-            font-weight: 600;
-            letter-spacing: -0.02em;
-            color: var(--text);
-        }
-
-        .kb-card-sub {
-            font-size: 11px;
-            color: var(--text-faint);
-        }
-
-        .kb-card-dec-icon {
-            position: absolute;
-            right: 12px;
-            bottom: 12px;
-            color: var(--text-faint);
-            opacity: 0.25;
-        }
-
-        /* Verified card accent */
-        .kb-card-verified { border-color: rgba(34,197,94,0.2); }
-        .kb-card-verified .kb-card-chip { color: var(--green); border-color: var(--green-border); background: var(--green-bg); }
-
-        /* Unverified card accent */
-        .kb-card-unverified { border-color: rgba(245,158,11,0.2); }
-        .kb-card-unverified .kb-card-chip { color: var(--amber); border-color: rgba(245,158,11,0.2); background: rgba(245,158,11,0.06); }
-
-        /* ───── Promo cards ────────────────────────────────── */
-        .kb-promo-grid {
-            display: grid;
-            grid-template-columns: 1fr 1fr;
-            gap: 10px;
-            padding: 0 16px 16px;
-        }
-
-        .kb-promo {
-            border: 1px solid var(--border);
-            border-radius: var(--r-lg);
-            overflow: hidden;
-            background: var(--surface-2);
-            text-decoration: none;
-            display: block;
+        .user-chip {
+            display: flex; align-items: center; gap: 7px;
+            padding: 3px 10px 3px 3px;
+            background: var(--s2); border: 1px solid var(--border);
+            border-radius: 99px; text-decoration: none;
             transition: border-color var(--ease), background var(--ease);
         }
-        .kb-promo:hover { border-color: var(--border-strong); background: var(--surface-3); }
-        .kb-promo:active { transform: scale(0.97); transition: transform 0.08s; }
+        .user-chip:hover { border-color: var(--bstrong); background: var(--s3); }
 
-        .kb-promo-top {
-            height: 72px;
-            background: var(--surface-3);
-            border-bottom: 1px solid var(--border);
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            position: relative;
-            overflow: hidden;
+        .av {
+            width: 28px; height: 28px;
+            background: var(--s3); border: 1px solid var(--bstrong);
+            border-radius: 50%; overflow: hidden;
+            display: flex; align-items: center; justify-content: center;
+            font-size: 11px; font-weight: 700; color: var(--text);
+            flex-shrink: 0;
         }
+        .av img { width:100%; height:100%; object-fit:cover; border-radius:50%; }
+        .av.has-border { border: 2px solid var(--accent); }
 
-        .kb-promo-boost-bg {
-            background: #fff;
-        }
-
-        .kb-promo-icon {
-            color: var(--text-faint);
-        }
-        .kb-promo-boost-bg .kb-promo-icon { color: #000; }
-
-        .kb-promo-body {
-            padding: 10px 11px;
-        }
-        .kb-promo-title {
-            font-size: 12px;
-            font-weight: 600;
-            color: var(--text);
-            letter-spacing: -0.01em;
-            margin-bottom: 2px;
-        }
-        .kb-promo-sub {
-            font-size: 10.5px;
-            color: var(--text-faint);
+        .chip-name {
+            font-size: 12px; font-weight: 500; color: var(--muted);
+            max-width: 100px; overflow: hidden;
+            text-overflow: ellipsis; white-space: nowrap;
         }
 
-        /* ───── Share activity bar ─────────────────────────── */
-        .kb-progress-wrap {
-            padding: 16px 16px 12px;
-            display: flex;
-            flex-direction: column;
-            gap: 10px;
+        .logout-btn {
+            display: flex; align-items: center; gap: 5px;
+            font-size: 12px; font-family: var(--font); font-weight: 500;
+            color: var(--faint); background: none; border: none;
+            padding: 5px 9px; border-radius: var(--r-sm);
+            cursor: pointer;
+            transition: color var(--ease), background var(--ease);
+        }
+        .logout-btn:hover { color: var(--red); background: var(--rbg); }
+
+        /* ══════════════════════════════════════════════════════
+           LAYOUT SHELL
+        ══════════════════════════════════════════════════════ */
+        .layout {
+            display: flex; min-height: 100svh;
+            padding-top: var(--nav); position: relative; z-index: 1;
         }
 
-        .kb-progress-row {
-            display: flex;
-            align-items: center;
-            justify-content: space-between;
-            margin-bottom: 6px;
+        /* ── SIDEBAR ── */
+        .sidebar {
+            width: 218px; flex-shrink: 0;
+            position: sticky; top: var(--nav);
+            height: calc(100svh - var(--nav));
+            background: var(--surface);
+            border-right: 1px solid var(--border);
+            padding: 16px 0; overflow-y: auto;
+            display: flex; flex-direction: column;
         }
-        .kb-progress-label {
-            font-size: 12px;
-            font-weight: 500;
-            color: var(--text-muted);
+        .sb-sec { padding: 0 10px; margin-bottom: 2px; }
+        .sb-lbl {
+            font-size: 10px; font-weight: 600; letter-spacing: .09em;
+            text-transform: uppercase; color: var(--faint);
+            padding: 6px 8px 4px;
         }
-        .kb-progress-val {
-            font-size: 12px;
-            font-weight: 600;
-            color: var(--text);
+        .sb-a {
+            display: flex; align-items: center; gap: 9px;
+            padding: 7px 9px; border-radius: var(--r-sm);
+            font-size: 13px; font-weight: 500; color: var(--muted);
+            text-decoration: none; background: none; border: none;
+            cursor: pointer; width: 100%;
+            transition: color var(--ease), background var(--ease);
+        }
+        .sb-a:hover  { color:var(--text); background:var(--s2); }
+        .sb-a.active { color:var(--text); background:var(--s3); }
+        .sb-a svg { flex-shrink: 0; }
+        .sb-badge {
+            margin-left: auto;
+            background: var(--red); color: #fff;
+            font-size: 10px; font-weight: 700;
+            min-width: 16px; height: 16px; padding: 0 4px;
+            border-radius: 99px;
+            display: flex; align-items: center; justify-content: center;
+            font-family: var(--mono);
+        }
+        .sb-div { height:1px; background:var(--border); margin: 8px 10px; }
+
+        /* ── MAIN ── */
+        .main { flex:1; min-width:0; padding: 28px 28px 100px; }
+
+        /* ══════════════════════════════════════════════════════
+           GREETING
+        ══════════════════════════════════════════════════════ */
+        .greeting { margin-bottom: 24px; }
+        .g-eye {
+            font-size: 11px; font-weight: 500; letter-spacing: .08em;
+            text-transform: uppercase; color: var(--faint); margin-bottom: 5px;
+        }
+        .g-h1 {
+            font-size: clamp(20px, 3vw, 28px);
+            font-weight: 700; letter-spacing: -.035em;
+            color: var(--text); margin-bottom: 3px;
+        }
+        .g-sub { font-size: 13px; color: var(--muted); }
+
+        /* ══════════════════════════════════════════════════════
+           BOOST CTA BANNER
+        ══════════════════════════════════════════════════════ */
+        .cta-banner {
+            display: flex; align-items: center;
+            justify-content: space-between; gap: 16px;
+            padding: 18px 20px;
+            background: var(--surface); border: 1px solid var(--border);
+            border-radius: var(--r-lg); margin-bottom: 20px;
+        }
+        .cta-txt h3 {
+            font-size: 14px; font-weight: 600;
+            letter-spacing: -.02em; color: var(--text); margin-bottom: 3px;
+        }
+        .cta-txt p { font-size: 12px; color: var(--muted); margin: 0; }
+        .btn-w {
+            display: inline-flex; align-items: center; gap: 6px;
+            font-size: 12.5px; font-family: var(--font); font-weight: 500;
+            color: #000; background: #fff; border: none;
+            padding: 7px 16px; border-radius: var(--r-sm);
+            text-decoration: none; white-space: nowrap;
+            cursor: pointer; flex-shrink: 0;
+            transition: background var(--ease);
+        }
+        .btn-w:hover { background: var(--adim); color: #000; }
+
+        /* ══════════════════════════════════════════════════════
+           STAT CARDS
+        ══════════════════════════════════════════════════════ */
+        .stats-row {
+            display: grid; grid-template-columns: repeat(4,1fr);
+            gap: 1px; background: var(--border);
+            border: 1px solid var(--border);
+            border-radius: var(--r-lg); overflow: hidden;
+            margin-bottom: 20px;
+        }
+        .sc {
+            background: var(--surface); padding: 18px 18px;
+            transition: background var(--ease);
+        }
+        .sc:hover { background: var(--s2); }
+        .sc-lbl {
+            font-size: 11px; font-weight: 500; color: var(--faint);
+            letter-spacing: .04em; margin-bottom: 7px;
+            display: flex; align-items: center; gap: 6px;
+        }
+        .sc-val {
+            font-size: 26px; font-weight: 700;
+            letter-spacing: -.04em; color: var(--text);
+            font-variant-numeric: tabular-nums; line-height: 1; margin-bottom: 3px;
+        }
+        .sc-sub { font-size: 11px; color: var(--faint); }
+        .dot-g { width:6px;height:6px;border-radius:50%;background:var(--green);flex-shrink:0; }
+        .dot-r { width:6px;height:6px;border-radius:50%;background:var(--red);flex-shrink:0; }
+
+        /* ══════════════════════════════════════════════════════
+           QUICK ACTIONS
+        ══════════════════════════════════════════════════════ */
+        .sec-hd {
+            font-size: 11px; font-weight: 600; color: var(--faint);
+            letter-spacing: .08em; text-transform: uppercase;
+            margin-bottom: 12px;
+            display: flex; align-items: center; gap: 10px;
+        }
+        .sec-hd::after { content:''; flex:1; height:1px; background:var(--border); }
+
+        .acts {
+            display: grid; grid-template-columns: repeat(4,1fr);
+            gap: 10px; margin-bottom: 20px;
+        }
+        .act {
+            display: flex; flex-direction: column;
+            align-items: center; gap: 8px; padding: 15px 8px;
+            background: var(--surface); border: 1px solid var(--border);
+            border-radius: var(--r-md); text-decoration: none;
+            color: var(--muted); font-size: 11.5px; font-weight: 500;
+            text-align: center; cursor: pointer; position: relative;
+            transition: color var(--ease), background var(--ease), border-color var(--ease);
+        }
+        .act:hover { color:var(--text); background:var(--s2); border-color:var(--bstrong); }
+        .act-icon {
+            width: 33px; height: 33px;
+            background: var(--s2); border: 1px solid var(--bstrong);
+            border-radius: var(--r-sm);
+            display: flex; align-items: center; justify-content: center;
+            color: var(--faint);
+            transition: border-color var(--ease), color var(--ease);
+        }
+        .act:hover .act-icon { border-color:var(--faint); color:var(--muted); }
+        .act-badge {
+            position: absolute; top: 7px; right: 7px;
+            min-width: 14px; height: 14px; padding: 0 3px;
+            background: var(--red); border: 1.5px solid var(--bg);
+            border-radius: 99px; font-size: 9px; font-weight: 700;
+            color: #fff; display: flex; align-items: center; justify-content: center;
             font-family: var(--mono);
         }
 
-        .kb-bar-track {
-            height: 4px;
-            background: var(--surface-3);
-            border-radius: 99px;
-            overflow: hidden;
-        }
-        .kb-bar-fill {
-            height: 100%;
-            background: #fff;
-            border-radius: 99px;
-            transition: width 0.8s cubic-bezier(.16,1,.3,1);
-            width: 0%;
-        }
-        .kb-bar-fill.green { background: var(--green); }
+        /* ══════════════════════════════════════════════════════
+           CONTENT CARDS
+        ══════════════════════════════════════════════════════ */
+        .row2 { display:grid; grid-template-columns:1fr 1fr; gap:16px; margin-bottom:20px; }
 
-        /* ───── Bottom nav ─────────────────────────────────── */
-        .kb-botnav {
-            position: fixed;
-            bottom: 0;
-            left: 50%;
-            transform: translateX(-50%);
-            width: 100%;
-            max-width: 480px;
-            height: var(--bot-h);
-            z-index: 200;
-            background: rgba(0,0,0,0.92);
-            backdrop-filter: blur(16px);
-            -webkit-backdrop-filter: blur(16px);
-            border-top: 1px solid var(--border);
-            display: flex;
-            align-items: flex-start;
-            padding-top: 10px;
+        .card {
+            background: var(--surface);
+            border: 1px solid var(--border);
+            border-radius: var(--r-lg); overflow: hidden;
         }
-
-        .kb-botnav-item {
-            flex: 1;
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            gap: 3px;
-            text-decoration: none;
-            color: var(--text-faint);
-            font-size: 10px;
-            font-weight: 500;
+        .card-hd {
+            display: flex; align-items: center;
+            justify-content: space-between;
+            padding: 13px 18px; border-bottom: 1px solid var(--border);
+        }
+        .card-hd-t { font-size:13px; font-weight:600; color:var(--text); letter-spacing:-.015em; }
+        .card-hd-l {
+            font-size:11px; color:var(--faint);
+            text-decoration:none; font-weight:500;
             transition: color var(--ease);
-            cursor: pointer;
-            position: relative;
-            padding-top: 2px;
         }
-        .kb-botnav-item:hover { color: var(--text-muted); }
-        .kb-botnav-item.active { color: var(--text); }
+        .card-hd-l:hover { color:var(--muted); }
+        .card-body { padding: 16px 18px; }
 
-        /* Center Boost button */
-        .kb-botnav-center {
-            flex: 1;
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            gap: 3px;
-            text-decoration: none;
+        /* Detail rows */
+        .dr {
+            display: flex; align-items: center;
+            justify-content: space-between;
+            padding: 10px 0; border-bottom: 1px solid var(--border);
+        }
+        .dr:first-child { padding-top:0; }
+        .dr:last-child  { border-bottom:none; padding-bottom:0; }
+        .dr-k { font-size:12px; color:var(--faint); font-weight:500; }
+        .dr-v {
+            font-size:12px; color:var(--text); font-weight:500;
+            font-family:var(--mono);
+            max-width:150px; overflow:hidden; text-overflow:ellipsis; white-space:nowrap;
         }
 
-        .kb-botnav-fab {
-            width: 44px; height: 44px;
-            background: #fff;
-            border-radius: var(--r-md);
+        /* Chips */
+        .chip {
+            display: inline-flex; align-items: center; gap:5px;
+            font-size:11px; font-weight:500;
+            padding:2px 9px; border-radius:99px;
+        }
+        .chip::before { content:''; width:5px;height:5px;border-radius:50%;flex-shrink:0; }
+        .chip-g  { background:var(--gbg); color:var(--green); border:1px solid var(--gb); }
+        .chip-g::before  { background:var(--green); }
+        .chip-r  { background:var(--rbg); color:var(--red);   border:1px solid var(--rb); }
+        .chip-r::before  { background:var(--red); }
+        .chip-am { background:var(--abg); color:var(--amber); border:1px solid var(--ab); }
+        .chip-am::before { background:var(--amber); }
+        .chip-n  { background:var(--s2);  color:var(--muted); border:1px solid var(--bstrong); }
+        .chip-n::before  { display:none; }
+
+        /* Share chart */
+        .bar-chart {
+            display: flex; align-items: flex-end; gap: 3px;
+            height: 64px; margin-top: 4px;
+        }
+        .bar {
+            flex: 1; background: var(--s3);
+            border-radius: 2px 2px 0 0; min-height: 3px;
+            transition: background var(--ease); cursor: default; position: relative;
+        }
+        .bar.lit { background: var(--bstrong); }
+        .bar.lit:hover { background: var(--faint); }
+        .chart-row {
+            display:flex; justify-content:space-between; margin-top:6px;
+        }
+        .chart-lbl { font-size:10px; color:var(--faint); font-family:var(--mono); }
+
+        /* Tooltip for bars */
+        .bar[data-tip]:hover::after {
+            content: attr(data-tip);
+            position: absolute; bottom: calc(100% + 5px); left: 50%;
+            transform: translateX(-50%);
+            background: var(--s2); border: 1px solid var(--border);
+            color: var(--text); font-size: 10px; font-family: var(--mono);
+            padding: 2px 6px; border-radius: 4px; white-space: nowrap;
+            pointer-events: none; z-index: 10;
+        }
+
+        /* Inbox items */
+        .msg {
+            display: flex; align-items: flex-start; gap: 10px;
+            padding: 11px 0; border-bottom: 1px solid var(--border);
+        }
+        .msg:first-child { padding-top:0; }
+        .msg:last-child  { border-bottom:none; padding-bottom:0; }
+        .msg-icon {
+            width: 28px; height: 28px;
+            background: var(--s2); border: 1px solid var(--bstrong);
+            border-radius: var(--r-sm); flex-shrink: 0; margin-top:1px;
             display: flex; align-items: center; justify-content: center;
-            color: #000;
-            margin-top: -22px;
-            border: 3px solid var(--bg);
-            box-shadow: 0 4px 20px rgba(255,255,255,0.15);
-            transition: background var(--ease), transform 0.1s;
+            color: var(--faint);
         }
-        .kb-botnav-center:active .kb-botnav-fab { transform: scale(0.93); }
-        .kb-botnav-center:hover .kb-botnav-fab { background: var(--accent-dim); }
-
-        .kb-botnav-fab-label {
-            font-size: 10px;
-            font-weight: 600;
-            color: var(--text-muted);
-            margin-top: 3px;
+        .msg-t {
+            font-size:12.5px; font-weight:500; color:var(--text); margin-bottom:2px;
+            overflow:hidden; display:-webkit-box;
+            -webkit-line-clamp:1; -webkit-box-orient:vertical;
+        }
+        .msg-s { font-size:11px; color:var(--faint); }
+        .unread-dot {
+            width:6px;height:6px;background:var(--accent);
+            border-radius:50%;flex-shrink:0;margin-top:5px;
         }
 
-        .kb-botnav-badge {
-            position: absolute;
-            top: 0; right: calc(50% - 16px);
-            width: 7px; height: 7px;
-            border-radius: 50%;
-            background: var(--red);
-            border: 1.5px solid var(--bg);
-            display: none;
+        /* Empty */
+        .empty {
+            display:flex; flex-direction:column;
+            align-items:center; justify-content:center;
+            padding:28px 16px; gap:6px;
         }
-        .kb-botnav-badge.show { display: block; }
+        .empty svg { color:var(--faint); margin-bottom:4px; }
+        .empty p { font-size:12px; color:var(--faint); margin:0; text-align:center; }
 
-        /* ───── Skeleton loader ────────────────────────────── */
-        .kb-skel {
-            background: var(--surface-3);
-            border-radius: 4px;
-            animation: skelPulse 1.4s ease-in-out infinite;
+        /* Skeleton */
+        .sk {
+            display:inline-block; background:var(--s2);
+            border-radius:4px; animation:skP 1.5s ease-in-out infinite;
         }
-        @keyframes skelPulse {
-            0%, 100% { opacity: 1; }
-            50%       { opacity: 0.4; }
-        }
+        @keyframes skP { 0%,100%{opacity:1} 50%{opacity:.3} }
 
-        /* ───── Page entrance animation ────────────────────── */
-        .kb-page-enter {
-            animation: pageIn 0.3s cubic-bezier(.16,1,.3,1) both;
+        /* Badges row */
+        .badges-row {
+            display: flex; flex-wrap: wrap; gap: 4px; margin-top: 2px;
         }
-        @keyframes pageIn {
-            from { opacity: 0; transform: translateY(8px); }
-            to   { opacity: 1; transform: translateY(0); }
+        .badge-item {
+            font-size: 10px; font-weight: 500;
+            background: var(--s2); border: 1px solid var(--bstrong);
+            color: var(--muted); padding: 1px 7px; border-radius: 99px;
         }
 
-        /* ───── Responsive desktop ─────────────────────────── */
-        @media (min-width: 520px) {
-            .kb-topnav,
-            .kb-botnav,
-            #shell {
-                border-left: 1px solid var(--border);
-                border-right: 1px solid var(--border);
-            }
+        /* ══════════════════════════════════════════════════════
+           BOTTOM NAV (mobile)
+        ══════════════════════════════════════════════════════ */
+        .bot-nav {
+            display: none; position: fixed; bottom:0; left:0; right:0;
+            z-index: 200; height: var(--bot);
+            background: rgba(0,0,0,.92);
+            backdrop-filter: blur(20px); -webkit-backdrop-filter: blur(20px);
+            border-top: 1px solid var(--border);
+        }
+        .bot-inner { display:flex; align-items:stretch; height:100%; }
+        .bot-a {
+            flex:1; display:flex; flex-direction:column;
+            align-items:center; justify-content:center; gap:3px;
+            text-decoration:none; color:var(--faint);
+            font-size:10px; font-weight:500;
+            transition:color var(--ease); position:relative;
+            padding-bottom: env(safe-area-inset-bottom, 0px);
+        }
+        .bot-a:hover { color:var(--muted); }
+        .bot-a.active { color:var(--text); }
+        .bot-fab-wrap {
+            flex:1; display:flex; align-items:center; justify-content:center;
+            padding-bottom: env(safe-area-inset-bottom, 0px);
+        }
+        .bot-fab {
+            width:44px; height:44px; background:#fff;
+            border-radius:var(--r-md); display:flex;
+            align-items:center; justify-content:center;
+            color:#000; text-decoration:none;
+            transition:background var(--ease), transform .1s;
+            box-shadow: 0 0 0 1px rgba(255,255,255,.12);
+        }
+        .bot-fab:hover { background:var(--adim); }
+        .bot-fab:active { transform:scale(.93); }
+        .bot-unread {
+            position:absolute; top:8px; right:50%;
+            transform:translateX(10px);
+            width:7px; height:7px;
+            background:var(--red); border:1.5px solid var(--bg);
+            border-radius:50%;
+        }
+
+        /* ══════════════════════════════════════════════════════
+           FADE IN
+        ══════════════════════════════════════════════════════ */
+        .fd { opacity:0; transform:translateY(14px); animation:fdIn .38s cubic-bezier(.16,1,.3,1) forwards; }
+        .d1 { animation-delay:.07s; }
+        .d2 { animation-delay:.14s; }
+        .d3 { animation-delay:.21s; }
+        .d4 { animation-delay:.28s; }
+        @keyframes fdIn { to { opacity:1; transform:none; } }
+
+        /* ══════════════════════════════════════════════════════
+           RESPONSIVE
+        ══════════════════════════════════════════════════════ */
+        @media (max-width:1024px) {
+            .stats-row { grid-template-columns:repeat(2,1fr); }
+        }
+        @media (max-width:768px) {
+            .sidebar  { display:none; }
+            .bot-nav  { display:flex; }
+            .main     { padding:18px 16px 84px; }
+            .stats-row{ grid-template-columns:repeat(2,1fr); }
+            .row2     { grid-template-columns:1fr; }
+            .acts     { gap:8px; }
+            .act      { padding:12px 6px; font-size:11px; gap:6px; }
+            .act-icon { width:30px; height:30px; }
+            .nav-inner{ padding:0 16px; }
+            .chip-name{ max-width:72px; }
+            .logout-btn span { display:none; }
+            .cta-banner { flex-direction:column; align-items:flex-start; gap:10px; }
+            .btn-w    { width:100%; justify-content:center; }
+        }
+        @media (max-width:400px) {
+            .acts { grid-template-columns:repeat(4,1fr); gap:6px; }
+            .act  { padding:10px 3px; font-size:10px; }
+            .act-icon { width:28px; height:28px; }
+            .sc-val { font-size:22px; }
         }
     </style>
 </head>
 <body>
+<div id="go"></div>
 
-    <!-- ── Top Nav ─────────────────────────────────────────── -->
-    <nav class="kb-topnav">
-        <a href="/" class="kb-topnav-brand">
-            <div class="kb-brand-mark">
-                <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="#000" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+<!-- ══════════════════════════════════════════════════════════
+     TOP NAV
+══════════════════════════════════════════════════════════ -->
+<nav class="nav">
+    <div class="nav-inner">
+        <a href="/" class="brand">
+            <div class="brand-icon">
+                <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="#000" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
                     <path d="M13 2L3 14h9l-1 8 10-12h-9l1-8z"/>
                 </svg>
             </div>
             KiroBoost
         </a>
+        <div class="nav-right">
+            <a href="/profile" class="user-chip">
+                <div class="av" id="navAv"><span id="navInit">—</span></div>
+                <span class="chip-name" id="navName">Loading</span>
+            </a>
+            <button class="logout-btn" onclick="doLogout()">
+                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                    <path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"/>
+                    <polyline points="16 17 21 12 16 7"/>
+                    <line x1="21" y1="12" x2="9" y2="12"/>
+                </svg>
+                <span>Log out</span>
+            </button>
+        </div>
+    </div>
+</nav>
 
-        <div class="kb-topnav-right">
-            <!-- Inbox icon with badge -->
-            <a href="/inbox" class="kb-icon-btn" id="navInboxBtn" title="Inbox">
+<!-- ══════════════════════════════════════════════════════════
+     LAYOUT
+══════════════════════════════════════════════════════════ -->
+<div class="layout">
+
+    <!-- SIDEBAR -->
+    <aside class="sidebar">
+        <div class="sb-sec">
+            <div class="sb-lbl">Main</div>
+            <a href="/home" class="sb-a active">
+                <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                    <path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/>
+                    <polyline points="9 22 9 12 15 12 15 22"/>
+                </svg>
+                Dashboard
+            </a>
+            <a href="/boost" class="sb-a">
+                <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                    <path d="M13 2L3 14h9l-1 8 10-12h-9l1-8z"/>
+                </svg>
+                Boost
+            </a>
+            <a href="/cookies" class="sb-a">
+                <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                    <rect x="2" y="7" width="20" height="14" rx="2"/>
+                    <path d="M16 7V5a2 2 0 0 0-2-2h-4a2 2 0 0 0-2 2v2"/>
+                </svg>
+                Accounts
+            </a>
+        </div>
+        <div class="sb-div"></div>
+        <div class="sb-sec">
+            <div class="sb-lbl">Activity</div>
+            <a href="/inbox" class="sb-a" id="sbInbox">
                 <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
                     <path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"/>
                     <polyline points="22,6 12,13 2,6"/>
                 </svg>
-                <span class="kb-notif-dot" id="topNavDot"></span>
+                Inbox
+                <span class="sb-badge" id="sbBadge" style="display:none"></span>
             </a>
-
-            <!-- Profile -->
-            <a href="/profile" class="kb-icon-btn" id="topNavAvatar" title="Profile">
-                <span id="topNavInitial" style="font-size:12px;font-weight:600;">—</span>
+            <a href="/transactions" class="sb-a">
+                <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                    <path d="M9 5H7a2 2 0 0 0-2 2v12a2 2 0 0 0 2 2h10a2 2 0 0 0 2-2V7a2 2 0 0 0-2-2h-2"/>
+                    <rect x="9" y="3" width="6" height="4" rx="2"/>
+                </svg>
+                Orders
+            </a>
+            <a href="/limits" class="sb-a">
+                <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                    <line x1="18" y1="20" x2="18" y2="10"/>
+                    <line x1="12" y1="20" x2="12" y2="4"/>
+                    <line x1="6"  y1="20" x2="6"  y2="14"/>
+                </svg>
+                Limits
             </a>
         </div>
-    </nav>
+        <div class="sb-div"></div>
+        <div class="sb-sec">
+            <div class="sb-lbl">Account</div>
+            <a href="/profile" class="sb-a">
+                <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                    <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/>
+                    <circle cx="12" cy="7" r="4"/>
+                </svg>
+                Profile
+            </a>
+            <a href="/admin" class="sb-a" id="sbAdmin" style="display:none">
+                <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                    <path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/>
+                </svg>
+                Admin
+            </a>
+        </div>
+        <div style="margin-top:auto;padding:12px 10px 0;">
+            <div class="sb-div" style="margin:0 0 8px;"></div>
+            <button class="sb-a" onclick="doLogout()" style="border:none;background:none;cursor:pointer;color:var(--faint);width:100%;">
+                <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                    <path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"/>
+                    <polyline points="16 17 21 12 16 7"/>
+                    <line x1="21" y1="12" x2="9" y2="12"/>
+                </svg>
+                Log out
+            </button>
+        </div>
+    </aside>
 
-    <!-- ── App Shell ───────────────────────────────────────── -->
-    <div id="shell">
-        <main class="kb-main kb-page-enter" id="mainContent">
+    <!-- MAIN CONTENT -->
+    <main class="main">
 
-            <!-- ── Hero Header ─────────────────────────────── -->
-            <div class="kb-hero-header">
-                <div class="kb-hello-row">
-                    <div class="kb-avatar" id="heroAvatar">—</div>
-                    <div class="kb-hello-text">
-                        <div class="kb-hello-label">Hello!</div>
-                        <div class="kb-hello-name" id="heroName">
-                            <span class="kb-skel" style="width:96px;height:14px;display:inline-block;"></span>
-                        </div>
+        <!-- Greeting -->
+        <div class="greeting fd">
+            <div class="g-eye">Dashboard</div>
+            <h1 class="g-h1">Good to see you, <span id="gName">—</span></h1>
+            <p class="g-sub" id="gSub">Loading your account…</p>
+        </div>
+
+        <!-- Boost CTA -->
+        <div class="cta-banner fd d1">
+            <div class="cta-txt">
+                <h3>Ready to run a share session?</h3>
+                <p>Drop a post link, pick a speed mode, and go.</p>
+            </div>
+            <a href="/boost" class="btn-w">
+                Launch Boost
+                <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+                    <line x1="5" y1="12" x2="19" y2="12"/><polyline points="12 5 19 12 12 19"/>
+                </svg>
+            </a>
+        </div>
+
+        <!-- Stat cards — from GET /api/user/stats -->
+        <div class="stats-row fd d1">
+            <div class="sc">
+                <div class="sc-lbl"><span id="dotSt" class="dot-r"></span> Account Status</div>
+                <div class="sc-val" id="stSt"><span class="sk" style="width:60px;height:20px;"></span></div>
+                <div class="sc-sub" id="stStSub">—</div>
+            </div>
+            <div class="sc">
+                <div class="sc-lbl">Saved Cookies</div>
+                <div class="sc-val" id="stCk"><span class="sk" style="width:40px;height:26px;"></span></div>
+                <div class="sc-sub" id="stCkSub">accounts</div>
+            </div>
+            <div class="sc">
+                <div class="sc-lbl">Total Shares</div>
+                <div class="sc-val" id="stTot"><span class="sk" style="width:48px;height:26px;"></span></div>
+                <div class="sc-sub">all time</div>
+            </div>
+            <div class="sc">
+                <div class="sc-lbl">Last 30 Days</div>
+                <div class="sc-val" id="stRec"><span class="sk" style="width:40px;height:26px;"></span></div>
+                <div class="sc-sub">shares</div>
+            </div>
+        </div>
+
+        <!-- Quick Actions -->
+        <div class="fd d2">
+            <div class="sec-hd">Quick Actions</div>
+            <div class="acts">
+
+                <a href="/boost" class="act">
+                    <div class="act-icon">
+                        <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M13 2L3 14h9l-1 8 10-12h-9l1-8z"/></svg>
                     </div>
-                    <span class="kb-status-badge" id="statusBadge">···</span>
+                    Boost
+                </a>
+
+                <a href="/cookies" class="act">
+                    <div class="act-icon">
+                        <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="2" y="7" width="20" height="14" rx="2"/><path d="M16 7V5a2 2 0 0 0-2-2h-4a2 2 0 0 0-2 2v2"/></svg>
+                    </div>
+                    Accounts
+                </a>
+
+                <a href="/transactions" class="act">
+                    <div class="act-icon">
+                        <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M9 5H7a2 2 0 0 0-2 2v12a2 2 0 0 0 2 2h10a2 2 0 0 0 2-2V7a2 2 0 0 0-2-2h-2"/><rect x="9" y="3" width="6" height="4" rx="2"/></svg>
+                    </div>
+                    Orders
+                </a>
+
+                <a href="/inbox" class="act" id="actInbox">
+                    <div class="act-icon">
+                        <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"/><polyline points="22,6 12,13 2,6"/></svg>
+                    </div>
+                    Inbox
+                </a>
+
+                <a href="/limits" class="act">
+                    <div class="act-icon">
+                        <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="18" y1="20" x2="18" y2="10"/><line x1="12" y1="20" x2="12" y2="4"/><line x1="6" y1="20" x2="6" y2="14"/></svg>
+                    </div>
+                    Limits
+                </a>
+
+                <a href="/profile" class="act">
+                    <div class="act-icon">
+                        <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>
+                    </div>
+                    Profile
+                </a>
+
+                <a href="/admin" class="act" id="actAdmin" style="display:none">
+                    <div class="act-icon">
+                        <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg>
+                    </div>
+                    Admin
+                </a>
+
+                <a href="/" class="act">
+                    <div class="act-icon">
+                        <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/></svg>
+                    </div>
+                    About
+                </a>
+
+            </div>
+        </div>
+
+        <!-- Two-col: Account details + Share chart -->
+        <div class="row2 fd d3">
+
+            <!-- Account details — data from stats + cached kb_user -->
+            <div class="card">
+                <div class="card-hd">
+                    <span class="card-hd-t">Account Details</span>
+                    <a href="/profile" class="card-hd-l">Edit profile →</a>
                 </div>
-
-                <!-- Stats row -->
-                <div class="kb-stats-row">
-                    <div class="kb-stat-cell">
-                        <div class="kb-stat-n" id="statCookies">
-                            <span class="kb-skel" style="width:28px;height:20px;display:inline-block;"></span>
-                        </div>
-                        <div class="kb-stat-l">Cookies</div>
+                <div class="card-body">
+                    <div class="dr">
+                        <span class="dr-k">Username</span>
+                        <span class="dr-v" id="dUser">—</span>
                     </div>
-                    <div class="kb-stat-cell">
-                        <div class="kb-stat-n" id="statToday">—</div>
-                        <div class="kb-stat-l">Today's<br>Shares</div>
+                    <div class="dr">
+                        <span class="dr-k">Status</span>
+                        <span id="dSt"><span class="sk" style="width:58px;height:18px;border-radius:99px;"></span></span>
                     </div>
-                    <div class="kb-stat-cell">
-                        <div class="kb-stat-n" id="statTotal">—</div>
-                        <div class="kb-stat-l">Total<br>Shares</div>
+                    <div class="dr">
+                        <span class="dr-k">Cookies</span>
+                        <span class="dr-v" id="dCk">—</span>
+                    </div>
+                    <div class="dr">
+                        <span class="dr-k">Facebook</span>
+                        <span class="dr-v" id="dFb" title="">—</span>
+                    </div>
+                    <div class="dr">
+                        <span class="dr-k">Role</span>
+                        <span id="dRole"><span class="chip chip-n">user</span></span>
+                    </div>
+                    <div class="dr" id="dBadgesRow" style="display:none">
+                        <span class="dr-k">Badges</span>
+                        <div class="badges-row" id="dBadges"></div>
                     </div>
                 </div>
             </div>
 
-            <div class="kb-gap"></div>
-
-            <!-- ── Quick Actions ───────────────────────────── -->
-            <div>
-                <div class="kb-section-header">
-                    <span class="kb-section-title">Quick Actions</span>
+            <!-- Share chart — built from shareHistory[{date,count}] in stats -->
+            <div class="card">
+                <div class="card-hd">
+                    <span class="card-hd-t">Share Activity</span>
+                    <span class="card-hd-l">30-day history</span>
                 </div>
-
-                <div class="kb-actions-grid" id="actionsGrid">
-
-                    <a href="/boost" class="kb-action kb-action-boost">
-                        <div class="kb-action-icon">
-                            <svg width="18" height="18" viewBox="0 0 24 24" fill="currentColor" viewBox="0 0 24 24">
-                                <path d="M13 10V3L4 14h7v7l9-11h-7z"/>
-                            </svg>
-                        </div>
-                        <span class="kb-action-label">Boost</span>
-                    </a>
-
-                    <a href="/cookies" class="kb-action">
-                        <div class="kb-action-icon">
-                            <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                                <rect x="2" y="7" width="20" height="14" rx="2"/>
-                                <path d="M16 7V5a2 2 0 0 0-2-2h-4a2 2 0 0 0-2 2v2"/>
-                            </svg>
-                        </div>
-                        <span class="kb-action-label">Accounts</span>
-                    </a>
-
-                    <a href="/transactions" class="kb-action">
-                        <div class="kb-action-icon">
-                            <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                                <path d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2"/>
-                            </svg>
-                        </div>
-                        <span class="kb-action-label">Orders</span>
-                    </a>
-
-                    <a href="/inbox" class="kb-action" id="inboxAction">
-                        <div class="kb-action-icon">
-                            <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                                <path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"/>
-                                <polyline points="22,6 12,13 2,6"/>
-                            </svg>
-                        </div>
-                        <span class="kb-action-label">Inbox</span>
-                        <span class="kb-action-badge" id="inboxBadge"></span>
-                    </a>
-
-                    <a href="/limits" class="kb-action">
-                        <div class="kb-action-icon">
-                            <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                                <line x1="18" y1="20" x2="18" y2="10"/><line x1="12" y1="20" x2="12" y2="4"/><line x1="6" y1="20" x2="6" y2="14"/>
-                            </svg>
-                        </div>
-                        <span class="kb-action-label">Limits</span>
-                    </a>
-
-                    <a href="/profile" class="kb-action">
-                        <div class="kb-action-icon">
-                            <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                                <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/>
-                                <circle cx="12" cy="7" r="4"/>
-                            </svg>
-                        </div>
-                        <span class="kb-action-label">Profile</span>
-                    </a>
-
-                    <!-- Admin — hidden by default, shown if isAdmin -->
-                    <a href="/admin" class="kb-action kb-admin-action" id="adminAction">
-                        <div class="kb-action-icon">
-                            <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                                <path d="M10.325 4.317c.426-1.756 2.924-1.756 3.35 0a1.724 1.724 0 002.573 1.066c1.543-.94 3.31.826 2.37 2.37a1.724 1.724 0 001.065 2.572c1.756.426 1.756 2.924 0 3.35a1.724 1.724 0 00-1.066 2.573c.94 1.543-.826 3.31-2.37 2.37a1.724 1.724 0 00-2.572 1.065c-.426 1.756-2.924 1.756-3.35 0a1.724 1.724 0 00-2.573-1.066c-1.543.94-3.31-.826-2.37-2.37a1.724 1.724 0 00-1.065-2.572c-1.756-.426-1.756-2.924 0-3.35a1.724 1.724 0 001.066-2.573c-.94-1.543.826-3.31 2.37-2.37.996.608 2.296.07 2.572-1.065z"/>
-                                <circle cx="12" cy="12" r="3"/>
-                            </svg>
-                        </div>
-                        <span class="kb-action-label">Admin</span>
-                    </a>
-
-                    <a href="/cookies" class="kb-action">
-                        <div class="kb-action-icon">
-                            <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                                <line x1="12" y1="5" x2="12" y2="19"/>
-                                <line x1="5" y1="12" x2="19" y2="12"/>
-                            </svg>
-                        </div>
-                        <span class="kb-action-label">Add Acct</span>
-                    </a>
-
-                </div>
-            </div>
-
-            <div class="kb-gap"></div>
-
-            <!-- ── Cookie progress ─────────────────────────── -->
-            <div>
-                <div class="kb-section-header">
-                    <span class="kb-section-title">Cookie Capacity</span>
-                    <a href="/cookies" class="kb-section-link">Manage →</a>
-                </div>
-
-                <div class="kb-progress-wrap">
-                    <div>
-                        <div class="kb-progress-row">
-                            <span class="kb-progress-label">Used slots</span>
-                            <span class="kb-progress-val" id="progressLabel">— / —</span>
-                        </div>
-                        <div class="kb-bar-track">
-                            <div class="kb-bar-fill" id="cookieBar"></div>
-                        </div>
+                <div class="card-body">
+                    <div style="display:flex;align-items:baseline;gap:8px;margin-bottom:14px;">
+                        <span style="font-size:28px;font-weight:700;letter-spacing:-.04em;color:var(--text);font-variant-numeric:tabular-nums;" id="chartN">—</span>
+                        <span style="font-size:12px;color:var(--faint);">shares in 30 days</span>
+                    </div>
+                    <div class="bar-chart" id="barChart"></div>
+                    <div class="chart-row">
+                        <span class="chart-lbl" id="chartStart">30d ago</span>
+                        <span class="chart-lbl">today</span>
                     </div>
                 </div>
             </div>
 
-            <div class="kb-gap"></div>
+        </div>
 
-            <!-- ── Account Status cards ────────────────────── -->
-            <div>
-                <div class="kb-section-header">
-                    <span class="kb-section-title">Account Status</span>
-                </div>
-
-                <div class="kb-cards-scroll">
-
-                    <!-- Verification card -->
-                    <div class="kb-card" id="verifyCard">
-                        <div class="kb-card-inner">
-                            <span class="kb-card-chip" id="verifyChip">USER</span>
-                            <div>
-                                <div class="kb-card-h">Verification</div>
-                                <div class="kb-card-sub" id="verifyStatus">Loading…</div>
-                            </div>
-                            <div class="kb-card-dec-icon">
-                                <svg width="40" height="40" viewBox="0 0 24 24" fill="currentColor">
-                                    <path fill-rule="evenodd" d="M6.267 3.455a3.066 3.066 0 001.745-.723 3.066 3.066 0 013.976 0 3.066 3.066 0 001.745.723 3.066 3.066 0 012.812 2.812c.051.643.304 1.254.723 1.745a3.066 3.066 0 010 3.976 3.066 3.066 0 00-.723 1.745 3.066 3.066 0 01-2.812 2.812 3.066 3.066 0 00-1.745.723 3.066 3.066 0 01-3.976 0 3.066 3.066 0 00-1.745-.723 3.066 3.066 0 01-2.812-2.812 3.066 3.066 0 00-.723-1.745 3.066 3.066 0 010-3.976 3.066 3.066 0 00.723-1.745 3.066 3.066 0 012.812-2.812zm7.44 5.252a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clip-rule="evenodd"/>
-                                </svg>
-                            </div>
-                        </div>
+        <!-- Inbox preview — from GET /api/user/inbox?limit=4 -->
+        <div class="card fd d4">
+            <div class="card-hd">
+                <span class="card-hd-t">Recent Messages</span>
+                <a href="/inbox" class="card-hd-l">View all →</a>
+            </div>
+            <div class="card-body" id="inboxWrap">
+                <!-- skeleton -->
+                <div class="msg">
+                    <div class="msg-icon"><span class="sk" style="width:28px;height:28px;display:block;border-radius:6px;"></span></div>
+                    <div style="flex:1">
+                        <div class="sk" style="width:55%;height:13px;margin-bottom:6px;"></div>
+                        <div class="sk" style="width:35%;height:10px;"></div>
                     </div>
-
-                    <!-- Shares today card -->
-                    <div class="kb-card">
-                        <div class="kb-card-inner">
-                            <span class="kb-card-chip">TODAY</span>
-                            <div>
-                                <div class="kb-card-h" id="cardTodayShares">—</div>
-                                <div class="kb-card-sub">Shares today</div>
-                            </div>
-                            <div class="kb-card-dec-icon">
-                                <svg width="40" height="40" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
-                                    <path d="M13 2L3 14h9l-1 8 10-12h-9l1-8z"/>
-                                </svg>
-                            </div>
-                        </div>
-                    </div>
-
-                    <!-- Total shares card -->
-                    <div class="kb-card">
-                        <div class="kb-card-inner">
-                            <span class="kb-card-chip">ALL TIME</span>
-                            <div>
-                                <div class="kb-card-h" id="cardTotalShares">—</div>
-                                <div class="kb-card-sub">Total shares</div>
-                            </div>
-                            <div class="kb-card-dec-icon">
-                                <svg width="40" height="40" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
-                                    <polyline points="22 12 18 12 15 21 9 3 6 12 2 12"/>
-                                </svg>
-                            </div>
-                        </div>
-                    </div>
-
                 </div>
             </div>
+        </div>
 
-            <div class="kb-gap"></div>
+    </main>
+</div>
 
-            <!-- ── Featured section ────────────────────────── -->
-            <div>
-                <div class="kb-section-header">
-                    <span class="kb-section-title">Get Started</span>
-                </div>
-
-                <div class="kb-promo-grid">
-
-                    <a href="/boost" class="kb-promo">
-                        <div class="kb-promo-top kb-promo-boost-bg">
-                            <div class="kb-promo-icon">
-                                <svg width="28" height="28" viewBox="0 0 24 24" fill="currentColor">
-                                    <path d="M13 10V3L4 14h7v7l9-11h-7z"/>
-                                </svg>
-                            </div>
-                        </div>
-                        <div class="kb-promo-body">
-                            <div class="kb-promo-title">Kiro Boost</div>
-                            <div class="kb-promo-sub">Grow now, instantly</div>
-                        </div>
-                    </a>
-
-                    <a href="/cookies" class="kb-promo">
-                        <div class="kb-promo-top">
-                            <div class="kb-promo-icon">
-                                <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
-                                    <rect x="2" y="7" width="20" height="14" rx="2"/>
-                                    <path d="M16 7V5a2 2 0 0 0-2-2h-4a2 2 0 0 0-2 2v2"/>
-                                </svg>
-                            </div>
-                        </div>
-                        <div class="kb-promo-body">
-                            <div class="kb-promo-title">Add Accounts</div>
-                            <div class="kb-promo-sub">Manage your cookies</div>
-                        </div>
-                    </a>
-
-                    <a href="/transactions" class="kb-promo">
-                        <div class="kb-promo-top">
-                            <div class="kb-promo-icon">
-                                <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
-                                    <path d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2"/>
-                                </svg>
-                            </div>
-                        </div>
-                        <div class="kb-promo-body">
-                            <div class="kb-promo-title">View Orders</div>
-                            <div class="kb-promo-sub">Track your campaigns</div>
-                        </div>
-                    </a>
-
-                    <a href="/profile" class="kb-promo">
-                        <div class="kb-promo-top">
-                            <div class="kb-promo-icon">
-                                <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
-                                    <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/>
-                                    <circle cx="12" cy="7" r="4"/>
-                                </svg>
-                            </div>
-                        </div>
-                        <div class="kb-promo-body">
-                            <div class="kb-promo-title">Your Profile</div>
-                            <div class="kb-promo-sub">Customise your page</div>
-                        </div>
-                    </a>
-
-                </div>
+<!-- ══════════════════════════════════════════════════════════
+     BOTTOM NAV (mobile only)
+══════════════════════════════════════════════════════════ -->
+<nav class="bot-nav">
+    <div class="bot-inner">
+        <a href="/home" class="bot-a active">
+            <svg width="20" height="20" viewBox="0 0 24 24" fill="currentColor"><path d="M10 20v-6h4v6h5v-8h3L12 3 2 12h3v8z"/></svg>
+            Home
+        </a>
+        <a href="/inbox" class="bot-a" id="botInbox">
+            <div style="position:relative;line-height:0;">
+                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"/><polyline points="22,6 12,13 2,6"/></svg>
+                <span class="bot-unread" id="botDot" style="display:none;"></span>
             </div>
-
-            <!-- bottom spacing -->
-            <div style="height:8px;"></div>
-
-        </main>
+            Inbox
+        </a>
+        <div class="bot-fab-wrap">
+            <a href="/boost" class="bot-fab">
+                <svg width="20" height="20" viewBox="0 0 24 24" fill="currentColor"><path d="M13 10V3L4 14h7v7l9-11h-7z"/></svg>
+            </a>
+        </div>
+        <a href="/transactions" class="bot-a">
+            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M9 5H7a2 2 0 0 0-2 2v12a2 2 0 0 0 2 2h10a2 2 0 0 0 2-2V7a2 2 0 0 0-2-2h-2"/><rect x="9" y="3" width="6" height="4" rx="2"/></svg>
+            Orders
+        </a>
+        <a href="/profile" class="bot-a">
+            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>
+            Profile
+        </a>
     </div>
+</nav>
 
-    <!-- ── Bottom Nav ──────────────────────────────────────── -->
-    <nav class="kb-botnav">
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
+<script>
+/* ═══════════════════════════════════════════════════════════
+   AUTH GUARD
+═══════════════════════════════════════════════════════════ */
+const TOKEN = localStorage.getItem('kb_token');
+if (!TOKEN) window.location.replace('/login');
 
-        <a href="/home" class="kb-botnav-item active">
-            <svg width="18" height="18" viewBox="0 0 24 24" fill="currentColor">
-                <path d="M10 20v-6h4v6h5v-8h3L12 3 2 12h3v8z"/>
-            </svg>
-            <span>Home</span>
-        </a>
+/* ═══════════════════════════════════════════════════════════
+   HELPERS
+═══════════════════════════════════════════════════════════ */
+const $   = id => document.getElementById(id);
+const fmt = n  => {
+    if (n == null || isNaN(n)) return '0';
+    if (n >= 1_000_000) return (n / 1_000_000).toFixed(1) + 'M';
+    if (n >= 1_000)     return (n / 1_000).toFixed(1) + 'k';
+    return String(n);
+};
+const ago = str => {
+    const s = Math.floor((Date.now() - new Date(str)) / 1000);
+    if (s < 60)    return 'just now';
+    if (s < 3600)  return Math.floor(s / 60)  + 'm ago';
+    if (s < 86400) return Math.floor(s / 3600) + 'h ago';
+    return Math.floor(s / 86400) + 'd ago';
+};
 
-        <a href="/inbox" class="kb-botnav-item" id="botNavInbox">
-            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                <path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"/>
-                <polyline points="22,6 12,13 2,6"/>
-            </svg>
-            <span>Inbox</span>
-            <span class="kb-botnav-badge" id="botNavBadge"></span>
-        </a>
+function doLogout() {
+    localStorage.removeItem('kb_token');
+    localStorage.removeItem('kb_user');
+    window.location.replace('/login');
+}
 
-        <!-- Center Boost FAB -->
-        <a href="/boost" class="kb-botnav-center">
-            <div class="kb-botnav-fab">
-                <svg width="20" height="20" viewBox="0 0 24 24" fill="currentColor">
-                    <path d="M13 10V3L4 14h7v7l9-11h-7z"/>
+/* ═══════════════════════════════════════════════════════════
+   RENDER STATS
+   stats object = response from GET /api/user/stats → .stats
+   isAdmin & facebook come from cached kb_user (set on login)
+═══════════════════════════════════════════════════════════ */
+function renderStats(stats, cached) {
+    const username  = stats.username  || '—';
+    const active    = !!stats.isActive;
+    const cookies   = stats.cookieCount ?? 0;
+    const total     = stats.totalShares ?? 0;
+    const history   = Array.isArray(stats.shareHistory) ? stats.shareHistory : [];
+    const recent    = history.reduce((s, d) => s + (d.count || 0), 0);
+
+    // isAdmin + facebook from login cache (not in stats response)
+    const isAdmin   = !!(cached.isAdmin);
+    const facebook  = cached.facebook || '—';
+
+    // Profile image — stats has profileImage (base64) or profileImageUrl
+    const imgSrc    = stats.bannerImage ? null : (stats.profileImage || stats.profileImageUrl || null);
+
+    /* ── Nav chip ── */
+    $('navInit').textContent = username.charAt(0).toUpperCase();
+    if (imgSrc) {
+        $('navAv').innerHTML = `<img src="${imgSrc}" alt="">`;
+    }
+    if (stats.avatarBorder && stats.avatarBorder !== 'none') {
+        $('navAv').style.border = `2px solid ${stats.accentColor || '#fff'}`;
+    }
+    $('navName').textContent = username;
+
+    /* ── Greeting ── */
+    $('gName').textContent = username;
+    $('gSub').textContent  = active
+        ? `Account active — ${cookies} cookie${cookies !== 1 ? 's' : ''} saved, ${fmt(total)} total shares.`
+        : 'Your account is inactive. Contact an admin to get activated.';
+
+    /* ── Stat cards ── */
+    $('dotSt').className      = active ? 'dot-g' : 'dot-r';
+    $('stSt').textContent     = active ? 'Active' : 'Inactive';
+    $('stStSub').textContent  = active ? 'Ready to boost' : 'Awaiting activation';
+    $('stCk').textContent     = fmt(cookies);
+    $('stCkSub').textContent  = `${cookies} account${cookies !== 1 ? 's' : ''}`;
+    $('stTot').textContent    = fmt(total);
+    $('stRec').textContent    = fmt(recent);
+    $('chartN').textContent   = fmt(recent);
+
+    /* ── Detail card ── */
+    $('dUser').textContent  = username;
+    $('dSt').innerHTML      = active
+        ? '<span class="chip chip-g">Active</span>'
+        : '<span class="chip chip-r">Inactive</span>';
+    $('dCk').textContent    = `${cookies} saved`;
+    $('dFb').textContent    = facebook;
+    $('dFb').title          = facebook;
+    $('dRole').innerHTML    = isAdmin
+        ? '<span class="chip chip-am">admin</span>'
+        : '<span class="chip chip-n">user</span>';
+
+    // Badges (optional array from stats)
+    if (Array.isArray(stats.badges) && stats.badges.length > 0) {
+        $('dBadgesRow').style.display = '';
+        $('dBadges').innerHTML = stats.badges.map(b =>
+            `<span class="badge-item">${b}</span>`
+        ).join('');
+    }
+
+    /* ── Admin visibility ── */
+    if (isAdmin) {
+        $('actAdmin').style.display = '';
+        $('sbAdmin').style.display  = '';
+    }
+
+    /* ── Bar chart from real shareHistory[{date,count}] ── */
+    buildChart(history);
+
+    /* ── Date label ── */
+    const d30 = new Date();
+    d30.setDate(d30.getDate() - 29);
+    $('chartStart').textContent = d30.toLocaleDateString('en-US', { month: 'short', day: 'numeric' });
+
+    /* ── Persist merged cache ── */
+    localStorage.setItem('kb_user', JSON.stringify({ ...cached, ...stats }));
+}
+
+/* ═══════════════════════════════════════════════════════════
+   BUILD BAR CHART
+   Uses real shareHistory array from stats API
+   Format: [{date: 'YYYY-MM-DD', count: N}, ...]
+═══════════════════════════════════════════════════════════ */
+function buildChart(history) {
+    const chart = $('barChart');
+    chart.innerHTML = '';
+    const N = 30;
+
+    // Build a date→count map from history
+    const map = {};
+    history.forEach(h => { map[h.date] = (h.count || 0); });
+
+    // Generate last 30 days in order
+    const days = [];
+    for (let i = N - 1; i >= 0; i--) {
+        const d = new Date();
+        d.setDate(d.getDate() - i);
+        const key = d.toISOString().slice(0, 10);
+        days.push({ date: key, count: map[key] || 0 });
+    }
+
+    const maxCount = Math.max(...days.map(d => d.count), 1);
+
+    days.forEach(day => {
+        const bar = document.createElement('div');
+        bar.className = 'bar' + (day.count > 0 ? ' lit' : '');
+        const pct = (day.count / maxCount) * 100;
+        bar.style.height = day.count > 0 ? Math.max(pct, 6) + '%' : '6%';
+        bar.dataset.tip  = `${day.date}: ${day.count}`;
+        chart.appendChild(bar);
+    });
+}
+
+/* ═══════════════════════════════════════════════════════════
+   RENDER INBOX
+   Uses GET /api/user/inbox?limit=4
+   Response: { success, messages:[{messageId,title,content,isRead,date,time,createdAt}], unreadCount }
+═══════════════════════════════════════════════════════════ */
+function renderInbox(messages, unreadCount) {
+    const hasUnread = (unreadCount || 0) > 0;
+
+    if (hasUnread) {
+        $('sbBadge').style.display = '';
+        $('sbBadge').textContent   = unreadCount > 99 ? '99+' : unreadCount;
+        $('botDot').style.display  = '';
+
+        // Badge on action tile
+        const dot = document.createElement('span');
+        dot.className   = 'act-badge';
+        dot.textContent = unreadCount > 9 ? '9+' : unreadCount;
+        $('actInbox').appendChild(dot);
+    }
+
+    const wrap = $('inboxWrap');
+
+    if (!messages || messages.length === 0) {
+        wrap.innerHTML = `
+            <div class="empty">
+                <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
+                    <path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"/>
+                    <polyline points="22,6 12,13 2,6"/>
+                </svg>
+                <p>No messages yet</p>
+            </div>`;
+        return;
+    }
+
+    wrap.innerHTML = messages.slice(0, 4).map(m => `
+        <div class="msg">
+            <div class="msg-icon">
+                <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                    <path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"/>
+                    <polyline points="22,6 12,13 2,6"/>
                 </svg>
             </div>
-            <span style="font-size:10px;font-weight:600;color:var(--text-muted);">Boost</span>
-        </a>
+            <div style="flex:1;min-width:0;">
+                <div class="msg-t">${escHtml(m.title || 'Message')}</div>
+                <div class="msg-s">${m.date || ''} ${m.time || ''}</div>
+            </div>
+            ${!m.isRead ? '<span class="unread-dot"></span>' : ''}
+        </div>`).join('');
+}
 
-        <a href="/transactions" class="kb-botnav-item">
-            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                <path d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2"/>
-            </svg>
-            <span>Orders</span>
-        </a>
+function escHtml(s) {
+    return String(s)
+        .replace(/&/g, '&amp;')
+        .replace(/</g, '&lt;')
+        .replace(/>/g, '&gt;')
+        .replace(/"/g, '&quot;');
+}
 
-        <a href="/profile" class="kb-botnav-item">
-            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/>
-                <circle cx="12" cy="7" r="4"/>
-            </svg>
-            <span>Profile</span>
-        </a>
+/* ═══════════════════════════════════════════════════════════
+   MAIN LOAD — hits both endpoints defined in main.js
+═══════════════════════════════════════════════════════════ */
+async function loadDashboard() {
+    const hdrs   = { 'Authorization': `Bearer ${TOKEN}` };
+    const cached = JSON.parse(localStorage.getItem('kb_user') || '{}');
 
-    </nav>
+    /* ── 1. GET /api/user/stats (proxied by main.js → server.js) ── */
+    try {
+        const res  = await fetch('/api/user/stats', { headers: hdrs });
 
-    <script>
-    // ── Auth guard ─────────────────────────────────────────────
-    const token = localStorage.getItem('kb_token');
-    if (!token) { window.location.replace('/login'); }
+        if (res.status === 401) {
+            localStorage.removeItem('kb_token');
+            localStorage.removeItem('kb_user');
+            window.location.replace('/login');
+            return;
+        }
 
-    // ── Cached user from previous load ────────────────────────
-    let user = {};
-    try { user = JSON.parse(localStorage.getItem('kb_user') || '{}'); } catch {}
+        const body = await res.json();
 
-    // Apply cached data immediately to avoid blank flash
-    if (user.username) {
-        setUsername(user.username);
-        if (typeof user.cookieCount !== 'undefined') setCookieStats(user.cookieCount, user.cookieLimit || 10);
-    }
-
-    // ── DOM refs ───────────────────────────────────────────────
-    const $ = id => document.getElementById(id);
-
-    // ── Helpers ────────────────────────────────────────────────
-    function setUsername(name) {
-        const initial = (name || '?')[0].toUpperCase();
-        $('heroName').textContent        = name;
-        $('heroAvatar').textContent      = initial;
-        $('topNavInitial').textContent   = initial;
-    }
-
-    function setCookieStats(count, limit) {
-        const c = count  ?? 0;
-        const l = limit  ?? 10;
-        $('statCookies').textContent  = c;
-        $('progressLabel').textContent = `${c} / ${l}`;
-        const pct = l > 0 ? Math.min((c / l) * 100, 100) : 0;
-        const bar = $('cookieBar');
-        bar.style.width = pct + '%';
-        // colour shift when near limit
-        bar.className = 'kb-bar-fill' + (pct >= 80 ? ' green' : '');
-    }
-
-    function fmt(n) {
-        if (n === undefined || n === null) return '—';
-        if (n >= 1000000) return (n / 1000000).toFixed(1) + 'M';
-        if (n >= 1000)    return (n / 1000).toFixed(1) + 'K';
-        return String(n);
-    }
-
-    function showInboxBadge() {
-        $('topNavDot').classList.add('show');
-        $('botNavBadge').classList.add('show');
-        $('inboxBadge').classList.add('show');
-    }
-
-    // ── Load data ──────────────────────────────────────────────
-    async function loadData() {
-        try {
-            // ─── 1. User stats — GET /api/user/stats ───────────
-            const statsRes = await fetch('/api/user/stats', {
-                headers: { 'Authorization': `Bearer ${token}` }
-            });
-
-            if (statsRes.status === 401) {
-                localStorage.clear();
-                window.location.replace('/login');
-                return;
-            }
-
-            const statsData = await statsRes.json();
-
-            if (statsData.success) {
-                const s = statsData.stats;
-                // Merge and cache
-                user = { ...user, ...s };
-                localStorage.setItem('kb_user', JSON.stringify(user));
-
-                // Username & avatar
-                setUsername(s.username);
-
-                // Cookie stats
-                setCookieStats(s.cookieCount, s.cookieLimit);
-
-                // Today / total shares
-                const todayShares = s.todayShares ?? s.sharesToday ?? 0;
-                const totalShares = s.totalShares ?? 0;
-                $('statToday').textContent      = fmt(todayShares);
-                $('statTotal').textContent      = fmt(totalShares);
-                $('cardTodayShares').textContent = fmt(todayShares);
-                $('cardTotalShares').textContent = fmt(totalShares);
-
-                // Account status badge + verification card
-                const active = !!s.isActive;
-                const badge  = $('statusBadge');
-                const card   = $('verifyCard');
-                const chip   = $('verifyChip');
-                const vstatus= $('verifyStatus');
-
-                badge.textContent = active ? 'Active' : 'Inactive';
-                badge.className   = 'kb-status-badge ' + (active ? 'active' : 'inactive');
-
-                vstatus.textContent = active
-                    ? 'Verified Account'
-                    : 'Pending — check inbox';
-
-                if (active) {
-                    card.classList.add('kb-card-verified');
-                } else {
-                    card.classList.add('kb-card-unverified');
-                    chip.textContent = 'UNVERIFIED';
-                }
-
-                // Admin shortcut
-                if (s.isAdmin) {
-                    $('adminAction').classList.add('visible');
-                }
-            }
-
-            // ─── 2. Inbox unread — GET /api/user/inbox ─────────
-            const inboxRes = await fetch('/api/user/inbox?filter=unread&limit=1', {
-                headers: { 'Authorization': `Bearer ${token}` }
-            });
-            const inboxData = await inboxRes.json();
-            if (inboxData.success && inboxData.unreadCount > 0) {
-                showInboxBadge();
-            }
-
-        } catch (err) {
-            console.error('[KiroBoost] loadData error:', err);
-            // Graceful fallback — already rendered cached data above
+        if (body.success && body.stats) {
+            renderStats(body.stats, cached);
+        } else {
+            throw new Error(body.message || 'Stats failed');
+        }
+    } catch (err) {
+        console.error('[home] stats error:', err);
+        // Graceful fallback — use cached login data
+        if (cached.username) {
+            // Build a minimal stats-shape from cached login data
+            renderStats({
+                username:    cached.username,
+                isActive:    cached.isActive,
+                totalShares: cached.totalShares || 0,
+                cookieCount: cached.cookieCount || 0,
+                shareHistory: [],
+                badges:      cached.badges || []
+            }, cached);
+            $('gSub').textContent = 'Showing cached data — refresh to update.';
+        } else {
+            $('gName').textContent = 'there';
+            $('gSub').textContent  = 'Could not connect — check your network.';
         }
     }
 
-    loadData();
-    </script>
+    /* ── 2. GET /api/user/inbox?limit=4&filter=all (proxied by main.js) ── */
+    try {
+        const res  = await fetch('/api/user/inbox?limit=4', { headers: hdrs });
+        const body = await res.json();
 
+        if (body.success) {
+            renderInbox(body.messages, body.unreadCount);
+        }
+    } catch (err) {
+        console.error('[home] inbox error:', err);
+        $('inboxWrap').innerHTML =
+            '<div class="empty"><p>Could not load messages.</p></div>';
+    }
+}
+
+/* ═══════════════════════════════════════════════════════════
+   INIT — instant render from cache, then fetch fresh data
+═══════════════════════════════════════════════════════════ */
+;(function init() {
+    const c = JSON.parse(localStorage.getItem('kb_user') || '{}');
+    if (c.username) {
+        $('navInit').textContent  = c.username.charAt(0).toUpperCase();
+        $('navName').textContent  = c.username;
+        $('gName').textContent    = c.username;
+    }
+    loadDashboard();
+})();
+</script>
 </body>
 </html>
