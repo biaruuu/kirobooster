@@ -17,14 +17,10 @@
         :root {
             --bg:      #000000;
             --card:    #111111;
-            --card2:   #161616;
             --border:  rgba(255,255,255,0.08);
-            --border2: rgba(255,255,255,0.14);
-            --muted:   #B4B4B4;
-            --muted2:  #555;
+            --border2: rgba(255,255,255,0.16);
             --green:   #22c55e;
             --red:     #ef4444;
-            --yellow:  #eab308;
             --blue:    #3b82f6;
         }
 
@@ -45,13 +41,17 @@
         .kiro-logo { display: inline-flex; align-items: baseline; letter-spacing: -0.04em; user-select: none; text-decoration: none; }
         .logo-kiro  { font-weight: 800; color: #fff; font-style: italic; font-size: 1.4rem; }
         .logo-boost { font-weight: 300; color: rgba(255,255,255,0.4); font-size: 1.4rem; }
-        .nav-back { display: flex; align-items: center; gap: 6px; color: var(--muted); font-size: 0.82rem; font-weight: 600; text-decoration: none; transition: color .2s; }
+        .nav-back {
+            display: flex; align-items: center; gap: 6px;
+            color: #aaa; font-size: 0.82rem; font-weight: 600;
+            text-decoration: none; transition: color .2s;
+        }
         .nav-back:hover { color: #fff; }
 
         /* ── Page ── */
         #page { max-width: 900px; margin: 0 auto; padding: 2rem 1.25rem 4rem; }
 
-        /* ── Grid layout ── */
+        /* ── Grid ── */
         #grid {
             display: grid;
             grid-template-columns: 1fr 380px;
@@ -73,28 +73,27 @@
         }
         .card-title {
             font-size: 0.78rem; font-weight: 700;
-            text-transform: uppercase; letter-spacing: .07em; color: var(--muted2);
+            text-transform: uppercase; letter-spacing: .07em; color: #999;
             display: flex; align-items: center; gap: 7px;
         }
-        .card-title svg { color: var(--muted2); }
         .card-body { padding: 1.25rem; display: flex; flex-direction: column; gap: 1rem; }
 
         /* Page title */
         .page-title-row { margin-bottom: 1.25rem; }
-        .page-title { font-size: 1.5rem; font-weight: 800; letter-spacing: -0.03em; }
-        .page-sub   { font-size: 0.82rem; color: var(--muted2); margin-top: 2px; }
+        .page-title { font-size: 1.5rem; font-weight: 800; letter-spacing: -0.03em; color: #fff; }
+        .page-sub   { font-size: 0.82rem; color: #666; margin-top: 2px; }
 
         /* ── Field groups ── */
         .field-group { display: flex; flex-direction: column; gap: 6px; }
         .field-label {
             font-size: 0.72rem; font-weight: 700;
-            text-transform: uppercase; letter-spacing: .06em; color: var(--muted2);
+            text-transform: uppercase; letter-spacing: .06em; color: #aaa;
             display: flex; align-items: center; justify-content: space-between;
         }
-        .field-label-right { font-size: 0.68rem; font-weight: 500; color: #444; text-transform: none; letter-spacing: 0; }
+        .field-label-right { font-size: 0.68rem; font-weight: 500; color: #666; text-transform: none; letter-spacing: 0; }
 
         .field-input {
-            background: rgba(255,255,255,0.04);
+            background: rgba(255,255,255,0.05);
             border: 1px solid var(--border);
             border-radius: 8px;
             color: #fff;
@@ -104,25 +103,30 @@
             outline: none;
             transition: border-color .2s, background .2s;
         }
-        .field-input:focus { border-color: rgba(255,255,255,.25); background: rgba(255,255,255,.06); }
-        .field-input::placeholder { color: #333; }
+        .field-input:focus { border-color: rgba(255,255,255,.3); background: rgba(255,255,255,.07); }
+        .field-input::placeholder { color: #444; }
 
-        .field-hint { font-size: 0.7rem; color: #444; display: flex; align-items: center; gap: 5px; }
+        .field-hint {
+            font-size: 0.7rem; color: #666;
+            display: flex; align-items: center; gap: 5px;
+        }
 
-        /* Resolved post ID chip */
+        /* Post ID chip */
         .post-id-chip {
             display: none; align-items: center; gap: 6px;
             padding: 4px 10px;
-            background: rgba(34,197,94,.1); border: 1px solid rgba(34,197,94,.2);
+            background: rgba(34,197,94,.1); border: 1px solid rgba(34,197,94,.25);
             border-radius: 20px; font-size: 0.72rem; color: #86efac; font-weight: 600;
         }
         .post-id-chip.show { display: inline-flex; }
-        .post-id-chip.error { background: rgba(239,68,68,.1); border-color: rgba(239,68,68,.25); color: #fca5a5; }
+        .post-id-chip.error {
+            background: rgba(239,68,68,.1); border-color: rgba(239,68,68,.3); color: #fca5a5;
+        }
 
         /* ── Method selector ── */
         .method-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; }
         .method-opt {
-            padding: .7rem .9rem;
+            padding: .75rem .9rem;
             border: 1.5px solid var(--border);
             border-radius: 10px;
             cursor: pointer;
@@ -130,16 +134,16 @@
             display: flex; flex-direction: column; gap: 3px;
         }
         .method-opt:hover { border-color: var(--border2); background: rgba(255,255,255,.03); }
-        .method-opt.selected { border-color: rgba(255,255,255,.4); background: rgba(255,255,255,.07); }
+        .method-opt.selected { border-color: rgba(255,255,255,.35); background: rgba(255,255,255,.06); }
         .method-opt-name { font-size: 0.875rem; font-weight: 700; color: #fff; }
-        .method-opt-desc { font-size: 0.72rem; color: var(--muted); }
+        .method-opt-desc { font-size: 0.72rem; color: #888; margin-top: 1px; }
         .method-tag {
-            display: inline-block; font-size: 0.62rem; font-weight: 800;
-            padding: 2px 8px; border-radius: 5px; text-transform: uppercase;
-            margin-top: 3px; letter-spacing: .04em;
+            display: inline-block; font-size: 0.6rem; font-weight: 800;
+            padding: 2px 7px; border-radius: 4px; text-transform: uppercase;
+            margin-top: 4px; letter-spacing: .04em;
         }
-        .tag-fast { background: rgba(34,197,94,.18); color: #86efac; border: 1px solid rgba(34,197,94,.25); }
-        .tag-smm  { background: rgba(168,85,247,.18); color: #d8b4fe; border: 1px solid rgba(168,85,247,.25); }
+        .tag-default { background: rgba(34,197,94,.15); color: #86efac; }
+        .tag-smm     { background: rgba(168,85,247,.15); color: #d8b4fe; }
 
         /* ── Speed selector ── */
         .speed-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 8px; }
@@ -151,29 +155,17 @@
             transition: all .15s;
             text-align: center;
         }
-        .speed-opt:hover { border-color: var(--border2); background: rgba(255,255,255,.03); }
-        .speed-opt.selected { border-color: rgba(255,255,255,.4); background: rgba(255,255,255,.07); }
-        .speed-icon { font-size: 1.2rem; margin-bottom: 4px; }
+        .speed-opt:hover { border-color: var(--border2); }
+        .speed-opt.selected { border-color: rgba(255,255,255,.35); background: rgba(255,255,255,.06); }
+        .speed-icon { font-size: 1.2rem; margin-bottom: 3px; line-height: 1; }
         .speed-name { font-size: 0.82rem; font-weight: 700; color: #fff; }
-        .speed-desc { font-size: 0.68rem; color: var(--muted); margin-top: 2px; }
+        .speed-desc { font-size: 0.67rem; color: #888; margin-top: 2px; }
 
-        /* ── Account selector ── */
-        .acct-header {
-            display: flex; align-items: center; justify-content: space-between;
-            margin-bottom: 8px;
-        }
-        .select-all-btn {
-            background: none; border: none; color: var(--muted2);
-            font-size: 0.72rem; font-weight: 600; cursor: pointer;
-            transition: color .2s;
-        }
-        .select-all-btn:hover { color: #fff; }
-
+        /* ── Account list ── */
         .acct-list {
             display: flex; flex-direction: column; gap: 6px;
             max-height: 230px; overflow-y: auto;
         }
-
         .acct-row {
             display: flex; align-items: center; gap: 10px;
             padding: .6rem .75rem;
@@ -183,16 +175,14 @@
             transition: all .15s;
             user-select: none;
         }
-        .acct-row:hover { border-color: var(--border2); background: rgba(255,255,255,.025); }
+        .acct-row:hover { border-color: var(--border2); background: rgba(255,255,255,.03); }
         .acct-row.selected { border-color: rgba(255,255,255,.3); background: rgba(255,255,255,.05); }
-        .acct-row.extracting { opacity: .6; pointer-events: none; }
-        .acct-row.token-ok  .acct-status-dot { background: var(--green); }
-        .acct-row.token-err .acct-status-dot { background: var(--red); }
 
         .acct-ck {
-            width: 16px; height: 16px; border: 1.5px solid var(--muted2); border-radius: 4px;
-            display: flex; align-items: center; justify-content: center; flex-shrink: 0;
-            transition: all .15s;
+            width: 16px; height: 16px;
+            border: 1.5px solid #555; border-radius: 4px;
+            display: flex; align-items: center; justify-content: center;
+            flex-shrink: 0; transition: all .15s;
         }
         .acct-row.selected .acct-ck { background: #fff; border-color: #fff; }
         .acct-row.selected .acct-ck::after {
@@ -200,31 +190,35 @@
             border-right: 2px solid #000; border-bottom: 2px solid #000;
             transform: rotate(45deg) translate(-1px,-1px);
         }
-
         .acct-avatar {
-            width: 32px; height: 32px; border-radius: 50%;
+            width: 34px; height: 34px; border-radius: 50%;
             display: flex; align-items: center; justify-content: center;
-            font-size: 0.75rem; font-weight: 800; flex-shrink: 0;
+            font-size: 0.78rem; font-weight: 800; flex-shrink: 0; color: #fff;
         }
-
         .acct-info { flex: 1; min-width: 0; }
-        .acct-name { font-size: 0.82rem; font-weight: 700; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
-        .acct-uid  { font-size: 0.68rem; color: var(--muted2); font-family: 'Courier New', monospace; }
+        .acct-name { font-size: 0.82rem; font-weight: 700; color: #fff; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+        .acct-uid  { font-size: 0.68rem; color: #777; font-family: 'Courier New', monospace; }
+        .acct-right { display: flex; align-items: center; gap: 5px; flex-shrink: 0; }
+        .acct-status-dot { width: 7px; height: 7px; border-radius: 50%; }
+        .acct-status-label { font-size: 0.65rem; color: #888; }
 
-        .acct-right { display: flex; align-items: center; gap: 6px; flex-shrink: 0; }
-        .acct-status-dot { width: 7px; height: 7px; border-radius: 50%; background: #333; }
-        .acct-status-label { font-size: 0.65rem; color: var(--muted2); }
+        .select-all-btn {
+            background: none; border: none; color: #888;
+            font-size: 0.72rem; font-weight: 600;
+            cursor: pointer; transition: color .2s;
+        }
+        .select-all-btn:hover { color: #fff; }
 
         .no-cookies-msg {
             text-align: center; padding: 1.5rem 1rem;
-            color: var(--muted2); font-size: 0.82rem;
+            color: #666; font-size: 0.82rem;
             display: flex; flex-direction: column; align-items: center; gap: 6px;
         }
         .no-cookies-msg svg { opacity: .2; }
-        .no-cookies-link { color: var(--muted); text-decoration: none; font-weight: 600; }
+        .no-cookies-link { color: #aaa; text-decoration: none; font-weight: 600; }
         .no-cookies-link:hover { color: #fff; text-decoration: underline; }
 
-        /* ── Start button ── */
+        /* ── Start / Stop buttons ── */
         .btn-start {
             background: #fff; color: #000;
             font-size: 0.95rem; font-weight: 800;
@@ -245,34 +239,37 @@
             border: 1px solid rgba(239,68,68,.3); border-radius: 10px;
             height: 42px; width: 100%; cursor: pointer;
             display: none; align-items: center; justify-content: center; gap: 8px;
-            transition: background .2s;
-            margin-top: 6px;
+            transition: background .2s; margin-top: 6px;
         }
         .btn-stop:hover { background: rgba(239,68,68,.22); }
         .btn-stop.show { display: flex; }
 
-        /* ── RIGHT PANEL: Live Session ── */
+        /* ── Right: Live Session ── */
         .session-panel { display: flex; flex-direction: column; gap: 1.25rem; }
 
-        /* Stats bar */
+        .session-top {
+            display: flex; align-items: center; justify-content: space-between;
+            padding: .9rem 1.25rem; border-bottom: 1px solid var(--border);
+        }
+
         .session-stats {
             display: grid; grid-template-columns: repeat(3, 1fr);
             gap: 8px; padding: 1rem 1.25rem;
             border-bottom: 1px solid var(--border);
         }
         .sstat { text-align: center; }
-        .sstat-val { font-size: 1.4rem; font-weight: 800; letter-spacing: -0.04em; line-height: 1; }
-        .sstat-key { font-size: 0.65rem; color: var(--muted2); font-weight: 500; text-transform: uppercase; letter-spacing: .05em; margin-top: 2px; }
-        .sstat-val.green  { color: #86efac; }
-        .sstat-val.red    { color: #fca5a5; }
-        .sstat-val.muted  { color: #444; }
+        .sstat-val { font-size: 1.4rem; font-weight: 800; letter-spacing: -0.04em; line-height: 1; color: #fff; }
+        .sstat-key { font-size: 0.65rem; color: #888; font-weight: 500; text-transform: uppercase; letter-spacing: .05em; margin-top: 3px; }
+        .sstat-val.green { color: #86efac; }
+        .sstat-val.red   { color: #fca5a5; }
+        .sstat-val.dim   { color: #555; }
 
-        /* Progress bar */
-        .prog-wrap { padding: 0 1.25rem 1rem; }
-        .prog-labels { display: flex; justify-content: space-between; font-size: 0.7rem; color: var(--muted2); margin-bottom: 5px; }
-        .prog-bar { height: 5px; background: #1a1a1a; border-radius: 3px; overflow: hidden; }
+        /* Progress */
+        .prog-wrap { padding: .85rem 1.25rem 1rem; }
+        .prog-labels { display: flex; justify-content: space-between; font-size: 0.7rem; color: #888; margin-bottom: 6px; }
+        .prog-bar  { height: 5px; background: #1a1a1a; border-radius: 3px; overflow: hidden; }
         .prog-fill { height: 100%; border-radius: 3px; background: #fff; transition: width .4s ease; width: 0%; }
-        .prog-fill.done { background: #86efac; }
+        .prog-fill.done    { background: #86efac; }
         .prog-fill.stopped { background: #fca5a5; }
 
         /* Status badge */
@@ -281,51 +278,47 @@
             padding: 3px 10px; border-radius: 20px;
             font-size: 0.72rem; font-weight: 700;
         }
-        .ss-idle      { background: rgba(255,255,255,.05); color: #444; border: 1px solid var(--border); }
+        .ss-idle      { background: rgba(255,255,255,.05); color: #555; border: 1px solid var(--border); }
         .ss-running   { background: rgba(59,130,246,.12); color: #93c5fd; border: 1px solid rgba(59,130,246,.25); }
         .ss-completed { background: rgba(34,197,94,.12); color: #86efac; border: 1px solid rgba(34,197,94,.25); }
         .ss-stopped   { background: rgba(239,68,68,.1); color: #fca5a5; border: 1px solid rgba(239,68,68,.2); }
-        .ss-dot { width: 6px; height: 6px; border-radius: 50%; background: currentColor; }
+        .ss-dot { width: 6px; height: 6px; border-radius: 50%; background: currentColor; flex-shrink: 0; }
         .ss-running .ss-dot { animation: pulse .9s ease-in-out infinite; }
-        @keyframes pulse { 0%,100% { opacity:1; } 50% { opacity:.3; } }
+        @keyframes pulse { 0%,100%{opacity:1}50%{opacity:.25} }
 
-        /* Session top strip */
-        .session-top {
+        /* Log */
+        .log-header {
             display: flex; align-items: center; justify-content: space-between;
-            padding: .9rem 1.25rem;
-            border-bottom: 1px solid var(--border);
+            padding: .75rem 1.25rem; border-bottom: 1px solid var(--border);
         }
-
-        /* Speed info */
-        .speed-info {
-            font-size: 0.7rem; color: var(--muted2);
-            display: flex; align-items: center; gap: 4px;
-        }
-
-        /* Log panel */
-        .log-header { padding: .75rem 1.25rem; border-bottom: 1px solid var(--border); display: flex; align-items: center; justify-content: space-between; }
-        .log-title  { font-size: 0.72rem; font-weight: 700; color: var(--muted2); text-transform: uppercase; letter-spacing: .06em; }
-        .log-clear  { background: none; border: none; color: #333; font-size: 0.7rem; cursor: pointer; font-weight: 600; transition: color .2s; }
-        .log-clear:hover { color: var(--muted); }
+        .log-title { font-size: 0.72rem; font-weight: 700; color: #aaa; text-transform: uppercase; letter-spacing: .06em; }
+        .log-clear { background: none; border: none; color: #555; font-size: 0.7rem; cursor: pointer; font-weight: 600; transition: color .2s; }
+        .log-clear:hover { color: #aaa; }
 
         #logBox {
-            height: 280px; overflow-y: auto; overflow-x: hidden; padding: .75rem 1.25rem;
-            display: flex; flex-direction: column; gap: 4px;
-            font-size: 0.75rem; font-family: 'Courier New', monospace;
+            height: 280px;
+            overflow-y: auto;
+            overflow-x: hidden;
+            padding: .75rem 1.25rem;
+            display: flex; flex-direction: column; gap: 3px;
+            font-size: 0.72rem;
         }
 
         .log-entry {
-            display: flex; gap: 6px; align-items: flex-start;
-            padding: 4px 0;
+            display: grid;
+            grid-template-columns: 72px 68px 1fr;
+            gap: 6px;
+            align-items: baseline;
+            padding: 3px 0;
             border-bottom: 1px solid rgba(255,255,255,.03);
             animation: logIn .2s ease;
-            min-width: 0; width: 100%;
+            min-width: 0;
         }
-        @keyframes logIn { from { opacity: 0; transform: translateY(4px); } to { opacity: 1; transform: none; } }
+        @keyframes logIn { from{opacity:0;transform:translateY(3px)} to{opacity:1;transform:none} }
 
-        .log-time { color: #333; flex-shrink: 0; font-size: 0.68rem; white-space: nowrap; }
-        .log-acct { color: #666; flex-shrink: 0; width: 70px; min-width: 0; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
-        .log-msg  { flex: 1; min-width: 0; word-break: break-word; overflow-wrap: break-word; white-space: pre-wrap; }
+        .log-time { color: #555; font-size: 0.67rem; white-space: nowrap; font-family: monospace; }
+        .log-acct { color: #777; font-size: 0.7rem; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; font-family: monospace; }
+        .log-msg  { font-size: 0.72rem; word-break: break-word; overflow-wrap: anywhere; font-family: monospace; }
         .log-msg.ok   { color: #86efac; }
         .log-msg.fail { color: #fca5a5; }
         .log-msg.info { color: #93c5fd; }
@@ -334,10 +327,12 @@
         .log-empty {
             display: flex; flex-direction: column; align-items: center; justify-content: center;
             height: 100%; gap: 8px; color: #2a2a2a;
+            font-family: 'Outfit', sans-serif !important;
         }
-        .log-empty svg { opacity: .15; }
+        .log-empty svg { opacity: .12; }
+        .log-empty span { font-size: 0.78rem; color: #333; }
 
-        /* Inline error */
+        /* Inline errors */
         .inline-err {
             background: rgba(239,68,68,.1); border: 1px solid rgba(239,68,68,.25);
             border-radius: 8px; padding: 9px 12px;
@@ -347,8 +342,8 @@
         .inline-err.show { display: flex; }
 
         /* Spinner */
-        .geist-spinner { display: inline-flex; align-items: center; justify-content: center; animation: spin .8s linear infinite; }
-        @keyframes spin { to { transform: rotate(360deg); } }
+        .geist-spinner { display: inline-flex; align-items: center; animation: spin .8s linear infinite; }
+        @keyframes spin { to{transform:rotate(360deg)} }
 
         /* Toast */
         #toast {
@@ -363,17 +358,42 @@
         }
         #toast.show { transform: translateY(0); opacity: 1; }
         #toast.success { border-color: rgba(34,197,94,.3); color: #86efac; }
-        #toast.error   { border-color: rgba(239,68,68,.3);  color: #fca5a5; }
-        #toast.info    { border-color: rgba(59,130,246,.3);  color: #93c5fd; }
+        #toast.error   { border-color: rgba(239,68,68,.3); color: #fca5a5; }
+        #toast.info    { border-color: rgba(59,130,246,.3); color: #93c5fd; }
 
         /* Skeleton */
         .skeleton { background: linear-gradient(90deg,#141414 25%,#1c1c1c 50%,#141414 75%); background-size: 200% 100%; animation: shimmer 1.5s infinite; border-radius: 5px; }
-        @keyframes shimmer { 0%{background-position:200% 0} 100%{background-position:-200% 0} }
+        @keyframes shimmer { 0%{background-position:200% 0}100%{background-position:-200% 0} }
+
+        /* Resolve button */
+        #resolveBtn {
+            background: rgba(255,255,255,.1);
+            border: 1px solid var(--border2);
+            color: #fff; border-radius: 8px;
+            padding: .6rem .95rem;
+            font-size: 0.82rem; font-weight: 700;
+            cursor: pointer; white-space: nowrap;
+            transition: background .2s; flex-shrink: 0;
+        }
+        #resolveBtn:hover { background: rgba(255,255,255,.18); }
+        #resolveBtn:disabled { opacity: .5; cursor: not-allowed; }
+
+        /* How it works */
+        .how-label { font-size: .72rem; font-weight: 700; color: #aaa; text-transform: uppercase; letter-spacing: .06em; margin-bottom: .5rem; }
+        .how-item  { font-size: .78rem; color: #777; line-height: 1.6; margin-bottom: 3px; }
+        .how-item strong { color: #ccc; }
+        .how-divider { border: none; border-top: 1px solid var(--border); margin: .7rem 0; }
 
         /* Responsive */
         @media (max-width: 760px) {
             #grid { grid-template-columns: 1fr; }
             #page { padding: 1rem .75rem 3rem; }
+            #logBox { height: 220px; }
+            .log-entry { grid-template-columns: 60px 55px 1fr; gap: 4px; }
+        }
+        @media (max-width: 400px) {
+            .log-entry { grid-template-columns: 56px 1fr; }
+            .log-acct  { display: none; }
         }
     </style>
 </head>
@@ -398,7 +418,7 @@
 
     <div id="grid">
 
-        <!-- ════ LEFT: Setup ════ -->
+        <!-- ═══ LEFT: Setup ═══ -->
         <div style="display:flex;flex-direction:column;gap:1.25rem;">
 
             <!-- Post Link -->
@@ -410,6 +430,7 @@
                     </span>
                 </div>
                 <div class="card-body">
+
                     <div class="inline-err" id="linkError">
                         <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/></svg>
                         <span id="linkErrorText"></span>
@@ -418,31 +439,29 @@
                     <div class="field-group">
                         <div class="field-label">Facebook Post URL</div>
                         <div style="display:flex;gap:8px;align-items:center;">
-                            <input type="text" class="field-input" id="postLink"
-                                placeholder="https://www.facebook.com/permalink.php?story_fbid=..."
+                            <input type="url" class="field-input" id="postLink"
+                                placeholder="https://www.facebook.com/..."
                                 autocomplete="off" oninput="onLinkInput()">
-                            <button onclick="resolvePostId()" id="resolveBtn"
-                                style="background:rgba(255,255,255,.07);border:1px solid var(--border2);color:#fff;border-radius:8px;padding:.6rem .9rem;font-size:.78rem;font-weight:700;cursor:pointer;white-space:nowrap;transition:background .2s;flex-shrink:0;"
-                                onmouseenter="this.style.background='rgba(255,255,255,.13)'"
-                                onmouseleave="this.style.background='rgba(255,255,255,.07)'">
+                            <button id="resolveBtn" onclick="resolvePostId()">
                                 <span id="resolveBtnContent">Resolve</span>
                             </button>
                         </div>
-                        <div style="display:flex;align-items:center;gap:8px;flex-wrap:wrap;">
+                        <div style="min-height:22px;display:flex;align-items:center;">
                             <span class="post-id-chip" id="postIdChip">
                                 <svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="20 6 9 17 4 12"/></svg>
-                                Post ID: <strong id="postIdText">—</strong>
+                                Post ID:&nbsp;<strong id="postIdText">—</strong>
                             </span>
                         </div>
                         <div class="field-hint">
                             <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><line x1="12" y1="16" x2="12" y2="12"/><line x1="12" y1="8" x2="12.01" y2="8"/></svg>
-                            Paste the direct link to the Facebook post you want to boost
+                            You must click Resolve before starting a boost
                         </div>
                     </div>
+
                 </div>
             </div>
 
-            <!-- Settings: Method + Speed + Target -->
+            <!-- Settings -->
             <div class="card">
                 <div class="card-header">
                     <span class="card-title">
@@ -459,7 +478,7 @@
                             <div class="method-opt selected" data-method="normal" onclick="selectMethod(this)">
                                 <div class="method-opt-name">Normal</div>
                                 <div class="method-opt-desc">Standard b-graph share</div>
-                                <span class="method-tag tag-fast">Default</span>
+                                <span class="method-tag tag-default">Default</span>
                             </div>
                             <div class="method-opt" data-method="smm" onclick="selectMethod(this)">
                                 <div class="method-opt-name">SMM</div>
@@ -491,10 +510,10 @@
                         </div>
                     </div>
 
-                    <!-- Target count -->
+                    <!-- Target -->
                     <div class="field-group">
                         <div class="field-label">
-                            <span>Target Shares</span>
+                            Target Shares
                             <span class="field-label-right">Leave blank for unlimited</span>
                         </div>
                         <input type="number" class="field-input" id="targetCount"
@@ -514,24 +533,19 @@
                     <button class="select-all-btn" id="selectAllBtn" onclick="toggleSelectAll()">Select All</button>
                 </div>
                 <div class="card-body" style="padding-top:.85rem;padding-bottom:.85rem;">
-
-                    <div class="acct-header" style="margin-bottom:0;">
-                        <span id="selectedCount" style="font-size:0.72rem;color:var(--muted2);">Loading accounts...</span>
-                    </div>
-
+                    <div style="font-size:0.72rem;color:#777;margin-bottom:2px;" id="selectedCount">Loading accounts...</div>
                     <div class="acct-list" id="acctList">
-                        <!-- Skeleton -->
-                        ${Array(3).fill(0).map(()=>`
+                        <!-- Skeletons -->
+                        ${[1,2,3].map(()=>`
                         <div style="display:flex;align-items:center;gap:10px;padding:.6rem .75rem;border:1.5px solid var(--border);border-radius:9px;">
                             <div class="skeleton" style="width:16px;height:16px;border-radius:3px;"></div>
-                            <div class="skeleton" style="width:32px;height:32px;border-radius:50%;flex-shrink:0;"></div>
+                            <div class="skeleton" style="width:34px;height:34px;border-radius:50%;flex-shrink:0;"></div>
                             <div style="flex:1;display:flex;flex-direction:column;gap:5px;">
-                                <div class="skeleton" style="height:11px;width:55%;"></div>
-                                <div class="skeleton" style="height:9px;width:35%;"></div>
+                                <div class="skeleton" style="height:11px;width:50%;"></div>
+                                <div class="skeleton" style="height:9px;width:32%;"></div>
                             </div>
                         </div>`).join('')}
                     </div>
-
                 </div>
             </div>
 
@@ -556,7 +570,7 @@
 
         </div>
 
-        <!-- ════ RIGHT: Live Session ════ -->
+        <!-- ═══ RIGHT: Live Session ═══ -->
         <div class="session-panel">
             <div class="card">
 
@@ -578,7 +592,7 @@
                         <div class="sstat-key">Failed</div>
                     </div>
                     <div class="sstat">
-                        <div class="sstat-val muted" id="sessTarget">∞</div>
+                        <div class="sstat-val dim" id="sessTarget">∞</div>
                         <div class="sstat-key">Target</div>
                     </div>
                 </div>
@@ -586,7 +600,7 @@
                 <div class="prog-wrap">
                     <div class="prog-labels">
                         <span id="progLabel">—</span>
-                        <span id="progPct">0%</span>
+                        <span id="progPct">—</span>
                     </div>
                     <div class="prog-bar">
                         <div class="prog-fill" id="progFill"></div>
@@ -595,7 +609,7 @@
 
                 <div class="log-header">
                     <span class="log-title">
-                        <svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" style="margin-right:4px;vertical-align:middle;"><path d="M14 2H6a2 2 0 00-2 2v16a2 2 0 002 2h12a2 2 0 002-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="16" y1="13" x2="8" y2="13"/><line x1="16" y1="17" x2="8" y2="17"/></svg>
+                        <svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" style="vertical-align:middle;margin-right:4px;"><path d="M14 2H6a2 2 0 00-2 2v16a2 2 0 002 2h12a2 2 0 002-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="16" y1="13" x2="8" y2="13"/></svg>
                         Activity Log
                     </span>
                     <button class="log-clear" onclick="clearLog()">Clear</button>
@@ -610,23 +624,23 @@
 
             </div>
 
-            <!-- Speed info box -->
+            <!-- How it works -->
             <div class="card">
-                <div class="card-body" style="gap:.6rem;">
-                    <div style="font-size:.72rem;font-weight:700;color:var(--muted2);text-transform:uppercase;letter-spacing:.06em;">How it works</div>
-                    <div style="font-size:.78rem;color:#555;line-height:1.6;">
-                        <div style="margin-bottom:4px;">⚡ <strong style="color:#B4B4B4;">Instant</strong> — Fires all accounts simultaneously, no delay</div>
-                        <div style="margin-bottom:4px;">🚀 <strong style="color:#B4B4B4;">Fast</strong> — 2 second delay between each share per account</div>
-                        <div style="margin-bottom:4px;">🐢 <strong style="color:#B4B4B4;">Slow</strong> — 3 second delay between each share per account</div>
-                        <div style="margin-top:8px;padding-top:8px;border-top:1px solid var(--border);">All accounts run in parallel. Each account stops individually on failure while others continue.</div>
-                    </div>
+                <div class="card-body" style="gap:.5rem;">
+                    <div class="how-label">How it works</div>
+                    <div class="how-item">⚡ <strong>Instant</strong> — All accounts fire simultaneously, no delay</div>
+                    <div class="how-item">🚀 <strong>Fast</strong> — 2s delay between each share per account</div>
+                    <div class="how-item">🐢 <strong>Slow</strong> — 3s delay between each share per account</div>
+                    <hr class="how-divider">
+                    <div class="how-item" style="color:#555;">All accounts run in parallel. An account stops only if it fails, others continue.</div>
+                    <div class="how-item" style="color:#555;"><strong style="color:#888;">SMM method</strong> passes the full post URL directly to the share API.</div>
                 </div>
             </div>
 
-        </div>
+        </div><!-- /session-panel -->
 
-    </div>
-</div>
+    </div><!-- /grid -->
+</div><!-- /page -->
 
 <div id="toast"></div>
 
@@ -661,80 +675,66 @@ function toast(msg, type = 'success') {
     el._t = setTimeout(() => el.className = '', 3200);
 }
 
+/* ── State ── */
+let cookies        = [];
+let selectedIds    = new Set();
+let resolvedPostId = null;   // numeric post ID (for Normal method)
+let rawPostLink    = '';     // original URL (for SMM method)
+let selectedMethod = 'normal';
+let selectedSpeed  = 'instant';
+let sessionId      = null;
+let pollTimer      = null;
+let logLines       = [];
+let lastLogCount   = 0;
+
+/* ── Helpers ── */
+function esc(s) {
+    return (s||'').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;');
+}
+function showErr(boxId, textId, msg) {
+    document.getElementById(textId).textContent = msg;
+    document.getElementById(boxId).classList.add('show');
+}
+function hideErr(boxId) { document.getElementById(boxId).classList.remove('show'); }
 function logout() {
     ['token','kb_token','userRole','username','kb_user'].forEach(k => localStorage.removeItem(k));
     window.location.href = '/login';
 }
-
-/* ── State ── */
-let cookies      = [];       // all saved cookies
-let selectedIds  = new Set();
-let resolvedPostId = null;
-let rawLink        = null;   // original URL — used by SMM method
-let selectedMethod = 'normal';
-let selectedSpeed  = 'instant';
-let sessionId    = null;
-let pollTimer    = null;
-let logLines     = [];
 
 /* ── Selectors ── */
 function selectMethod(el) {
     document.querySelectorAll('.method-opt').forEach(o => o.classList.remove('selected'));
     el.classList.add('selected');
     selectedMethod = el.dataset.method;
-    // Reset resolve state — user must re-resolve for the new method
-    resolvedPostId = null;
-    rawLink = null;
-    document.getElementById('postIdChip').classList.remove('show','error');
-    document.getElementById('linkError').classList.remove('show');
-    // Update hint text
-    const hint = document.querySelector('.field-hint');
-    if (selectedMethod === 'smm') {
-        hint.innerHTML = `<svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><line x1="12" y1="16" x2="12" y2="12"/><line x1="12" y1="8" x2="12.01" y2="8"/></svg> SMM uses the full URL directly — paste the link and click Resolve`;
-    } else {
-        hint.innerHTML = `<svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><line x1="12" y1="16" x2="12" y2="12"/><line x1="12" y1="8" x2="12.01" y2="8"/></svg> Paste the direct link to the Facebook post you want to boost`;
-    }
 }
-
 function selectSpeed(el) {
     document.querySelectorAll('.speed-opt').forEach(o => o.classList.remove('selected'));
     el.classList.add('selected');
     selectedSpeed = el.dataset.speed;
 }
 
-/* ── Link resolve ── */
+/* ── Post link ── */
 function onLinkInput() {
-    document.getElementById('postIdChip').classList.remove('show','error');
-    document.getElementById('linkError').classList.remove('show');
+    // Reset resolved state whenever user edits the link
     resolvedPostId = null;
-    rawLink = null;
+    rawPostLink    = '';
+    const chip = document.getElementById('postIdChip');
+    chip.className = 'post-id-chip';
+    hideErr('linkError');
 }
 
 async function resolvePostId() {
     const link = document.getElementById('postLink').value.trim();
     if (!link) {
-        showErr('linkError','linkErrorText','Please enter a Facebook post URL.');
+        showErr('linkError', 'linkErrorText', 'Please enter a Facebook post URL.');
         return;
     }
-    const btn = document.getElementById('resolveBtn');
+
+    const btn     = document.getElementById('resolveBtn');
     const content = document.getElementById('resolveBtnContent');
-    btn.disabled = true;
+    btn.disabled  = true;
     content.innerHTML = SPINNER;
-
-    document.getElementById('linkError').classList.remove('show');
-    rawLink = link; // always save raw URL for SMM
-
-    // For SMM method — no need to resolve a numeric ID, just validate the link
-    if (selectedMethod === 'smm') {
-        btn.disabled = false;
-        content.innerHTML = 'Resolve';
-        resolvedPostId = link; // SMM uses the full URL directly
-        const chip = document.getElementById('postIdChip');
-        chip.className = 'post-id-chip show';
-        chip.innerHTML = `<svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="20 6 9 17 4 12"/></svg> SMM — Link ready`;
-        toast('Link accepted for SMM method.', 'success');
-        return;
-    }
+    hideErr('linkError');
 
     const data = await fetch('/share/get-post-id', {
         method: 'POST',
@@ -746,37 +746,40 @@ async function resolvePostId() {
     content.innerHTML = 'Resolve';
 
     const chip = document.getElementById('postIdChip');
+
     if (data?.success && data.postId) {
         resolvedPostId = data.postId;
+        rawPostLink    = link;
         document.getElementById('postIdText').textContent = data.postId;
         chip.className = 'post-id-chip show';
-        chip.innerHTML = `<svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="20 6 9 17 4 12"/></svg> Post ID: <strong id="postIdText">${data.postId}</strong>`;
+        chip.innerHTML = `<svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="20 6 9 17 4 12"/></svg> Post ID:&nbsp;<strong>${esc(data.postId)}</strong>`;
         toast(`Post ID resolved: ${data.postId}`, 'success');
     } else {
         resolvedPostId = null;
+        rawPostLink    = '';
         chip.className = 'post-id-chip show error';
-        chip.innerHTML = `<svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><circle cx="12" cy="12" r="10"/><line x1="15" y1="9" x2="9" y2="15"/><line x1="9" y1="9" x2="15" y2="15"/></svg> Could not resolve post ID`;
-        showErr('linkError','linkErrorText', data?.message || 'Failed to resolve post ID. Check the link.');
+        chip.innerHTML = `<svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><circle cx="12" cy="12" r="10"/><line x1="15" y1="9" x2="9" y2="15"/><line x1="9" y1="9" x2="15" y2="15"/></svg> Could not resolve`;
+        showErr('linkError', 'linkErrorText', data?.message || 'Failed to resolve post ID. Check the link and try again.');
     }
 }
 
 /* ── Accounts ── */
 function fbAvatarColor(name) {
-    const colors = ['#1877f2','#4267B2','#5865f2','#7c3aed','#0891b2','#0f766e'];
+    const colors = ['#1877f2','#4267B2','#5865f2','#7c3aed','#0891b2','#0f766e','#b45309'];
     return colors[(name||'?').charCodeAt(0) % colors.length];
 }
 
 function renderAccounts() {
-    const list = document.getElementById('acctList');
+    const list    = document.getElementById('acctList');
     const visible = cookies.filter(c => c.status === 'active' || c.status === 'restricted');
 
-    if (!visible.length && !cookies.length) {
+    if (!cookies.length) {
         list.innerHTML = `<div class="no-cookies-msg">
             <svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.3"><rect x="3" y="3" width="18" height="18" rx="2"/><path d="M3 9h18M9 21V9"/></svg>
-            No cookies added yet.
+            <span>No cookies added yet.</span>
             <a href="/cookies" class="no-cookies-link">Go add cookies →</a>
         </div>`;
-        document.getElementById('selectedCount').textContent = 'No accounts';
+        document.getElementById('selectedCount').textContent = 'No accounts available';
         return;
     }
 
@@ -785,29 +788,31 @@ function renderAccounts() {
             <span>All your cookies are expired or blocked.</span>
             <a href="/cookies" class="no-cookies-link">Manage cookies →</a>
         </div>`;
+        document.getElementById('selectedCount').textContent = 'No usable accounts';
         return;
     }
 
     list.innerHTML = visible.map(c => {
-        const sel = selectedIds.has(c.id);
-        const bg  = fbAvatarColor(c.name);
+        const sel    = selectedIds.has(c.id);
+        const bg     = fbAvatarColor(c.name);
         const letter = (c.name||'?').charAt(0).toUpperCase();
+        const dotClr = c.status === 'active' ? '#22c55e' : '#eab308';
         return `
         <div class="acct-row${sel ? ' selected' : ''}" id="acct-${c.id}" onclick="toggleAcct('${c.id}')">
             <div class="acct-ck"></div>
-            <div class="acct-avatar" style="background:${bg};color:#fff;">${letter}</div>
+            <div class="acct-avatar" style="background:${bg};">${letter}</div>
             <div class="acct-info">
                 <div class="acct-name">${esc(c.name)}</div>
                 <div class="acct-uid">${esc(c.uid)}</div>
             </div>
             <div class="acct-right">
-                <span class="acct-status-dot" style="background:${c.status==='active'?'#22c55e':'#eab308'};"></span>
+                <span class="acct-status-dot" style="background:${dotClr};"></span>
                 <span class="acct-status-label">${c.status}</span>
             </div>
         </div>`;
     }).join('');
 
-    updateSelectedCount();
+    updateSelectedCount(visible.length);
 }
 
 function toggleAcct(id) {
@@ -817,132 +822,131 @@ function toggleAcct(id) {
 }
 
 function toggleSelectAll() {
-    const active = cookies.filter(c => c.status === 'active' || c.status === 'restricted');
-    const allSelected = active.every(c => selectedIds.has(c.id));
-    if (allSelected) { selectedIds.clear(); }
-    else { active.forEach(c => selectedIds.add(c.id)); }
+    const visible = cookies.filter(c => c.status === 'active' || c.status === 'restricted');
+    const allSel  = visible.every(c => selectedIds.has(c.id));
+    if (allSel) { selectedIds.clear(); }
+    else { visible.forEach(c => selectedIds.add(c.id)); }
     renderAccounts();
 }
 
-function updateSelectedCount() {
-    const total  = cookies.filter(c => c.status === 'active' || c.status === 'restricted').length;
-    const selCnt = selectedIds.size;
-    document.getElementById('selectedCount').textContent = `${selCnt} of ${total} selected`;
-    const btn = document.getElementById('selectAllBtn');
-    btn.textContent = selCnt === total && total > 0 ? 'Deselect All' : 'Select All';
+function updateSelectedCount(total) {
+    const cnt = selectedIds.size;
+    document.getElementById('selectedCount').textContent = `${cnt} of ${total} selected`;
+    document.getElementById('selectAllBtn').textContent  =
+        (cnt === total && total > 0) ? 'Deselect All' : 'Select All';
 }
 
-/* ── Error helpers ── */
-function showErr(boxId, textId, msg) {
-    document.getElementById(textId).textContent = msg;
-    document.getElementById(boxId).classList.add('show');
-}
-function hideErr(boxId) { document.getElementById(boxId).classList.remove('show'); }
-function esc(s) { return (s||'').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;'); }
-
-/* ── Log helpers ── */
+/* ── Log ── */
 function addLog(type, account, msg) {
-    logLines.push({ type, account, msg, time: new Date().toLocaleTimeString('en',{hour12:true,hour:'2-digit',minute:'2-digit',second:'2-digit'}) });
+    logLines.push({
+        type, account, msg,
+        time: new Date().toLocaleTimeString('en-US', { hour12: true, hour: '2-digit', minute: '2-digit', second: '2-digit' })
+    });
     renderLog();
 }
 
 function renderLog() {
-    const box = document.getElementById('logBox');
+    const box   = document.getElementById('logBox');
     const empty = document.getElementById('logEmpty');
-    if (!logLines.length) { if(empty) empty.style.display = 'flex'; return; }
-    if(empty) empty.style.display = 'none';
+    if (!logLines.length) {
+        if (empty) empty.style.display = 'flex';
+        return;
+    }
+    if (empty) empty.style.display = 'none';
 
-    const html = logLines.slice(-150).reverse().map(l => `
+    box.innerHTML = logLines.slice().reverse().slice(0, 200).map(l => `
         <div class="log-entry">
-            <span class="log-time">${l.time}</span>
-            <span class="log-acct">${esc(l.account)}</span>
+            <span class="log-time">${esc(l.time)}</span>
+            <span class="log-acct" title="${esc(l.account)}">${esc(l.account)}</span>
             <span class="log-msg ${l.type}">${esc(l.msg)}</span>
         </div>`).join('');
-    box.innerHTML = html + (logLines.length ? '' : `<div class="log-empty" id="logEmpty"><svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.3"><path d="M14 2H6a2 2 0 00-2 2v16a2 2 0 002 2h12a2 2 0 002-2V8z"/><polyline points="14 2 14 8 20 8"/></svg><span>No activity yet</span></div>`);
 }
 
-function clearLog() { logLines = []; document.getElementById('logBox').innerHTML = `<div class="log-empty" id="logEmpty"><svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.3"><path d="M14 2H6a2 2 0 00-2 2v16a2 2 0 002 2h12a2 2 0 002-2V8z"/><polyline points="14 2 14 8 20 8"/></svg><span>No activity yet</span></div>`; }
+function clearLog() {
+    logLines = [];
+    lastLogCount = 0;
+    document.getElementById('logBox').innerHTML =
+        `<div class="log-empty" id="logEmpty"><svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.3"><path d="M14 2H6a2 2 0 00-2 2v16a2 2 0 002 2h12a2 2 0 002-2V8z"/><polyline points="14 2 14 8 20 8"/></svg><span>No activity yet</span></div>`;
+}
 
 /* ── Session status UI ── */
 function setSessionStatus(status) {
-    const badge = document.getElementById('sessionStatusBadge');
-    const text  = document.getElementById('sessionStatusText');
+    const labels = { idle:'Idle', running:'Running', completed:'Completed', stopped:'Stopped' };
+    const badge  = document.getElementById('sessionStatusBadge');
     badge.className = `session-status ss-${status}`;
-    badge.innerHTML = `<span class="ss-dot"></span><span id="sessionStatusText">${status.charAt(0).toUpperCase()+status.slice(1)}</span>`;
+    badge.innerHTML = `<span class="ss-dot"></span><span>${labels[status]||status}</span>`;
 }
 
 function updateProgress(success, target) {
-    const pct  = target ? Math.min(100, Math.round((success / target) * 100)) : 0;
-    const fill = document.getElementById('progFill');
-    fill.style.width = target ? `${pct}%` : '0%';
+    const pct  = (target && target > 0) ? Math.min(100, Math.round((success / target) * 100)) : null;
     document.getElementById('progLabel').textContent = target ? `${success} / ${target}` : `${success} shares`;
-    document.getElementById('progPct').textContent   = target ? `${pct}%` : '—';
+    document.getElementById('progPct').textContent   = pct !== null ? `${pct}%` : '—';
+    document.getElementById('progFill').style.width  = pct !== null ? `${pct}%` : '0%';
 }
 
 /* ── Poll session ── */
 async function pollSession() {
     if (!sessionId) return;
-    const data = await fetch(`/share/session/${sessionId}`, { headers: authHeaders() }).then(r=>r.json()).catch(()=>null);
+
+    const data = await fetch(`/share/session/${sessionId}`, { headers: authHeaders() })
+        .then(r => r.json()).catch(() => null);
+
     if (!data?.success) return;
 
+    // Update counters
     document.getElementById('sessSuccess').textContent = data.successCount;
     document.getElementById('sessFail').textContent    = data.failCount;
     document.getElementById('sessTarget').textContent  = data.targetCount || '∞';
-
     updateProgress(data.successCount, data.targetCount);
 
-    // Render new logs
-    const existing = logLines.length;
-    const newLogs  = data.logs || [];
-    if (newLogs.length > existing) {
-        newLogs.slice(existing).forEach(l => {
-            const t = l.success ? 'ok' : 'fail';
-            addLog(t, l.account, l.message);
+    // Sync new log entries (server gives all logs, we only append new ones)
+    const serverLogs = data.logs || [];
+    if (serverLogs.length > lastLogCount) {
+        serverLogs.slice(lastLogCount).forEach(l => {
+            addLog(l.success ? 'ok' : 'fail', l.account, l.message);
         });
-    } else if (newLogs.length && logLines.length === 0) {
-        newLogs.forEach(l => addLog(l.success ? 'ok' : 'fail', l.account, l.message));
+        lastLogCount = serverLogs.length;
     }
 
+    // Session ended?
     if (data.status === 'completed' || data.status === 'stopped') {
         clearInterval(pollTimer); pollTimer = null;
         setSessionStatus(data.status);
         const fill = document.getElementById('progFill');
         fill.className = `prog-fill ${data.status === 'completed' ? 'done' : 'stopped'}`;
 
-        // Mark complete on server
+        // Credit shares to user stats
         if (data.status === 'completed' && data.successCount > 0) {
             await apiFetch('/api/share/complete', {
                 method: 'POST',
                 body: JSON.stringify({ totalShares: data.successCount })
-            });
+            }).catch(() => {});
         }
 
+        // Reset button state
         document.getElementById('startBtn').disabled = false;
         document.getElementById('startBtnContent').innerHTML = `<span style="display:inline-flex;align-items:center;gap:8px;"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M13 2L3 14h9l-1 8 10-12h-9l1-8z"/></svg>Start Boost</span>`;
         document.getElementById('stopBtn').classList.remove('show');
 
         addLog('info', 'System', `Session ${data.status} — ${data.successCount} shares, ${data.failCount} failed.`);
-        toast(`Boost ${data.status}! ${data.successCount} shares.`, data.status === 'completed' ? 'success' : 'error');
+        toast(`Boost ${data.status}! ${data.successCount} shares.`, data.status === 'completed' ? 'success' : 'info');
     }
 }
 
-/* ── Start Boost ── */
+/* ── START BOOST ── */
 async function startBoost() {
     hideErr('startError');
     hideErr('linkError');
 
-    // Validate — MUST click Resolve first
+    // Must resolve first
     if (!resolvedPostId) {
-        const link = document.getElementById('postLink').value.trim();
-        if (!link) {
-            showErr('startError','startErrorText','Please enter a Facebook post URL first.');
-        } else {
-            showErr('startError','startErrorText','You must click "Resolve" to validate the post link before starting.');
-        }
+        showErr('startError', 'startErrorText', 'You must click Resolve on the post link first.');
+        document.getElementById('postLink').focus();
         return;
     }
+
     if (selectedIds.size === 0) {
-        showErr('startError','startErrorText','Select at least one account to boost with.');
+        showErr('startError', 'startErrorText', 'Select at least one account to boost with.');
         return;
     }
 
@@ -950,37 +954,39 @@ async function startBoost() {
     const btn      = document.getElementById('startBtn');
     const bContent = document.getElementById('startBtnContent');
 
-    // For SMM: pass the original full URL as postId; for Normal: pass numeric postId
-    const postIdForBatch = selectedMethod === 'smm' ? rawLink : resolvedPostId;
-
     btn.disabled = true;
     bContent.innerHTML = SPINNER;
-    addLog('info', 'System', `Extracting tokens for ${selectedIds.size} account(s)...`);
+    logLines     = [];
+    lastLogCount = 0;
+    clearLog();
     setSessionStatus('running');
 
-    // Step 1: Extract tokens for all selected cookies in parallel
+    // STEP 1 — Extract tokens in parallel for all selected accounts
+    addLog('info', 'System', `Extracting tokens for ${selectedIds.size} account(s)...`);
     const selected = cookies.filter(c => selectedIds.has(c.id));
     const accounts = [];
-    let extractFails = 0;
+    let   failCount = 0;
+
+    // SMM uses a different token method
+    const tokenMethod = selectedMethod === 'smm' ? 'smm' : 'content_management';
 
     await Promise.all(selected.map(async (c) => {
         const row = document.getElementById(`acct-${c.id}`);
-        if (row) row.classList.add('extracting');
+        if (row) row.style.opacity = '0.5';
 
-        // Both 'smm' and 'content_management' use the same extraction path on the server
-        const data = await fetch('/share/extract-token', {
-            method: 'POST',
+        const res = await fetch('/share/extract-token', {
+            method:  'POST',
             headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify({ cookie: c.cookie, method: 'content_management' })
-        }).then(r=>r.json()).catch(()=>null);
+            body:    JSON.stringify({ cookie: c.cookie, method: tokenMethod })
+        }).then(r => r.json()).catch(() => null);
 
-        if (row) row.classList.remove('extracting');
+        if (row) row.style.opacity = '1';
 
-        if (data?.success && data.token) {
-            accounts.push({ cookie: c.cookie, token: data.token, name: c.name, uid: c.uid });
+        if (res?.success && res.token) {
+            accounts.push({ cookie: c.cookie, token: res.token, name: c.name, uid: c.uid });
             addLog('ok', c.name, `✓ Token extracted`);
         } else {
-            extractFails++;
+            failCount++;
             addLog('fail', c.name, `✗ Token extraction failed — skipped`);
         }
     }));
@@ -989,57 +995,64 @@ async function startBoost() {
         btn.disabled = false;
         bContent.innerHTML = `<span style="display:inline-flex;align-items:center;gap:8px;"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M13 2L3 14h9l-1 8 10-12h-9l1-8z"/></svg>Start Boost</span>`;
         setSessionStatus('idle');
-        showErr('startError','startErrorText','All selected cookies failed token extraction. They may be expired.');
-        toast('Token extraction failed for all accounts.','error');
+        showErr('startError', 'startErrorText', 'All selected cookies failed token extraction. They may be expired.');
+        toast('Token extraction failed for all accounts.', 'error');
         return;
     }
 
-    if (extractFails > 0) {
-        addLog('warn', 'System', `${extractFails} account(s) skipped — ${accounts.length} will proceed.`);
+    if (failCount > 0) {
+        addLog('warn', 'System', `${failCount} account(s) skipped — ${accounts.length} will proceed.`);
     }
 
-    // Notify server (start tracking)
-    await apiFetch('/api/share/start', { method: 'POST' }).catch(()=>{});
+    // Notify API that sharing has started
+    await apiFetch('/api/share/start', { method: 'POST' }).catch(() => {});
 
-    // Step 2: Start batch session
-    // SMM method passes full URL; Normal passes numeric postId
-    addLog('info', 'System', `Starting batch — ${accounts.length} accts, method: ${selectedMethod}, speed: ${selectedSpeed}${target ? ', target: '+target : ''}`);
+    // STEP 2 — Determine postId for the batch call
+    // CRITICAL FIX: SMM method needs the FULL URL, Normal needs the numeric postId
+    const batchPostId = selectedMethod === 'smm' ? rawPostLink : resolvedPostId;
 
-    const batchData = await fetch('/share/batch', {
-        method: 'POST',
+    addLog('info', 'System',
+        `Starting batch — ${accounts.length} accounts, method: ${selectedMethod}, speed: ${selectedSpeed}` +
+        (target ? `, target: ${target}` : ', unlimited') +
+        (selectedMethod === 'smm' ? ` [using full URL]` : ` [postId: ${batchPostId}]`)
+    );
+
+    // STEP 3 — Fire batch
+    const batchRes = await fetch('/share/batch', {
+        method:  'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({
+        body:    JSON.stringify({
             accounts,
-            postId:      postIdForBatch,
+            postId:      batchPostId,
             method:      selectedMethod,
             targetCount: target,
             speed:       selectedSpeed
         })
-    }).then(r=>r.json()).catch(()=>null);
+    }).then(r => r.json()).catch(() => null);
 
-    if (!batchData?.success) {
+    if (!batchRes?.success) {
         btn.disabled = false;
         bContent.innerHTML = `<span style="display:inline-flex;align-items:center;gap:8px;"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M13 2L3 14h9l-1 8 10-12h-9l1-8z"/></svg>Start Boost</span>`;
         setSessionStatus('idle');
-        showErr('startError','startErrorText', batchData?.message || 'Failed to start batch session.');
+        showErr('startError', 'startErrorText', batchRes?.message || 'Failed to start batch session.');
         return;
     }
 
-    sessionId = batchData.sessionId;
+    sessionId = batchRes.sessionId;
     document.getElementById('sessTarget').textContent = target || '∞';
     document.getElementById('stopBtn').classList.add('show');
 
     addLog('info', 'System', `Session started — ID: ${sessionId}`);
     toast(`Boost started! ${accounts.length} accounts active.`, 'success');
 
-    // Step 3: Poll every 1.5s
+    // STEP 4 — Poll every 1.5s
     pollTimer = setInterval(pollSession, 1500);
 }
 
-/* ── Stop session ── */
+/* ── STOP ── */
 async function stopSession() {
     if (!sessionId) return;
-    await fetch(`/share/session/${sessionId}/stop`, { method: 'POST', headers: authHeaders() }).catch(()=>{});
+    await fetch(`/share/session/${sessionId}/stop`, { method: 'POST', headers: authHeaders() }).catch(() => {});
     clearInterval(pollTimer); pollTimer = null;
     setSessionStatus('stopped');
     document.getElementById('stopBtn').classList.remove('show');
@@ -1050,7 +1063,7 @@ async function stopSession() {
     toast('Session stopped.', 'info');
 }
 
-/* ── Load cookies (GET /api/user/cookies) ── */
+/* ── Load cookies ── */
 async function loadCookies() {
     const data = await apiFetch('/api/user/cookies');
     if (!data?.success) { toast('Failed to load cookies.', 'error'); return; }
@@ -1058,7 +1071,7 @@ async function loadCookies() {
     renderAccounts();
 }
 
-/* ── Enter to resolve link ── */
+/* ── Enter key on link field → resolve ── */
 document.getElementById('postLink').addEventListener('keydown', e => {
     if (e.key === 'Enter') resolvePostId();
 });
