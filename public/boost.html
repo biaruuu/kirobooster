@@ -130,32 +130,32 @@
             display: flex; flex-direction: column; gap: 3px;
         }
         .method-opt:hover { border-color: var(--border2); background: rgba(255,255,255,.03); }
-        .method-opt.selected { border-color: rgba(255,255,255,.35); background: rgba(255,255,255,.06); }
-        .method-opt-name { font-size: 0.82rem; font-weight: 700; }
-        .method-opt-desc { font-size: 0.68rem; color: var(--muted2); }
+        .method-opt.selected { border-color: rgba(255,255,255,.4); background: rgba(255,255,255,.07); }
+        .method-opt-name { font-size: 0.875rem; font-weight: 700; color: #fff; }
+        .method-opt-desc { font-size: 0.72rem; color: var(--muted); }
         .method-tag {
-            display: inline-block; font-size: 0.6rem; font-weight: 800;
-            padding: 1px 6px; border-radius: 4px; text-transform: uppercase;
-            margin-top: 2px;
+            display: inline-block; font-size: 0.62rem; font-weight: 800;
+            padding: 2px 8px; border-radius: 5px; text-transform: uppercase;
+            margin-top: 3px; letter-spacing: .04em;
         }
-        .tag-fast { background: rgba(34,197,94,.15); color: #86efac; }
-        .tag-smm  { background: rgba(168,85,247,.15); color: #d8b4fe; }
+        .tag-fast { background: rgba(34,197,94,.18); color: #86efac; border: 1px solid rgba(34,197,94,.25); }
+        .tag-smm  { background: rgba(168,85,247,.18); color: #d8b4fe; border: 1px solid rgba(168,85,247,.25); }
 
         /* ── Speed selector ── */
         .speed-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 8px; }
         .speed-opt {
-            padding: .65rem .6rem;
+            padding: .75rem .6rem;
             border: 1.5px solid var(--border);
             border-radius: 9px;
             cursor: pointer;
             transition: all .15s;
             text-align: center;
         }
-        .speed-opt:hover { border-color: var(--border2); }
-        .speed-opt.selected { border-color: rgba(255,255,255,.3); background: rgba(255,255,255,.05); }
-        .speed-icon { font-size: 1.1rem; margin-bottom: 2px; }
-        .speed-name { font-size: 0.78rem; font-weight: 700; }
-        .speed-desc { font-size: 0.65rem; color: var(--muted2); }
+        .speed-opt:hover { border-color: var(--border2); background: rgba(255,255,255,.03); }
+        .speed-opt.selected { border-color: rgba(255,255,255,.4); background: rgba(255,255,255,.07); }
+        .speed-icon { font-size: 1.2rem; margin-bottom: 4px; }
+        .speed-name { font-size: 0.82rem; font-weight: 700; color: #fff; }
+        .speed-desc { font-size: 0.68rem; color: var(--muted); margin-top: 2px; }
 
         /* ── Account selector ── */
         .acct-header {
@@ -309,22 +309,23 @@
         .log-clear:hover { color: var(--muted); }
 
         #logBox {
-            height: 280px; overflow-y: auto; padding: .75rem 1.25rem;
+            height: 280px; overflow-y: auto; overflow-x: hidden; padding: .75rem 1.25rem;
             display: flex; flex-direction: column; gap: 4px;
             font-size: 0.75rem; font-family: 'Courier New', monospace;
         }
 
         .log-entry {
-            display: flex; gap: 8px; align-items: flex-start;
-            padding: 3px 0;
+            display: flex; gap: 6px; align-items: flex-start;
+            padding: 4px 0;
             border-bottom: 1px solid rgba(255,255,255,.03);
             animation: logIn .2s ease;
+            min-width: 0; width: 100%;
         }
         @keyframes logIn { from { opacity: 0; transform: translateY(4px); } to { opacity: 1; transform: none; } }
 
-        .log-time { color: #333; flex-shrink: 0; font-size: 0.7rem; }
-        .log-acct { color: #666; flex-shrink: 0; max-width: 90px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
-        .log-msg  { flex: 1; }
+        .log-time { color: #333; flex-shrink: 0; font-size: 0.68rem; white-space: nowrap; }
+        .log-acct { color: #666; flex-shrink: 0; width: 70px; min-width: 0; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+        .log-msg  { flex: 1; min-width: 0; word-break: break-word; overflow-wrap: break-word; white-space: pre-wrap; }
         .log-msg.ok   { color: #86efac; }
         .log-msg.fail { color: #fca5a5; }
         .log-msg.info { color: #93c5fd; }
@@ -669,6 +670,7 @@ function logout() {
 let cookies      = [];       // all saved cookies
 let selectedIds  = new Set();
 let resolvedPostId = null;
+let rawLink        = null;   // original URL — used by SMM method
 let selectedMethod = 'normal';
 let selectedSpeed  = 'instant';
 let sessionId    = null;
@@ -680,6 +682,18 @@ function selectMethod(el) {
     document.querySelectorAll('.method-opt').forEach(o => o.classList.remove('selected'));
     el.classList.add('selected');
     selectedMethod = el.dataset.method;
+    // Reset resolve state — user must re-resolve for the new method
+    resolvedPostId = null;
+    rawLink = null;
+    document.getElementById('postIdChip').classList.remove('show','error');
+    document.getElementById('linkError').classList.remove('show');
+    // Update hint text
+    const hint = document.querySelector('.field-hint');
+    if (selectedMethod === 'smm') {
+        hint.innerHTML = `<svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><line x1="12" y1="16" x2="12" y2="12"/><line x1="12" y1="8" x2="12.01" y2="8"/></svg> SMM uses the full URL directly — paste the link and click Resolve`;
+    } else {
+        hint.innerHTML = `<svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><line x1="12" y1="16" x2="12" y2="12"/><line x1="12" y1="8" x2="12.01" y2="8"/></svg> Paste the direct link to the Facebook post you want to boost`;
+    }
 }
 
 function selectSpeed(el) {
@@ -693,6 +707,7 @@ function onLinkInput() {
     document.getElementById('postIdChip').classList.remove('show','error');
     document.getElementById('linkError').classList.remove('show');
     resolvedPostId = null;
+    rawLink = null;
 }
 
 async function resolvePostId() {
@@ -707,6 +722,19 @@ async function resolvePostId() {
     content.innerHTML = SPINNER;
 
     document.getElementById('linkError').classList.remove('show');
+    rawLink = link; // always save raw URL for SMM
+
+    // For SMM method — no need to resolve a numeric ID, just validate the link
+    if (selectedMethod === 'smm') {
+        btn.disabled = false;
+        content.innerHTML = 'Resolve';
+        resolvedPostId = link; // SMM uses the full URL directly
+        const chip = document.getElementById('postIdChip');
+        chip.className = 'post-id-chip show';
+        chip.innerHTML = `<svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="20 6 9 17 4 12"/></svg> SMM — Link ready`;
+        toast('Link accepted for SMM method.', 'success');
+        return;
+    }
 
     const data = await fetch('/share/get-post-id', {
         method: 'POST',
@@ -721,7 +749,8 @@ async function resolvePostId() {
     if (data?.success && data.postId) {
         resolvedPostId = data.postId;
         document.getElementById('postIdText').textContent = data.postId;
-        chip.classList.remove('error'); chip.classList.add('show');
+        chip.className = 'post-id-chip show';
+        chip.innerHTML = `<svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="20 6 9 17 4 12"/></svg> Post ID: <strong id="postIdText">${data.postId}</strong>`;
         toast(`Post ID resolved: ${data.postId}`, 'success');
     } else {
         resolvedPostId = null;
@@ -902,9 +931,14 @@ async function startBoost() {
     hideErr('startError');
     hideErr('linkError');
 
-    // Validate
+    // Validate — MUST click Resolve first
     if (!resolvedPostId) {
-        showErr('startError','startErrorText','Please resolve a valid Facebook post link first.');
+        const link = document.getElementById('postLink').value.trim();
+        if (!link) {
+            showErr('startError','startErrorText','Please enter a Facebook post URL first.');
+        } else {
+            showErr('startError','startErrorText','You must click "Resolve" to validate the post link before starting.');
+        }
         return;
     }
     if (selectedIds.size === 0) {
@@ -912,16 +946,19 @@ async function startBoost() {
         return;
     }
 
-    const target = parseInt(document.getElementById('targetCount').value) || null;
-    const btn    = document.getElementById('startBtn');
+    const target   = parseInt(document.getElementById('targetCount').value) || null;
+    const btn      = document.getElementById('startBtn');
     const bContent = document.getElementById('startBtnContent');
+
+    // For SMM: pass the original full URL as postId; for Normal: pass numeric postId
+    const postIdForBatch = selectedMethod === 'smm' ? rawLink : resolvedPostId;
 
     btn.disabled = true;
     bContent.innerHTML = SPINNER;
     addLog('info', 'System', `Extracting tokens for ${selectedIds.size} account(s)...`);
     setSessionStatus('running');
 
-    // Step 1: Extract tokens for all selected cookies
+    // Step 1: Extract tokens for all selected cookies in parallel
     const selected = cookies.filter(c => selectedIds.has(c.id));
     const accounts = [];
     let extractFails = 0;
@@ -930,10 +967,11 @@ async function startBoost() {
         const row = document.getElementById(`acct-${c.id}`);
         if (row) row.classList.add('extracting');
 
+        // Both 'smm' and 'content_management' use the same extraction path on the server
         const data = await fetch('/share/extract-token', {
             method: 'POST',
             headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify({ cookie: c.cookie, method: selectedMethod === 'smm' ? 'smm' : 'content_management' })
+            body: JSON.stringify({ cookie: c.cookie, method: 'content_management' })
         }).then(r=>r.json()).catch(()=>null);
 
         if (row) row.classList.remove('extracting');
@@ -964,12 +1002,19 @@ async function startBoost() {
     await apiFetch('/api/share/start', { method: 'POST' }).catch(()=>{});
 
     // Step 2: Start batch session
-    addLog('info', 'System', `Starting batch — ${accounts.length} accounts, method: ${selectedMethod}, speed: ${selectedSpeed}${target ? ', target: '+target : ''}`);
+    // SMM method passes full URL; Normal passes numeric postId
+    addLog('info', 'System', `Starting batch — ${accounts.length} accts, method: ${selectedMethod}, speed: ${selectedSpeed}${target ? ', target: '+target : ''}`);
 
     const batchData = await fetch('/share/batch', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ accounts, postId: resolvedPostId, method: selectedMethod, targetCount: target, speed: selectedSpeed })
+        body: JSON.stringify({
+            accounts,
+            postId:      postIdForBatch,
+            method:      selectedMethod,
+            targetCount: target,
+            speed:       selectedSpeed
+        })
     }).then(r=>r.json()).catch(()=>null);
 
     if (!batchData?.success) {
@@ -988,7 +1033,6 @@ async function startBoost() {
     toast(`Boost started! ${accounts.length} accounts active.`, 'success');
 
     // Step 3: Poll every 1.5s
-    logLines = logLines; // keep existing
     pollTimer = setInterval(pollSession, 1500);
 }
 
