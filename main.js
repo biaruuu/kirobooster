@@ -232,7 +232,7 @@ async function smmShare(cookie, token, postLink) {
 }
 
 // =============================================================================
-//  API PROXY ROUTES  (all 40 server.js endpoints — explicitly wired)
+//  API PROXY ROUTES  (all server.js endpoints — explicitly wired)
 // =============================================================================
 
 // ── AUTH ──────────────────────────────────────────────────────────────────────
@@ -248,10 +248,16 @@ app.post('/api/auth/login', (req, res) =>
 // ── USER — SHARE TRACKING ─────────────────────────────────────────────────────
 
 // POST /api/share/start
+// body:     { postLink?, quantity?, accountCount?, speed?, referenceNote? }
+// response: { success, orderId }  ← orderId links the session to a BoosterOrder
 app.post('/api/share/start', (req, res) =>
     proxyToAPI(req, res, '/api/share/start'));
 
-// POST /api/share/complete  body: { totalShares }
+// POST /api/share/complete
+// body: { totalShares, orderId, stopped?, failCount? }
+//   orderId  — from /api/share/start response; links shares to the BoosterOrder
+//   stopped  — true if user manually stopped the session (marks order partial/cancelled)
+//   failCount — number of failed share attempts
 app.post('/api/share/complete', (req, res) =>
     proxyToAPI(req, res, '/api/share/complete'));
 
@@ -273,7 +279,7 @@ app.delete('/api/user/profile/image', (req, res) =>
 
 // ── USER — PROFILE BANNER ─────────────────────────────────────────────────────
 
-// POST /api/user/profile/banner  body: { imageData } (base64, supports GIF — no links)
+// POST /api/user/profile/banner  body: { imageData } (base64, supports GIF)
 app.post('/api/user/profile/banner', (req, res) =>
     proxyToAPI(req, res, '/api/user/profile/banner'));
 
@@ -309,13 +315,16 @@ app.delete('/api/user/cookies/:cookieId', (req, res) =>
 app.post('/api/user/cookies/delete-multiple', (req, res) =>
     proxyToAPI(req, res, '/api/user/cookies/delete-multiple'));
 
-// ── USER — ORDER HISTORY ──────────────────────────────────────────────────────
+// ── USER — ORDER HISTORY (Transactions page) ──────────────────────────────────
 
 // GET /api/user/orders/history  query: limit, status
+// response includes: summary { total, completed, pending, processing }, orders[]
+// each order: orderId, customerName, postLink, quantity, amount, status,
+//             currentCount, remainingCount, referenceNote, date, time, createdAt, completedAt
 app.get('/api/user/orders/history', (req, res) =>
     proxyToAPI(req, res, `/api/user/orders/history${qs(req)}`));
 
-// GET /api/user/orders/search  query: reference
+// GET /api/user/orders/search  query: reference (searches referenceNote AND orderId)
 app.get('/api/user/orders/search', (req, res) =>
     proxyToAPI(req, res, `/api/user/orders/search${qs(req)}`));
 
@@ -325,6 +334,12 @@ app.get('/api/user/orders/search', (req, res) =>
 app.get('/api/user/inbox', (req, res) =>
     proxyToAPI(req, res, `/api/user/inbox${qs(req)}`));
 
+// FIX: read-all MUST be declared before /:messageId to prevent Express
+//      from treating "read-all" as a messageId param value.
+// PUT /api/user/inbox/read-all
+app.put('/api/user/inbox/read-all', (req, res) =>
+    proxyToAPI(req, res, '/api/user/inbox/read-all'));
+
 // GET /api/user/inbox/:messageId  — also auto-marks as read
 app.get('/api/user/inbox/:messageId', (req, res) =>
     proxyToAPI(req, res, `/api/user/inbox/${req.params.messageId}`));
@@ -333,17 +348,14 @@ app.get('/api/user/inbox/:messageId', (req, res) =>
 app.put('/api/user/inbox/:messageId/read', (req, res) =>
     proxyToAPI(req, res, `/api/user/inbox/${req.params.messageId}/read`));
 
-// PUT /api/user/inbox/read-all  — must be before /:messageId to avoid conflict
-app.put('/api/user/inbox/read-all', (req, res) =>
-    proxyToAPI(req, res, '/api/user/inbox/read-all'));
-
 // DELETE /api/user/inbox/:messageId
 app.delete('/api/user/inbox/:messageId', (req, res) =>
     proxyToAPI(req, res, `/api/user/inbox/${req.params.messageId}`));
 
 // ── ADMIN — ORDERS ────────────────────────────────────────────────────────────
 
-// POST /api/admin/orders  body: { customOrderId?, customerName, postLink, quantity, amount?, notes?, referenceNote?, speed?, priority? }
+// POST /api/admin/orders
+// body: { customOrderId?, customerName, postLink, quantity, amount?, notes?, referenceNote?, speed?, priority? }
 app.post('/api/admin/orders', (req, res) =>
     proxyToAPI(req, res, '/api/admin/orders'));
 
@@ -351,13 +363,14 @@ app.post('/api/admin/orders', (req, res) =>
 app.get('/api/admin/orders', (req, res) =>
     proxyToAPI(req, res, `/api/admin/orders${qs(req)}`));
 
+// FIX: stats/summary and bulk/status MUST be declared before /:orderId
+//      to prevent Express matching "stats" or "bulk" as an orderId param.
+
 // GET /api/admin/orders/stats/summary  (admin only)
-// MUST be declared before /:orderId to avoid Express param conflict
 app.get('/api/admin/orders/stats/summary', (req, res) =>
     proxyToAPI(req, res, '/api/admin/orders/stats/summary'));
 
 // PUT /api/admin/orders/bulk/status  body: { orderIds: [], status }  (admin only)
-// MUST be declared before /:orderId
 app.put('/api/admin/orders/bulk/status', (req, res) =>
     proxyToAPI(req, res, '/api/admin/orders/bulk/status'));
 
@@ -375,7 +388,8 @@ app.delete('/api/admin/orders/:orderId', (req, res) =>
 
 // ── ADMIN — INBOX ─────────────────────────────────────────────────────────────
 
-// POST /api/admin/inbox/broadcast  body: { title, content, imageUrl?, type?, targetUsers: 'all'|'active'|'inactive'|[...usernames] }
+// POST /api/admin/inbox/broadcast
+// body: { title, content, imageUrl?, type?, targetUsers: 'all'|'active'|'inactive'|[...usernames] }
 app.post('/api/admin/inbox/broadcast', (req, res) =>
     proxyToAPI(req, res, '/api/admin/inbox/broadcast'));
 
@@ -393,8 +407,8 @@ app.get('/api/admin/inbox/stats', (req, res) =>
 app.get('/api/admin/users', (req, res) =>
     proxyToAPI(req, res, '/api/admin/users'));
 
-// DELETE /api/admin/users  — delete ALL non-admin users (admin only) ⚠️ destructive
-// MUST be declared before /:username
+// FIX: DELETE /api/admin/users (delete ALL) MUST be before /:username
+//      to prevent Express treating the empty segment as a username param.
 app.delete('/api/admin/users', (req, res) =>
     proxyToAPI(req, res, '/api/admin/users'));
 
@@ -420,7 +434,7 @@ app.get('/api/admin/dashboard', (req, res) =>
 app.use('/api', (req, res) => proxyToAPI(req, res, req.originalUrl));
 
 // =============================================================================
-//  SHARING ENGINE ROUTES
+//  SHARING ENGINE ROUTES  (handled locally — not proxied to server.js)
 // =============================================================================
 
 // POST /share/extract-token
@@ -454,10 +468,6 @@ app.post('/share/get-post-id', async (req, res) => {
 // POST /share/execute
 // Single share with optional speed delay.
 // body: { cookie, token, postId, method? ('smm'|'normal'), speed? ('instant'|'fast'|'slow') }
-// Speed:
-//   instant (DEFAULT) — fire immediately, no delay
-//   fast              — 2 second delay before sharing
-//   slow              — 3 second delay before sharing
 app.post('/share/execute', async (req, res) => {
     const { cookie, token, postId, method, speed } = req.body;
     if (!cookie || !token || !postId) {
@@ -477,7 +487,7 @@ app.post('/share/execute', async (req, res) => {
 // POST /share/batch
 // Run multiple accounts sharing in parallel with per-account speed delay.
 // body: { accounts: [{cookie, token, name?, uid?}], postId, method?, targetCount?, speed? }
-// Speed (delay applied AFTER each successful share per account):
+// Speed delay is applied AFTER each successful share per account:
 //   instant (DEFAULT) — no delay, maximum speed
 //   fast              — 2000ms between each share per account
 //   slow              — 3000ms between each share per account
@@ -533,8 +543,8 @@ async function runBatchShare(sessionId, accounts, postId, method, targetCount, s
                 account: account.name || account.uid || 'Unknown',
                 success: result.success,
                 message: result.success
-                    ? `✓ Shared — ID: ${result.id}`
-                    : `✗ Failed — ${result.error}`
+                    ? `Shared — ID: ${result.id}`
+                    : `Failed — ${result.error}`
             };
 
             session.logs.push(log);
@@ -552,8 +562,6 @@ async function runBatchShare(sessionId, accounts, postId, method, targetCount, s
                 break;
             }
 
-            // Apply speed delay AFTER each successful share
-            // instant = 0ms (skipped), fast = 2s, slow = 3s
             if (delay > 0) await sleep(delay);
         }
     });
@@ -675,5 +683,6 @@ app.listen(PORT, () => {
     console.log(`\n✅  KiroBoost Web Server  →  http://localhost:${PORT}`);
     console.log(`🔗  Backend API           →  ${API_URL}`);
     console.log(`⚡  Share speed modes     →  instant (0ms) | fast (2s) | slow (3s)`);
-    console.log(`📦  API routes proxied    →  40 endpoints from server.js\n`);
+    console.log(`📦  API routes proxied    →  45 endpoints from server.js`);
+    console.log(`🔄  Share engine          →  batch | execute | sessions | token extraction\n`);
 });
