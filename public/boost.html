@@ -5,7 +5,6 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>KiroBoost - Boost</title>
     <link rel="shortcut icon" href="img/fav-icon.png" type="image/x-icon">
-    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet">
@@ -414,6 +413,22 @@
             #grid { grid-template-columns: 1fr; }
             #page { padding: 1rem .75rem 3rem; }
         }
+
+        /* ── Result modal ── */
+        .result-overlay {
+            position: fixed; inset: 0; z-index: 600;
+            background: rgba(0,0,0,.88); backdrop-filter: blur(8px);
+            display: none; align-items: center; justify-content: center; padding: 1rem;
+        }
+        .result-overlay.open { display: flex; animation: fadeIn .2s ease; }
+        @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
+        .result-box {
+            background: #111; border: 1px solid rgba(255,255,255,.14);
+            border-radius: 18px; width: 100%; max-width: 380px;
+            padding: 1.75rem 1.5rem;
+            animation: slideUp .25s ease;
+        }
+        @keyframes slideUp { from { transform: translateY(20px); opacity: 0; } to { transform: none; opacity: 1; } }
     </style>
 </head>
 <body>
@@ -562,16 +577,9 @@
                     </div>
 
                     <div class="acct-list" id="acctList">
-                        <!-- Skeleton -->
-                        ${Array(3).fill(0).map(()=>`
-                        <div style="display:flex;align-items:center;gap:10px;padding:.6rem .75rem;border:1.5px solid var(--border);border-radius:9px;">
-                            <div class="skeleton" style="width:16px;height:16px;border-radius:3px;"></div>
-                            <div class="skeleton" style="width:32px;height:32px;border-radius:50%;flex-shrink:0;"></div>
-                            <div style="flex:1;display:flex;flex-direction:column;gap:5px;">
-                                <div class="skeleton" style="height:11px;width:55%;"></div>
-                                <div class="skeleton" style="height:9px;width:35%;"></div>
-                            </div>
-                        </div>`).join('')}
+                        <div class="acct-skel" style="display:flex;align-items:center;gap:10px;padding:.6rem .75rem;border:1.5px solid var(--border);border-radius:9px;"><div class="skeleton" style="width:16px;height:16px;border-radius:3px;flex-shrink:0;"></div><div class="skeleton" style="width:32px;height:32px;border-radius:50%;flex-shrink:0;"></div><div style="flex:1;display:flex;flex-direction:column;gap:5px;"><div class="skeleton" style="height:11px;width:55%;"></div><div class="skeleton" style="height:9px;width:35%;"></div></div></div>
+                        <div class="acct-skel" style="display:flex;align-items:center;gap:10px;padding:.6rem .75rem;border:1.5px solid var(--border);border-radius:9px;"><div class="skeleton" style="width:16px;height:16px;border-radius:3px;flex-shrink:0;"></div><div class="skeleton" style="width:32px;height:32px;border-radius:50%;flex-shrink:0;"></div><div style="flex:1;display:flex;flex-direction:column;gap:5px;"><div class="skeleton" style="height:11px;width:40%;"></div><div class="skeleton" style="height:9px;width:60%;"></div></div></div>
+                        <div class="acct-skel" style="display:flex;align-items:center;gap:10px;padding:.6rem .75rem;border:1.5px solid var(--border);border-radius:9px;"><div class="skeleton" style="width:16px;height:16px;border-radius:3px;flex-shrink:0;"></div><div class="skeleton" style="width:32px;height:32px;border-radius:50%;flex-shrink:0;"></div><div style="flex:1;display:flex;flex-direction:column;gap:5px;"><div class="skeleton" style="height:11px;width:65%;"></div><div class="skeleton" style="height:9px;width:30%;"></div></div></div>
                     </div>
 
                 </div>
@@ -670,9 +678,15 @@
     </div>
 </div>
 
+<!-- ═══ RESULT MODAL ═══ -->
+<div class="result-overlay" id="resultModal">
+    <div class="result-box">
+        <div id="resultModalBody"></div>
+    </div>
+</div>
+
 <div id="toast"></div>
 
-<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
 <script>
 'use strict';
 
@@ -681,411 +695,293 @@ const TOKEN = localStorage.getItem('token') || localStorage.getItem('kb_token');
 if (!TOKEN) { window.location.href = '/login'; }
 function authHeaders() { return { 'Authorization': `Bearer ${TOKEN}`, 'Content-Type': 'application/json' }; }
 async function apiFetch(url, opts = {}) {
-    const res = await fetch(url, { ...opts, headers: { ...authHeaders(), ...(opts.headers||{}) } });
-    if (res.status === 401) { logout(); return null; }
-    return res.json();
+    try {
+        const res = await fetch(url, { ...opts, headers: { ...authHeaders(), ...(opts.headers||{}) } });
+        if (res.status === 401) { logout(); return null; }
+        return await res.json();
+    } catch (e) { console.error('apiFetch error:', url, e); return null; }
 }
 
-/* ── Spinner ── */
 const SPINNER = `<span class="geist-spinner"><svg height="16" viewBox="0 0 16 16" width="16" style="color:currentColor"><g clip-path="url(#csp)"><path d="M8 0V4" stroke="currentColor" stroke-width="1.5"/><path opacity=".5" d="M8 16V12" stroke="currentColor" stroke-width="1.5"/><path opacity=".9" d="M3.29773 1.52783L5.64887 4.7639" stroke="currentColor" stroke-width="1.5"/><path opacity=".1" d="M12.7023 1.52783L10.3511 4.7639" stroke="currentColor" stroke-width="1.5"/><path opacity=".4" d="M12.7023 14.472L10.3511 11.236" stroke="currentColor" stroke-width="1.5"/><path opacity=".6" d="M3.29773 14.472L5.64887 11.236" stroke="currentColor" stroke-width="1.5"/><path opacity=".2" d="M15.6085 5.52783L11.8043 6.7639" stroke="currentColor" stroke-width="1.5"/><path opacity=".7" d="M0.391602 10.472L4.19583 9.23598" stroke="currentColor" stroke-width="1.5"/><path opacity=".3" d="M15.6085 10.4722L11.8043 9.2361" stroke="currentColor" stroke-width="1.5"/><path opacity=".8" d="M0.391602 5.52783L4.19583 6.7639" stroke="currentColor" stroke-width="1.5"/></g><defs><clipPath id="csp"><rect width="16" height="16" fill="white"/></clipPath></defs></svg></span>`;
 
-/* ── Toast ── */
-function toast(msg, type = 'success') {
-    const el = document.getElementById('toast');
-    const icons = {
-        success:`<svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="20 6 9 17 4 12"/></svg>`,
-        error:  `<svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/></svg>`,
-        info:   `<svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><circle cx="12" cy="12" r="10"/><line x1="12" y1="16" x2="12" y2="12"/><line x1="12" y1="8" x2="12.01" y2="8"/></svg>`
-    };
-    el.className = `show ${type}`;
-    el.innerHTML = (icons[type]||icons.info) + msg;
-    clearTimeout(el._t);
-    el._t = setTimeout(() => el.className = '', 3200);
+function toast(msg, type='success') {
+    const el=document.getElementById('toast');
+    const icons={success:`<svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="20 6 9 17 4 12"/></svg>`,error:`<svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/></svg>`,info:`<svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><circle cx="12" cy="12" r="10"/><line x1="12" y1="16" x2="12" y2="12"/><line x1="12" y1="8" x2="12.01" y2="8"/></svg>`};
+    el.className=`show ${type}`;el.innerHTML=(icons[type]||icons.info)+msg;
+    clearTimeout(el._t);el._t=setTimeout(()=>el.className='',3500);
 }
-
-function logout() {
-    ['token','kb_token','userRole','username','kb_user'].forEach(k => localStorage.removeItem(k));
-    window.location.href = '/login';
-}
+function logout(){['token','kb_token','userRole','username','kb_user'].forEach(k=>localStorage.removeItem(k));window.location.href='/login';}
+function esc(s){return(s||'').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;');}
 
 /* ── State ── */
-let cookies      = [];       // all saved cookies
-let selectedIds  = new Set();
-let resolvedPostId = null;
-let selectedMethod = 'normal';
-let selectedSpeed  = 'instant';
-let sessionId    = null;
-let pollTimer    = null;
-let logLines     = [];
+let cookies=[],selectedIds=new Set(),resolvedPostId=null;
+let selectedMethod='normal',selectedSpeed='instant';
+let sessionId=null,boostOrderId=null,pollTimer=null,logLines=[];
 
-/* ── Selectors ── */
-function selectMethod(el) {
-    if (el.classList.contains('method-locked')) return; // SMM is locked
-    document.querySelectorAll('.method-opt').forEach(o => {
+/* ── Method / Speed selectors ── */
+function selectMethod(el){
+    if(el.classList.contains('method-locked'))return;
+    document.querySelectorAll('.method-opt').forEach(o=>{
         o.classList.remove('selected');
-        // reset animation so it can replay
-        const desc = o.querySelector('.method-opt-desc');
-        if (desc) { desc.style.animation = 'none'; desc.offsetHeight; desc.style.animation = ''; }
+        const d=o.querySelector('.method-opt-desc');
+        if(d){d.style.animation='none';void d.offsetHeight;d.style.animation='';}
     });
-    el.classList.add('selected');
-    selectedMethod = el.dataset.method;
-    // Force re-trigger shimmer
-    const desc = el.querySelector('.method-opt-desc');
-    if (desc) { desc.style.animation = 'none'; desc.offsetHeight; desc.style.animation = 'desc-shimmer 1.8s linear forwards'; }
+    el.classList.add('selected');selectedMethod=el.dataset.method;
+    const d=el.querySelector('.method-opt-desc');
+    if(d){d.style.animation='none';void d.offsetHeight;d.style.animation='desc-shimmer 1.8s linear forwards';}
 }
-
-function selectSpeed(el) {
-    document.querySelectorAll('.speed-opt').forEach(o => o.classList.remove('selected'));
-    el.classList.add('selected');
-    selectedSpeed = el.dataset.speed;
+function selectSpeed(el){
+    document.querySelectorAll('.speed-opt').forEach(o=>o.classList.remove('selected'));
+    el.classList.add('selected');selectedSpeed=el.dataset.speed;
 }
 
 /* ── Link resolve ── */
-function onLinkInput() {
+function onLinkInput(){
     document.getElementById('postIdChip').classList.remove('show','error');
     document.getElementById('linkError').classList.remove('show');
-    resolvedPostId = null;
+    resolvedPostId=null;
 }
-
-async function resolvePostId() {
-    const link = document.getElementById('postLink').value.trim();
-    if (!link) {
-        showErr('linkError','linkErrorText','Please enter a Facebook post URL.');
-        return;
-    }
-    const btn = document.getElementById('resolveBtn');
-    const content = document.getElementById('resolveBtnContent');
-    btn.disabled = true;
-    content.innerHTML = SPINNER;
-
+async function resolvePostId(){
+    const link=document.getElementById('postLink').value.trim();
+    if(!link){showErr('linkError','linkErrorText','Please enter a Facebook post URL.');return;}
+    const btn=document.getElementById('resolveBtn'),content=document.getElementById('resolveBtnContent');
+    btn.disabled=true;content.innerHTML=SPINNER;
     document.getElementById('linkError').classList.remove('show');
-
-    const data = await fetch('/share/get-post-id', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ link })
-    }).then(r => r.json()).catch(() => null);
-
-    btn.disabled = false;
-    content.innerHTML = 'Resolve';
-
-    const chip = document.getElementById('postIdChip');
-    if (data?.success && data.postId) {
-        resolvedPostId = data.postId;
-        document.getElementById('postIdText').textContent = data.postId;
-        chip.classList.remove('error'); chip.classList.add('show');
-        toast(`Post ID resolved: ${data.postId}`, 'success');
+    const data=await fetch('/share/get-post-id',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({link})}).then(r=>r.json()).catch(()=>null);
+    btn.disabled=false;content.innerHTML='Resolve';
+    const chip=document.getElementById('postIdChip');
+    if(data?.success&&data.postId){
+        resolvedPostId=data.postId;
+        document.getElementById('postIdText').textContent=data.postId;
+        chip.classList.remove('error');chip.classList.add('show');
+        toast(`Post ID resolved: ${data.postId}`,'success');
     } else {
-        resolvedPostId = null;
-        chip.className = 'post-id-chip show error';
-        chip.innerHTML = `<svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><circle cx="12" cy="12" r="10"/><line x1="15" y1="9" x2="9" y2="15"/><line x1="9" y1="9" x2="15" y2="15"/></svg> Could not resolve post ID`;
-        showErr('linkError','linkErrorText', data?.message || 'Failed to resolve post ID. Check the link.');
+        resolvedPostId=null;
+        chip.className='post-id-chip show error';
+        chip.innerHTML=`<svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><circle cx="12" cy="12" r="10"/><line x1="15" y1="9" x2="9" y2="15"/><line x1="9" y1="9" x2="15" y2="15"/></svg> Could not resolve post ID`;
+        showErr('linkError','linkErrorText',data?.message||'Failed to resolve post ID. Check the link.');
     }
 }
 
 /* ── Accounts ── */
-function fbAvatarColor(name) {
-    const colors = ['#1877f2','#4267B2','#5865f2','#7c3aed','#0891b2','#0f766e'];
-    return colors[(name||'?').charCodeAt(0) % colors.length];
-}
-
-function renderAccounts() {
-    const list = document.getElementById('acctList');
-    const visible = cookies.filter(c => c.status === 'active' || c.status === 'restricted');
-
-    if (!visible.length && !cookies.length) {
-        list.innerHTML = `<div class="no-cookies-msg">
-            <svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.3"><rect x="3" y="3" width="18" height="18" rx="2"/><path d="M3 9h18M9 21V9"/></svg>
-            No cookies added yet.
-            <a href="/cookies" class="no-cookies-link">Go add cookies →</a>
-        </div>`;
-        document.getElementById('selectedCount').textContent = 'No accounts';
-        return;
+function fbAvatarColor(name){const c=['#1877f2','#4267B2','#5865f2','#7c3aed','#0891b2','#0f766e'];return c[(name||'?').charCodeAt(0)%c.length];}
+function renderAccounts(){
+    const list=document.getElementById('acctList');
+    const visible=cookies.filter(c=>c.status==='active'||c.status==='restricted');
+    if(!visible.length&&!cookies.length){
+        list.innerHTML=`<div class="no-cookies-msg"><svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.3"><rect x="3" y="3" width="18" height="18" rx="2"/><path d="M3 9h18M9 21V9"/></svg>No cookies added yet.<a href="/cookies" class="no-cookies-link">Go add cookies →</a></div>`;
+        document.getElementById('selectedCount').textContent='No accounts';return;
     }
-
-    if (!visible.length) {
-        list.innerHTML = `<div class="no-cookies-msg">
-            <span>All your cookies are expired or blocked.</span>
-            <a href="/cookies" class="no-cookies-link">Manage cookies →</a>
-        </div>`;
-        return;
-    }
-
-    list.innerHTML = visible.map(c => {
-        const sel = selectedIds.has(c.id);
-        const bg  = fbAvatarColor(c.name);
-        const letter = (c.name||'?').charAt(0).toUpperCase();
-        return `
-        <div class="acct-row${sel ? ' selected' : ''}" id="acct-${c.id}" onclick="toggleAcct('${c.id}')">
+    if(!visible.length){list.innerHTML=`<div class="no-cookies-msg"><span>All cookies expired or blocked.</span><a href="/cookies" class="no-cookies-link">Manage cookies →</a></div>`;return;}
+    list.innerHTML=visible.map(c=>{
+        const sel=selectedIds.has(c.id),bg=fbAvatarColor(c.name);
+        return `<div class="acct-row${sel?' selected':''}" id="acct-${c.id}" onclick="toggleAcct('${c.id}')">
             <div class="acct-ck"></div>
-            <div class="acct-avatar" style="background:${bg};color:#fff;">${letter}</div>
-            <div class="acct-info">
-                <div class="acct-name">${esc(c.name)}</div>
-                <div class="acct-uid">${esc(c.uid)}</div>
-            </div>
-            <div class="acct-right">
-                <span class="acct-status-dot" style="background:${c.status==='active'?'#22c55e':'#eab308'};"></span>
-                <span class="acct-status-label">${c.status}</span>
-            </div>
+            <div class="acct-avatar" style="background:${bg};color:#fff;">${(c.name||'?').charAt(0).toUpperCase()}</div>
+            <div class="acct-info"><div class="acct-name">${esc(c.name)}</div><div class="acct-uid">${esc(c.uid)}</div></div>
+            <div class="acct-right"><span class="acct-status-dot" style="background:${c.status==='active'?'#22c55e':'#eab308'};"></span><span class="acct-status-label">${c.status}</span></div>
         </div>`;
     }).join('');
-
     updateSelectedCount();
 }
-
-function toggleAcct(id) {
-    if (selectedIds.has(id)) selectedIds.delete(id);
-    else selectedIds.add(id);
+function toggleAcct(id){if(selectedIds.has(id))selectedIds.delete(id);else selectedIds.add(id);renderAccounts();}
+function toggleSelectAll(){
+    const active=cookies.filter(c=>c.status==='active'||c.status==='restricted');
+    const allSel=active.every(c=>selectedIds.has(c.id));
+    if(allSel)selectedIds.clear();else active.forEach(c=>selectedIds.add(c.id));
     renderAccounts();
 }
-
-function toggleSelectAll() {
-    const active = cookies.filter(c => c.status === 'active' || c.status === 'restricted');
-    const allSelected = active.every(c => selectedIds.has(c.id));
-    if (allSelected) { selectedIds.clear(); }
-    else { active.forEach(c => selectedIds.add(c.id)); }
-    renderAccounts();
-}
-
-function updateSelectedCount() {
-    const total  = cookies.filter(c => c.status === 'active' || c.status === 'restricted').length;
-    const selCnt = selectedIds.size;
-    document.getElementById('selectedCount').textContent = `${selCnt} of ${total} selected`;
-    const btn = document.getElementById('selectAllBtn');
-    btn.textContent = selCnt === total && total > 0 ? 'Deselect All' : 'Select All';
+function updateSelectedCount(){
+    const total=cookies.filter(c=>c.status==='active'||c.status==='restricted').length;
+    document.getElementById('selectedCount').textContent=`${selectedIds.size} of ${total} selected`;
+    document.getElementById('selectAllBtn').textContent=selectedIds.size===total&&total>0?'Deselect All':'Select All';
 }
 
 /* ── Error helpers ── */
-function showErr(boxId, textId, msg) {
-    document.getElementById(textId).textContent = msg;
-    document.getElementById(boxId).classList.add('show');
-}
-function hideErr(boxId) { document.getElementById(boxId).classList.remove('show'); }
-function esc(s) { return (s||'').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;'); }
+function showErr(boxId,textId,msg){document.getElementById(textId).textContent=msg;document.getElementById(boxId).classList.add('show');}
+function hideErr(boxId){document.getElementById(boxId).classList.remove('show');}
 
-/* ── Log helpers ── */
-const LOG_ICONS = {
-    ok:   `<svg width="13" height="13" viewBox="0 0 16 16" style="color:#86efac;flex-shrink:0;" fill="currentColor"><path fill-rule="evenodd" clip-rule="evenodd" d="M15.5607 3.99999L15.0303 4.53032L6.23744 13.3232C5.55403 14.0066 4.44599 14.0066 3.76257 13.3232L4.2929 12.7929L3.76257 13.3232L0.969676 10.5303L0.439346 9.99999L1.50001 8.93933L2.03034 9.46966L4.82323 12.2626C4.92086 12.3602 5.07915 12.3602 5.17678 12.2626L13.9697 3.46966L14.5 2.93933L15.5607 3.99999Z"/></svg>`,
-    fail: `<svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="#fca5a5" stroke-width="2.5" style="flex-shrink:0;"><circle cx="12" cy="12" r="10"/><line x1="15" y1="9" x2="9" y2="15"/><line x1="9" y1="9" x2="15" y2="15"/></svg>`,
-    info: `<svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="#93c5fd" stroke-width="2.5" style="flex-shrink:0;"><circle cx="12" cy="12" r="10"/><line x1="12" y1="16" x2="12" y2="12"/><line x1="12" y1="8" x2="12.01" y2="8"/></svg>`,
-    warn: `<svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="#fde68a" stroke-width="2.5" style="flex-shrink:0;"><path d="M10.29 3.86L1.82 18a2 2 0 001.71 3h16.94a2 2 0 001.71-3L13.71 3.86a2 2 0 00-3.42 0z"/><line x1="12" y1="9" x2="12" y2="13"/><line x1="12" y1="17" x2="12.01" y2="17"/></svg>`,
+/* ── Log ── */
+const LOG_ICONS={
+    ok:`<svg width="13" height="13" viewBox="0 0 16 16" style="color:#86efac;flex-shrink:0;" fill="currentColor"><path fill-rule="evenodd" clip-rule="evenodd" d="M15.5607 3.99999L15.0303 4.53032L6.23744 13.3232C5.55403 14.0066 4.44599 14.0066 3.76257 13.3232L4.2929 12.7929L3.76257 13.3232L0.969676 10.5303L0.439346 9.99999L1.50001 8.93933L2.03034 9.46966L4.82323 12.2626C4.92086 12.3602 5.07915 12.3602 5.17678 12.2626L13.9697 3.46966L14.5 2.93933L15.5607 3.99999Z"/></svg>`,
+    fail:`<svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="#fca5a5" stroke-width="2.5" style="flex-shrink:0;"><circle cx="12" cy="12" r="10"/><line x1="15" y1="9" x2="9" y2="15"/><line x1="9" y1="9" x2="15" y2="15"/></svg>`,
+    info:`<svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="#93c5fd" stroke-width="2.5" style="flex-shrink:0;"><circle cx="12" cy="12" r="10"/><line x1="12" y1="16" x2="12" y2="12"/><line x1="12" y1="8" x2="12.01" y2="8"/></svg>`,
+    warn:`<svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="#fde68a" stroke-width="2.5" style="flex-shrink:0;"><path d="M10.29 3.86L1.82 18a2 2 0 001.71 3h16.94a2 2 0 001.71-3L13.71 3.86a2 2 0 00-3.42 0z"/><line x1="12" y1="9" x2="12" y2="13"/><line x1="12" y1="17" x2="12.01" y2="17"/></svg>`,
 };
-
-function addLog(type, account, msg) {
-    logLines.push({ type, account, msg, time: new Date().toLocaleTimeString('en',{hour12:true,hour:'2-digit',minute:'2-digit',second:'2-digit'}) });
+function addLog(type,account,msg){
+    logLines.push({type,account,msg,time:new Date().toLocaleTimeString('en',{hour12:true,hour:'2-digit',minute:'2-digit',second:'2-digit'})});
     renderLog();
 }
+function renderLog(){
+    const box=document.getElementById('logBox');
+    if(!logLines.length){box.innerHTML=`<div class="log-empty" id="logEmpty"><svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.3"><path d="M14 2H6a2 2 0 00-2 2v16a2 2 0 002 2h12a2 2 0 002-2V8z"/><polyline points="14 2 14 8 20 8"/></svg><span>No activity yet</span></div>`;return;}
+    box.innerHTML=logLines.slice(-150).reverse().map(l=>`<div class="log-entry"><span class="log-icon">${LOG_ICONS[l.type]||LOG_ICONS.info}</span><span class="log-time">${l.time}</span><span class="log-acct">${esc(l.account)}</span><span class="log-msg ${l.type}">${esc(l.msg)}</span></div>`).join('');
+}
+function clearLog(){logLines=[];document.getElementById('logBox').innerHTML=`<div class="log-empty" id="logEmpty"><svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.3"><path d="M14 2H6a2 2 0 00-2 2v16a2 2 0 002 2h12a2 2 0 002-2V8z"/><polyline points="14 2 14 8 20 8"/></svg><span>No activity yet</span></div>`;}
 
-function renderLog() {
-    const box = document.getElementById('logBox');
-    if (!logLines.length) {
-        box.innerHTML = `<div class="log-empty" id="logEmpty"><svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.3"><path d="M14 2H6a2 2 0 00-2 2v16a2 2 0 002 2h12a2 2 0 002-2V8z"/><polyline points="14 2 14 8 20 8"/></svg><span>No activity yet</span></div>`;
-        return;
-    }
-
-    const html = logLines.slice(-150).reverse().map(l => `
-        <div class="log-entry">
-            <span class="log-icon">${LOG_ICONS[l.type] || LOG_ICONS.info}</span>
-            <span class="log-time">${l.time}</span>
-            <span class="log-acct">${esc(l.account)}</span>
-            <span class="log-msg ${l.type}">${esc(l.msg)}</span>
-        </div>`).join('');
-    box.innerHTML = html;
+/* ── Session status ── */
+function setSessionStatus(status){
+    const badge=document.getElementById('sessionStatusBadge');
+    badge.className=`session-status ss-${status}`;
+    badge.innerHTML=`<span class="ss-dot"></span><span>${status.charAt(0).toUpperCase()+status.slice(1)}</span>`;
+}
+function updateProgress(success,target){
+    const pct=target?Math.min(100,Math.round((success/target)*100)):0;
+    document.getElementById('progFill').style.width=target?`${pct}%`:'0%';
+    document.getElementById('progLabel').textContent=target?`${success} / ${target}`:`${success} shares`;
+    document.getElementById('progPct').textContent=target?`${pct}%`:'—';
 }
 
-function clearLog() {
-    logLines = [];
-    document.getElementById('logBox').innerHTML = `<div class="log-empty" id="logEmpty"><svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.3"><path d="M14 2H6a2 2 0 00-2 2v16a2 2 0 002 2h12a2 2 0 002-2V8z"/><polyline points="14 2 14 8 20 8"/></svg><span>No activity yet</span></div>`;
+/* ── Result modal ── */
+function showResultModal(status,successCount,failCount,target){
+    const isDone=status==='completed',isPart=status==='partial';
+    const iconColor=isDone?'rgba(34,197,94,.15)':isPart?'rgba(249,115,22,.12)':'rgba(239,68,68,.1)';
+    const borderColor=isDone?'rgba(34,197,94,.3)':isPart?'rgba(249,115,22,.3)':'rgba(239,68,68,.25)';
+    const titleColor=isDone?'#86efac':isPart?'#fdba74':'#fca5a5';
+    const title=isDone?'Boost Completed!':(isPart?'Session Stopped — Partial':'Session Stopped');
+    const subtitle=isDone?'All shares processed successfully.':'Session was stopped before reaching the target.';
+    const iconSvg=isDone
+        ?`<svg width="26" height="26" viewBox="0 0 16 16" fill="${titleColor}"><path fill-rule="evenodd" clip-rule="evenodd" d="M15.5607 3.99999L15.0303 4.53032L6.23744 13.3232C5.55403 14.0066 4.44599 14.0066 3.76257 13.3232L0.969676 10.5303L0.439346 9.99999L1.50001 8.93933L2.03034 9.46966L4.82323 12.2626C4.92086 12.3602 5.07915 12.3602 5.17678 12.2626L13.9697 3.46966L14.5 2.93933L15.5607 3.99999Z"/></svg>`
+        :`<svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="${titleColor}" stroke-width="2.5"><rect x="3" y="3" width="18" height="18" rx="2"/></svg>`;
+    document.getElementById('resultModalBody').innerHTML=`
+        <div style="text-align:center;padding:.5rem 0;">
+            <div style="width:56px;height:56px;border-radius:50%;background:${iconColor};border:2px solid ${borderColor};display:flex;align-items:center;justify-content:center;margin:0 auto 1rem;">${iconSvg}</div>
+            <div style="font-size:1.15rem;font-weight:800;letter-spacing:-0.02em;color:${titleColor};margin-bottom:.35rem;">${title}</div>
+            <div style="font-size:0.8rem;color:#777;margin-bottom:1.5rem;">${subtitle}</div>
+            <div style="display:grid;grid-template-columns:repeat(3,1fr);gap:.75rem;margin-bottom:1.5rem;">
+                <div style="background:rgba(34,197,94,.08);border:1px solid rgba(34,197,94,.15);border-radius:10px;padding:.75rem .5rem;">
+                    <div style="font-size:1.4rem;font-weight:800;color:#86efac;letter-spacing:-0.04em;">${successCount.toLocaleString()}</div>
+                    <div style="font-size:0.65rem;color:#666;text-transform:uppercase;letter-spacing:.05em;margin-top:2px;">Shared</div>
+                </div>
+                <div style="background:rgba(239,68,68,.07);border:1px solid rgba(239,68,68,.15);border-radius:10px;padding:.75rem .5rem;">
+                    <div style="font-size:1.4rem;font-weight:800;color:#fca5a5;letter-spacing:-0.04em;">${failCount.toLocaleString()}</div>
+                    <div style="font-size:0.65rem;color:#666;text-transform:uppercase;letter-spacing:.05em;margin-top:2px;">Failed</div>
+                </div>
+                <div style="background:rgba(255,255,255,.04);border:1px solid rgba(255,255,255,.08);border-radius:10px;padding:.75rem .5rem;">
+                    <div style="font-size:1.4rem;font-weight:800;color:#888;letter-spacing:-0.04em;">${target?target.toLocaleString():'∞'}</div>
+                    <div style="font-size:0.65rem;color:#666;text-transform:uppercase;letter-spacing:.05em;margin-top:2px;">Target</div>
+                </div>
+            </div>
+            <div style="display:flex;gap:.65rem;">
+                <button onclick="closeResultModal()" style="flex:1;background:rgba(255,255,255,.07);border:1px solid rgba(255,255,255,.12);color:#ccc;border-radius:9px;height:42px;font-size:.82rem;font-weight:700;cursor:pointer;transition:background .2s;" onmouseenter="this.style.background='rgba(255,255,255,.12)'" onmouseleave="this.style.background='rgba(255,255,255,.07)'">Boost Again</button>
+                <a href="/transactions" style="flex:1;background:#fff;color:#000;border:none;border-radius:9px;height:42px;font-size:.82rem;font-weight:700;cursor:pointer;display:flex;align-items:center;justify-content:center;gap:6px;text-decoration:none;">
+                    <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><rect x="3" y="3" width="18" height="18" rx="2"/><path d="M3 9h18M9 21V9"/></svg>View Transactions
+                </a>
+            </div>
+        </div>`;
+    document.getElementById('resultModal').classList.add('open');
 }
-
-/* ── Session status UI ── */
-function setSessionStatus(status) {
-    const badge = document.getElementById('sessionStatusBadge');
-    const text  = document.getElementById('sessionStatusText');
-    badge.className = `session-status ss-${status}`;
-    badge.innerHTML = `<span class="ss-dot"></span><span id="sessionStatusText">${status.charAt(0).toUpperCase()+status.slice(1)}</span>`;
-}
-
-function updateProgress(success, target) {
-    const pct  = target ? Math.min(100, Math.round((success / target) * 100)) : 0;
-    const fill = document.getElementById('progFill');
-    fill.style.width = target ? `${pct}%` : '0%';
-    document.getElementById('progLabel').textContent = target ? `${success} / ${target}` : `${success} shares`;
-    document.getElementById('progPct').textContent   = target ? `${pct}%` : '—';
-}
+function closeResultModal(){document.getElementById('resultModal').classList.remove('open');}
 
 /* ── Poll session ── */
-async function pollSession() {
-    if (!sessionId) return;
-    const data = await fetch(`/share/session/${sessionId}`, { headers: authHeaders() }).then(r=>r.json()).catch(()=>null);
-    if (!data?.success) return;
-
-    document.getElementById('sessSuccess').textContent = data.successCount;
-    document.getElementById('sessFail').textContent    = data.failCount;
-    document.getElementById('sessTarget').textContent  = data.targetCount || '∞';
-
-    updateProgress(data.successCount, data.targetCount);
-
-    // Render new logs
-    const existing = logLines.length;
-    const newLogs  = data.logs || [];
-    if (newLogs.length > existing) {
-        newLogs.slice(existing).forEach(l => {
-            const t = l.success ? 'ok' : 'fail';
-            addLog(t, l.account, l.message);
-        });
-    } else if (newLogs.length && logLines.length === 0) {
-        newLogs.forEach(l => addLog(l.success ? 'ok' : 'fail', l.account, l.message));
-    }
-
-    if (data.status === 'completed' || data.status === 'stopped') {
-        clearInterval(pollTimer); pollTimer = null;
+async function pollSession(){
+    if(!sessionId)return;
+    const data=await fetch(`/share/session/${sessionId}`,{headers:authHeaders()}).then(r=>r.json()).catch(()=>null);
+    if(!data?.success)return;
+    document.getElementById('sessSuccess').textContent=data.successCount;
+    document.getElementById('sessFail').textContent=data.failCount;
+    document.getElementById('sessTarget').textContent=data.targetCount||'∞';
+    updateProgress(data.successCount,data.targetCount);
+    const existing=logLines.length,newLogs=data.logs||[];
+    if(newLogs.length>existing){newLogs.slice(existing).forEach(l=>addLog(l.success?'ok':'fail',l.account,l.message));}
+    else if(newLogs.length&&logLines.length===0){newLogs.forEach(l=>addLog(l.success?'ok':'fail',l.account,l.message));}
+    if(data.status==='completed'||data.status==='stopped'){
+        clearInterval(pollTimer);pollTimer=null;
         setSessionStatus(data.status);
-        const fill = document.getElementById('progFill');
-        fill.className = `prog-fill ${data.status === 'completed' ? 'done' : 'stopped'}`;
-
-        // Mark complete on server
-        if (data.status === 'completed' && data.successCount > 0) {
-            await apiFetch('/api/share/complete', {
-                method: 'POST',
-                body: JSON.stringify({ totalShares: data.successCount })
-            });
-        }
-
-        document.getElementById('startBtn').disabled = false;
-        document.getElementById('startBtnContent').innerHTML = `<span style="display:inline-flex;align-items:center;gap:8px;"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M13 2L3 14h9l-1 8 10-12h-9l1-8z"/></svg>Start Boost</span>`;
+        document.getElementById('progFill').className=`prog-fill ${data.status==='completed'?'done':'stopped'}`;
+        // Save shares + finalize BoosterOrder
+        await apiFetch('/api/share/complete',{method:'POST',body:JSON.stringify({totalShares:data.successCount,orderId:boostOrderId,stopped:data.status==='stopped',failCount:data.failCount})});
+        document.getElementById('startBtn').disabled=false;
+        document.getElementById('startBtnContent').innerHTML=`<span style="display:inline-flex;align-items:center;gap:8px;"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M13 2L3 14h9l-1 8 10-12h-9l1-8z"/></svg>Start Boost</span>`;
         document.getElementById('stopBtn').classList.remove('show');
-
-        addLog('info', 'System', `Session ${data.status} — ${data.successCount} shares, ${data.failCount} failed.`);
-        toast(`Boost ${data.status}! ${data.successCount} shares.`, data.status === 'completed' ? 'success' : 'error');
+        addLog('info','System',`Session ${data.status} — ${data.successCount} shares, ${data.failCount} failed.`);
+        showResultModal(data.status,data.successCount,data.failCount,data.targetCount);
     }
 }
 
 /* ── Start Boost ── */
-async function startBoost() {
-    hideErr('startError');
-    hideErr('linkError');
-
-    // Validate
-    if (!resolvedPostId) {
-        showErr('startError','startErrorText','Please resolve a valid Facebook post link first.');
-        return;
-    }
-    if (selectedIds.size === 0) {
-        showErr('startError','startErrorText','Select at least one account to boost with.');
-        return;
-    }
-
-    const target = parseInt(document.getElementById('targetCount').value) || null;
-    const btn    = document.getElementById('startBtn');
-    const bContent = document.getElementById('startBtnContent');
-
-    btn.disabled = true;
-    bContent.innerHTML = SPINNER;
-    addLog('info', 'System', `Extracting tokens for ${selectedIds.size} account(s)...`);
+async function startBoost(){
+    hideErr('startError');hideErr('linkError');
+    if(!resolvedPostId){showErr('startError','startErrorText','Please resolve a valid Facebook post link first.');return;}
+    if(selectedIds.size===0){showErr('startError','startErrorText','Select at least one account to boost with.');return;}
+    const target=parseInt(document.getElementById('targetCount').value)||null;
+    const postLink=document.getElementById('postLink').value.trim();
+    const btn=document.getElementById('startBtn'),bContent=document.getElementById('startBtnContent');
+    btn.disabled=true;bContent.innerHTML=SPINNER;
+    logLines=[];boostOrderId=null;
+    addLog('info','System',`Extracting tokens for ${selectedIds.size} account(s)...`);
     setSessionStatus('running');
-
-    // Step 1: Extract tokens for all selected cookies
-    const selected = cookies.filter(c => selectedIds.has(c.id));
-    const accounts = [];
-    let extractFails = 0;
-
-    await Promise.all(selected.map(async (c) => {
-        const row = document.getElementById(`acct-${c.id}`);
-        if (row) row.classList.add('extracting');
-
-        const data = await fetch('/share/extract-token', {
-            method: 'POST',
-            headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify({ cookie: c.cookie, method: selectedMethod === 'smm' ? 'smm' : 'content_management' })
-        }).then(r=>r.json()).catch(()=>null);
-
-        if (row) row.classList.remove('extracting');
-
-        if (data?.success && data.token) {
-            accounts.push({ cookie: c.cookie, token: data.token, name: c.name, uid: c.uid });
-            addLog('ok', c.name, `✓ Token extracted`);
-        } else {
-            extractFails++;
-            addLog('fail', c.name, `✗ Token extraction failed — skipped`);
-        }
+    // Step 1 — Extract tokens
+    const selected=cookies.filter(c=>selectedIds.has(c.id));
+    const accounts=[];let extractFails=0;
+    await Promise.all(selected.map(async(c)=>{
+        const row=document.getElementById(`acct-${c.id}`);
+        if(row)row.classList.add('extracting');
+        const data=await fetch('/share/extract-token',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({cookie:c.cookie,method:selectedMethod==='smm'?'smm':'content_management'})}).then(r=>r.json()).catch(()=>null);
+        if(row)row.classList.remove('extracting');
+        if(data?.success&&data.token){accounts.push({cookie:c.cookie,token:data.token,name:c.name,uid:c.uid});addLog('ok',c.name,'Token extracted');}
+        else{extractFails++;addLog('fail',c.name,'Token extraction failed — skipped');}
     }));
-
-    if (!accounts.length) {
-        btn.disabled = false;
-        bContent.innerHTML = `<span style="display:inline-flex;align-items:center;gap:8px;"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M13 2L3 14h9l-1 8 10-12h-9l1-8z"/></svg>Start Boost</span>`;
-        setSessionStatus('idle');
-        showErr('startError','startErrorText','All selected cookies failed token extraction. They may be expired.');
-        toast('Token extraction failed for all accounts.','error');
-        return;
+    if(!accounts.length){
+        btn.disabled=false;
+        bContent.innerHTML=`<span style="display:inline-flex;align-items:center;gap:8px;"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M13 2L3 14h9l-1 8 10-12h-9l1-8z"/></svg>Start Boost</span>`;
+        setSessionStatus('idle');showErr('startError','startErrorText','All selected cookies failed token extraction. They may be expired.');toast('Token extraction failed for all accounts.','error');return;
     }
-
-    if (extractFails > 0) {
-        addLog('warn', 'System', `${extractFails} account(s) skipped — ${accounts.length} will proceed.`);
+    if(extractFails>0)addLog('warn','System',`${extractFails} account(s) skipped — ${accounts.length} will proceed.`);
+    // Step 2 — Create BoosterOrder via /api/share/start
+    const startData=await apiFetch('/api/share/start',{method:'POST',body:JSON.stringify({
+        postLink:postLink,quantity:target||accounts.length,accountCount:accounts.length,
+        speed:selectedSpeed,
+        referenceNote:`Boost – ${new Date().toLocaleString('en-PH',{month:'short',day:'2-digit',year:'numeric',hour:'2-digit',minute:'2-digit'})}`
+    })});
+    if(startData?.orderId){boostOrderId=startData.orderId;addLog('info','System',`Order created — ${boostOrderId}`);}
+    // Step 3 — Start batch
+    addLog('info','System',`Starting batch — ${accounts.length} accounts · ${selectedMethod} · ${selectedSpeed}${target?' · target: '+target:''}`);
+    const batchData=await fetch('/share/batch',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({accounts,postId:resolvedPostId,method:selectedMethod,targetCount:target,speed:selectedSpeed})}).then(r=>r.json()).catch(()=>null);
+    if(!batchData?.success){
+        btn.disabled=false;
+        bContent.innerHTML=`<span style="display:inline-flex;align-items:center;gap:8px;"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M13 2L3 14h9l-1 8 10-12h-9l1-8z"/></svg>Start Boost</span>`;
+        setSessionStatus('idle');showErr('startError','startErrorText',batchData?.message||'Failed to start batch session.');return;
     }
-
-    // Notify server (start tracking)
-    await apiFetch('/api/share/start', { method: 'POST' }).catch(()=>{});
-
-    // Step 2: Start batch session
-    addLog('info', 'System', `Starting batch — ${accounts.length} accounts, method: ${selectedMethod}, speed: ${selectedSpeed}${target ? ', target: '+target : ''}`);
-
-    const batchData = await fetch('/share/batch', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ accounts, postId: resolvedPostId, method: selectedMethod, targetCount: target, speed: selectedSpeed })
-    }).then(r=>r.json()).catch(()=>null);
-
-    if (!batchData?.success) {
-        btn.disabled = false;
-        bContent.innerHTML = `<span style="display:inline-flex;align-items:center;gap:8px;"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M13 2L3 14h9l-1 8 10-12h-9l1-8z"/></svg>Start Boost</span>`;
-        setSessionStatus('idle');
-        showErr('startError','startErrorText', batchData?.message || 'Failed to start batch session.');
-        return;
-    }
-
-    sessionId = batchData.sessionId;
-    document.getElementById('sessTarget').textContent = target || '∞';
+    sessionId=batchData.sessionId;
+    document.getElementById('sessTarget').textContent=target||'∞';
     document.getElementById('stopBtn').classList.add('show');
-
-    addLog('info', 'System', `Session started — ID: ${sessionId}`);
-    toast(`Boost started! ${accounts.length} accounts active.`, 'success');
-
-    // Step 3: Poll every 1.5s
-    logLines = logLines; // keep existing
-    pollTimer = setInterval(pollSession, 1500);
+    addLog('info','System',`Session active — ${accounts.length} accounts running`);
+    toast(`Boost started! ${accounts.length} accounts active.`,'success');
+    pollTimer=setInterval(pollSession,1500);
 }
 
 /* ── Stop session ── */
-async function stopSession() {
-    if (!sessionId) return;
-    await fetch(`/share/session/${sessionId}/stop`, { method: 'POST', headers: authHeaders() }).catch(()=>{});
-    clearInterval(pollTimer); pollTimer = null;
+async function stopSession(){
+    if(!sessionId)return;
+    await fetch(`/share/session/${sessionId}/stop`,{method:'POST',headers:authHeaders()}).catch(()=>{});
+    clearInterval(pollTimer);pollTimer=null;
+    // Get final counts
+    const finalData=await fetch(`/share/session/${sessionId}`,{headers:authHeaders()}).then(r=>r.json()).catch(()=>null);
+    const finalSuccess=finalData?.successCount||0,finalFail=finalData?.failCount||0,finalTarget=finalData?.targetCount||null;
+    // Finalize order as partial/cancelled
+    await apiFetch('/api/share/complete',{method:'POST',body:JSON.stringify({totalShares:finalSuccess,orderId:boostOrderId,stopped:true,failCount:finalFail})});
     setSessionStatus('stopped');
+    document.getElementById('progFill').className='prog-fill stopped';
     document.getElementById('stopBtn').classList.remove('show');
-    document.getElementById('startBtn').disabled = false;
-    document.getElementById('startBtnContent').innerHTML = `<span style="display:inline-flex;align-items:center;gap:8px;"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M13 2L3 14h9l-1 8 10-12h-9l1-8z"/></svg>Start Boost</span>`;
-    document.getElementById('progFill').className = 'prog-fill stopped';
-    addLog('warn', 'System', 'Session manually stopped by user.');
-    toast('Session stopped.', 'info');
+    document.getElementById('startBtn').disabled=false;
+    document.getElementById('startBtnContent').innerHTML=`<span style="display:inline-flex;align-items:center;gap:8px;"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M13 2L3 14h9l-1 8 10-12h-9l1-8z"/></svg>Start Boost</span>`;
+    addLog('warn','System',`Session stopped — ${finalSuccess} shares, ${finalFail} failed.`);
+    showResultModal('stopped',finalSuccess,finalFail,finalTarget);
 }
 
-/* ── Load cookies (GET /api/user/cookies) ── */
-async function loadCookies() {
-    const data = await apiFetch('/api/user/cookies');
-    if (!data?.success) { toast('Failed to load cookies.', 'error'); return; }
-    cookies = data.cookies || [];
-    renderAccounts();
+/* ── Load cookies ── */
+async function loadCookies(){
+    const data=await apiFetch('/api/user/cookies');
+    if(!data?.success){toast('Failed to load cookies.','error');return;}
+    cookies=data.cookies||[];renderAccounts();
 }
 
-/* ── Enter to resolve link ── */
-document.getElementById('postLink').addEventListener('keydown', e => {
-    if (e.key === 'Enter') resolvePostId();
-});
+/* ── Listeners ── */
+document.getElementById('postLink').addEventListener('keydown',e=>{if(e.key==='Enter')resolvePostId();});
+document.getElementById('resultModal').addEventListener('click',function(e){if(e.target===this)closeResultModal();});
 
-/* ── Init ── */
 loadCookies();
 </script>
-
 </body>
 </html>
