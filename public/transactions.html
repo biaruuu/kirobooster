@@ -5,7 +5,6 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>KiroBoost - Transactions</title>
     <link rel="shortcut icon" href="img/fav-icon.png" type="image/x-icon">
-    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet">
@@ -15,268 +14,237 @@
         *::selection { background: #4C4948 !important; color: #fff; }
 
         :root {
-            --bg:      #000000;
-            --card:    #111111;
-            --card2:   #161616;
-            --border:  rgba(255,255,255,0.08);
-            --border2: rgba(255,255,255,0.14);
-            --muted:   #B4B4B4;
-            --muted2:  #888;
-            --green:   #22c55e;
-            --red:     #ef4444;
-            --yellow:  #eab308;
-            --blue:    #3b82f6;
-            --orange:  #f97316;
-            --purple:  #a855f7;
+            --bg:     #000000;
+            --card:   #111111;
+            --border: rgba(255,255,255,0.08);
+            --bord2:  rgba(255,255,255,0.14);
+            --muted:  #B4B4B4;
+            --muted2: #888;
         }
 
         html, body { min-height: 100vh; background: var(--bg); color: #fff; overflow-x: hidden; }
-        ::-webkit-scrollbar { width: 5px; } ::-webkit-scrollbar-track { background: #000; } ::-webkit-scrollbar-thumb { background: #2a2a2a; border-radius: 3px; }
+        ::-webkit-scrollbar { width: 5px; }
+        ::-webkit-scrollbar-track { background: #000; }
+        ::-webkit-scrollbar-thumb { background: #2a2a2a; border-radius: 3px; }
 
         /* ── Navbar ── */
         #topnav {
             position: sticky; top: 0; z-index: 200;
-            background: rgba(0,0,0,0.92); border-bottom: 1px solid var(--border);
+            background: rgba(0,0,0,.92); border-bottom: 1px solid var(--border);
             backdrop-filter: blur(12px);
             display: flex; align-items: center; justify-content: space-between;
-            padding: 0 1.5rem; height: 60px; gap: 12px;
+            padding: 0 1.5rem; height: 60px;
         }
-        .kiro-logo { display: inline-flex; align-items: baseline; letter-spacing: -0.04em; user-select: none; text-decoration: none; }
+        .kiro-logo { display: inline-flex; align-items: baseline; letter-spacing: -0.04em; text-decoration: none; user-select: none; }
         .logo-kiro  { font-weight: 800; color: #fff; font-style: italic; font-size: 1.4rem; }
-        .logo-boost { font-weight: 300; color: rgba(255,255,255,0.4); font-size: 1.4rem; }
-        .nav-back { display: flex; align-items: center; gap: 6px; color: var(--muted); font-size: 0.82rem; font-weight: 600; text-decoration: none; transition: color .2s; }
+        .logo-boost { font-weight: 300; color: rgba(255,255,255,.4); font-size: 1.4rem; }
+        .nav-back { display: flex; align-items: center; gap: 6px; color: var(--muted); font-size: .82rem; font-weight: 600; text-decoration: none; transition: color .2s; }
         .nav-back:hover { color: #fff; }
 
         /* ── Page ── */
         #page { max-width: 900px; margin: 0 auto; padding: 2rem 1.25rem 4rem; display: flex; flex-direction: column; gap: 1.25rem; }
 
-        /* ── Page header ── */
-        .page-title { font-size: 1.5rem; font-weight: 800; letter-spacing: -0.03em; }
-        .page-sub   { font-size: 0.82rem; color: var(--muted2); margin-top: 2px; }
+        .page-title { font-size: 1.5rem; font-weight: 800; letter-spacing: -.03em; }
+        .page-sub   { font-size: .82rem; color: var(--muted2); margin-top: 2px; }
 
         /* ── Stats strip ── */
-        .stats-strip { display: grid; grid-template-columns: repeat(4, 1fr); gap: .85rem; }
+        .stats-strip { display: grid; grid-template-columns: repeat(4,1fr); gap: .85rem; }
         .scard {
             background: var(--card); border: 1px solid var(--border); border-radius: 12px;
             padding: 1rem 1.1rem; display: flex; flex-direction: column; gap: 4px;
             transition: border-color .2s;
         }
-        .scard:hover { border-color: var(--border2); }
-        .scard-val  { font-size: 1.5rem; font-weight: 800; letter-spacing: -0.04em; line-height: 1; }
-        .scard-key  { font-size: 0.7rem; color: var(--muted2); font-weight: 500; text-transform: uppercase; letter-spacing: .05em; }
+        .scard:hover { border-color: var(--bord2); }
+        .scard-val { font-size: 1.5rem; font-weight: 800; letter-spacing: -.04em; line-height: 1; color: #fff; }
+        .scard-key { font-size: .7rem; color: var(--muted2); font-weight: 500; text-transform: uppercase; letter-spacing: .05em; }
         .scard-val.green  { color: #86efac; }
         .scard-val.yellow { color: #fde68a; }
         .scard-val.blue   { color: #93c5fd; }
-        .scard-val.orange { color: #fdba74; }
 
-        /* ── Search + filters bar ── */
+        /* ── Toolbar ── */
         .toolbar {
             background: var(--card); border: 1px solid var(--border); border-radius: 12px;
-            padding: .85rem 1.1rem;
-            display: flex; gap: 10px; align-items: center; flex-wrap: wrap;
+            padding: .85rem 1.1rem; display: flex; gap: 10px; align-items: center; flex-wrap: wrap;
         }
-        .search-wrap {
-            position: relative; flex: 1; min-width: 180px;
-        }
-        .search-icon { position: absolute; left: 10px; top: 50%; transform: translateY(-50%); color: #555; display: flex; }
+        .search-wrap { position: relative; flex: 1; min-width: 160px; }
+        .search-icon { position: absolute; left: 10px; top: 50%; transform: translateY(-50%); color: #555; display: flex; pointer-events: none; }
         .search-input {
             background: rgba(255,255,255,.05); border: 1px solid var(--border);
             border-radius: 8px; color: #fff; padding: .55rem .85rem .55rem 34px;
-            font-size: 0.82rem; width: 100%; outline: none; transition: border-color .2s, background .2s;
+            font-size: .82rem; width: 100%; outline: none; transition: border-color .2s, background .2s;
         }
         .search-input:focus { border-color: rgba(255,255,255,.25); background: rgba(255,255,255,.08); }
         .search-input::placeholder { color: #444; }
 
-        /* Filter tabs */
-        .filter-tabs { display: flex; gap: 4px; flex-wrap: nowrap; overflow-x: auto; scrollbar-width: none; }
+        .filter-tabs { display: flex; gap: 4px; overflow-x: auto; scrollbar-width: none; flex-shrink: 0; }
         .filter-tabs::-webkit-scrollbar { display: none; }
         .ftab {
             padding: 5px 13px; border-radius: 20px;
-            font-size: 0.72rem; font-weight: 700;
-            cursor: pointer; white-space: nowrap;
+            font-size: .72rem; font-weight: 700; cursor: pointer; white-space: nowrap;
             border: 1px solid transparent; transition: all .15s; color: var(--muted2); background: none;
         }
         .ftab:hover { color: var(--muted); background: rgba(255,255,255,.04); }
-        .ftab.active { background: rgba(255,255,255,.09); border-color: var(--border2); color: #fff; }
+        .ftab.active { background: rgba(255,255,255,.09); border-color: var(--bord2); color: #fff; }
 
-        /* Sort */
         .sort-select {
             background: rgba(255,255,255,.05); border: 1px solid var(--border);
-            border-radius: 8px; color: var(--muted); font-size: 0.75rem; font-weight: 600;
+            border-radius: 8px; color: var(--muted); font-size: .75rem; font-weight: 600;
             padding: .5rem .75rem; outline: none; cursor: pointer; transition: border-color .2s;
-            appearance: none; -webkit-appearance: none;
+            appearance: none; -webkit-appearance: none; flex-shrink: 0;
             background-image: url("data:image/svg+xml,%3Csvg width='10' height='6' viewBox='0 0 10 6' fill='none' xmlns='http://www.w3.org/2000/svg'%3E%3Cpath d='M1 1L5 5L9 1' stroke='%23666' stroke-width='1.5' stroke-linecap='round'/%3E%3C/svg%3E");
             background-repeat: no-repeat; background-position: right 10px center; padding-right: 28px;
         }
-        .sort-select:focus { border-color: rgba(255,255,255,.2); }
         .sort-select option { background: #111; color: #fff; }
 
-        /* ── Order table card ── */
+        /* ── Table card ── */
         .table-card { background: var(--card); border: 1px solid var(--border); border-radius: 12px; overflow: hidden; }
         .table-header {
-            display: flex; align-items: center; justify-content: space-between; flex-wrap: wrap; gap: 8px;
+            display: flex; align-items: center; justify-content: space-between; gap: 8px;
             padding: .9rem 1.25rem; border-bottom: 1px solid var(--border);
         }
-        .table-title { font-size: 0.78rem; font-weight: 700; text-transform: uppercase; letter-spacing: .07em; color: var(--muted2); }
-        .table-count { font-size: 0.72rem; color: #555; }
+        .table-title { font-size: .78rem; font-weight: 700; text-transform: uppercase; letter-spacing: .07em; color: var(--muted2); }
+        .table-count { font-size: .72rem; color: #555; }
 
-        /* Table */
-        .orders-table { width: 100%; border-collapse: collapse; }
+        .orders-table { width: 100%; border-collapse: collapse; min-width: 520px; }
         .orders-table th {
-            padding: .65rem 1.25rem; text-align: left;
-            font-size: 0.67rem; font-weight: 700; text-transform: uppercase; letter-spacing: .06em;
+            padding: .65rem 1rem; text-align: left;
+            font-size: .67rem; font-weight: 700; text-transform: uppercase; letter-spacing: .06em;
             color: var(--muted2); border-bottom: 1px solid var(--border);
             white-space: nowrap; background: rgba(255,255,255,.015);
         }
         .orders-table td {
-            padding: .85rem 1.25rem; font-size: 0.82rem;
-            border-bottom: 1px solid rgba(255,255,255,.04);
-            vertical-align: middle;
+            padding: .8rem 1rem; font-size: .82rem;
+            border-bottom: 1px solid rgba(255,255,255,.04); vertical-align: middle;
         }
         .orders-table tr:last-child td { border-bottom: none; }
         .orders-table tbody tr { transition: background .12s; cursor: pointer; }
         .orders-table tbody tr:hover { background: rgba(255,255,255,.025); }
 
-        /* Order ID */
-        .order-id { font-size: 0.72rem; font-family: 'Courier New', monospace; color: var(--muted2); font-weight: 600; }
-
-        /* Reference note */
-        .ref-note { font-weight: 700; color: #fff; font-size: 0.82rem; }
-        .ref-note.empty { color: #3a3a3a; font-weight: 400; font-style: italic; font-size: 0.75rem; }
-
-        /* Customer name */
-        .customer-name { font-weight: 600; color: #e0e0e0; font-size: 0.82rem; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; max-width: 140px; }
-
-        /* Quantity */
-        .qty-val { font-weight: 700; font-size: 0.85rem; }
-
-        /* Amount */
-        .amount-val { font-weight: 700; font-size: 0.85rem; color: #86efac; }
-        .amount-val.zero { color: #3a3a3a; }
-
-        /* Date */
-        .date-val { font-size: 0.75rem; color: var(--muted2); white-space: nowrap; }
-        .time-val { font-size: 0.68rem; color: #555; margin-top: 1px; }
+        .order-id  { font-size: .68rem; font-family: 'Courier New', monospace; color: #555; margin-top: 2px; }
+        .ref-note  { font-weight: 700; color: #fff; font-size: .82rem; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; max-width: 160px; display: block; }
+        .ref-empty { color: #3a3a3a; font-weight: 400; font-style: italic; font-size: .75rem; }
+        .cust-name { font-weight: 600; color: #ddd; font-size: .8rem; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; max-width: 120px; display: block; }
+        .qty-val   { font-weight: 700; }
+        .amt-val   { font-weight: 700; color: #86efac; }
+        .amt-zero  { color: #333; }
+        .date-val  { font-size: .75rem; color: var(--muted2); white-space: nowrap; }
+        .time-val  { font-size: .68rem; color: #555; margin-top: 1px; }
 
         /* Status badges */
-        .status-badge {
+        .sb {
             display: inline-flex; align-items: center; gap: 4px;
             padding: 3px 9px; border-radius: 20px;
-            font-size: 0.67rem; font-weight: 700; white-space: nowrap;
+            font-size: .67rem; font-weight: 700; white-space: nowrap;
         }
-        .status-dot { width: 5px; height: 5px; border-radius: 50%; flex-shrink: 0; }
+        .sdot { width: 5px; height: 5px; border-radius: 50%; flex-shrink: 0; }
         .sb-pending    { background: rgba(234,179,8,.12); color: #fde68a; }
-        .sb-pending    .status-dot { background: #eab308; }
+        .sb-pending    .sdot { background: #eab308; }
         .sb-processing { background: rgba(59,130,246,.12); color: #93c5fd; }
-        .sb-processing .status-dot { background: #3b82f6; animation: pulse .9s ease-in-out infinite; }
+        .sb-processing .sdot { background: #3b82f6; animation: blink .9s ease-in-out infinite; }
         .sb-completed  { background: rgba(34,197,94,.12); color: #86efac; }
-        .sb-completed  .status-dot { background: #22c55e; }
+        .sb-completed  .sdot { background: #22c55e; }
         .sb-cancelled  { background: rgba(255,255,255,.06); color: #666; }
-        .sb-cancelled  .status-dot { background: #444; }
+        .sb-cancelled  .sdot { background: #444; }
         .sb-refunded   { background: rgba(168,85,247,.12); color: #d8b4fe; }
-        .sb-refunded   .status-dot { background: #a855f7; }
+        .sb-refunded   .sdot { background: #a855f7; }
         .sb-partial    { background: rgba(249,115,22,.12); color: #fdba74; }
-        .sb-partial    .status-dot { background: #f97316; }
-        @keyframes pulse { 0%,100%{opacity:1} 50%{opacity:.3} }
+        .sb-partial    .sdot { background: #f97316; }
+        @keyframes blink { 0%,100%{opacity:1} 50%{opacity:.3} }
 
-        /* View btn */
         .view-btn {
             background: rgba(255,255,255,.06); border: 1px solid var(--border);
             color: var(--muted2); border-radius: 7px; padding: .3rem .65rem;
-            font-size: 0.7rem; font-weight: 600; cursor: pointer;
-            white-space: nowrap; transition: all .15s;
+            font-size: .7rem; font-weight: 600; cursor: pointer; white-space: nowrap;
+            transition: all .15s;
         }
-        .view-btn:hover { background: rgba(255,255,255,.12); color: #fff; border-color: var(--border2); }
+        .view-btn:hover { background: rgba(255,255,255,.12); color: #fff; border-color: var(--bord2); }
+
+        /* Skeleton */
+        .sk { background: linear-gradient(90deg,#141414 25%,#1e1e1e 50%,#141414 75%); background-size: 200% 100%; animation: shim 1.5s infinite; border-radius: 5px; }
+        @keyframes shim { 0%{background-position:200% 0} 100%{background-position:-200% 0} }
 
         /* Empty state */
         .empty-state {
             padding: 3.5rem 1rem; text-align: center;
-            display: flex; flex-direction: column; align-items: center; gap: 10px; color: var(--muted2);
+            display: flex; flex-direction: column; align-items: center; gap: 10px;
         }
-        .empty-state svg { opacity: .18; }
-        .empty-title { font-size: 0.9rem; font-weight: 700; color: #333; }
-        .empty-sub   { font-size: 0.78rem; }
-
-        /* Skeleton */
-        .skeleton { background: linear-gradient(90deg,#141414 25%,#1c1c1c 50%,#141414 75%); background-size: 200% 100%; animation: shimmer 1.5s infinite; border-radius: 5px; }
-        @keyframes shimmer { 0%{background-position:200% 0} 100%{background-position:-200% 0} }
+        .empty-state svg { opacity: .15; }
+        .empty-ttl { font-size: .9rem; font-weight: 700; color: #333; }
+        .empty-sub { font-size: .78rem; color: #444; }
 
         /* Load more */
         .load-more-wrap { padding: 1rem; text-align: center; border-top: 1px solid var(--border); }
-        .btn-load-more {
-            background: rgba(255,255,255,.06); border: 1px solid var(--border2);
+        .btn-more {
+            background: rgba(255,255,255,.06); border: 1px solid var(--bord2);
             color: var(--muted); border-radius: 8px; padding: .55rem 1.5rem;
-            font-size: 0.78rem; font-weight: 600; cursor: pointer; transition: all .2s;
+            font-size: .78rem; font-weight: 600; cursor: pointer; transition: all .2s;
         }
-        .btn-load-more:hover { background: rgba(255,255,255,.1); color: #fff; }
-        .btn-load-more:disabled { opacity: .4; cursor: not-allowed; }
+        .btn-more:hover { background: rgba(255,255,255,.1); color: #fff; }
+        .btn-more:disabled { opacity: .4; cursor: not-allowed; }
 
-        /* ── Order detail modal ── */
+        /* ── Detail modal ── */
         .modal-overlay {
             position: fixed; inset: 0; z-index: 500;
-            background: rgba(0,0,0,.8); backdrop-filter: blur(6px);
+            background: rgba(0,0,0,.82); backdrop-filter: blur(8px);
             display: none; align-items: center; justify-content: center; padding: 1rem;
         }
-        .modal-overlay.open { display: flex; }
+        .modal-overlay.open { display: flex; animation: mfadein .18s ease; }
+        @keyframes mfadein { from{opacity:0} to{opacity:1} }
         .modal-box {
-            background: #111; border: 1px solid var(--border2);
-            border-radius: 16px; width: 100%; max-width: 480px;
-            max-height: 90vh; overflow-y: auto;
-            display: flex; flex-direction: column;
+            background: #111; border: 1px solid var(--bord2);
+            border-radius: 16px; width: 100%; max-width: 460px;
+            max-height: 88vh; overflow-y: auto; display: flex; flex-direction: column;
+            animation: mslide .2s ease;
         }
+        @keyframes mslide { from{transform:translateY(16px);opacity:0} to{transform:none;opacity:1} }
         .modal-head {
             display: flex; align-items: center; justify-content: space-between;
-            padding: 1.1rem 1.25rem; border-bottom: 1px solid var(--border);
+            padding: 1rem 1.25rem; border-bottom: 1px solid var(--border);
             position: sticky; top: 0; background: #111; z-index: 2;
         }
-        .modal-head-title { font-size: 0.9rem; font-weight: 800; letter-spacing: -0.02em; }
-        .modal-close {
-            background: none; border: none; color: var(--muted2); cursor: pointer;
-            display: flex; align-items: center; transition: color .2s;
-        }
+        .modal-head-title { font-size: .9rem; font-weight: 800; letter-spacing: -.02em; }
+        .modal-close { background: none; border: none; color: #555; cursor: pointer; display: flex; transition: color .2s; }
         .modal-close:hover { color: #fff; }
-        .modal-body { padding: 1.25rem; display: flex; flex-direction: column; gap: 1rem; }
+        .modal-body { padding: 1.25rem; display: flex; flex-direction: column; gap: .9rem; }
 
-        /* Detail row */
-        .detail-section { display: flex; flex-direction: column; gap: .55rem; }
-        .detail-section-label {
-            font-size: 0.67rem; font-weight: 700; text-transform: uppercase;
-            letter-spacing: .07em; color: #555; margin-bottom: 2px;
+        .dsec { display: flex; flex-direction: column; gap: 0; }
+        .dsec-label {
+            font-size: .65rem; font-weight: 700; text-transform: uppercase;
+            letter-spacing: .07em; color: #444; padding-bottom: .4rem; margin-bottom: .1rem;
         }
-        .detail-row {
+        .drow {
             display: flex; align-items: flex-start; justify-content: space-between; gap: 1rem;
-            padding: .55rem 0; border-bottom: 1px solid rgba(255,255,255,.04);
+            padding: .5rem 0; border-bottom: 1px solid rgba(255,255,255,.04);
         }
-        .detail-row:last-child { border-bottom: none; }
-        .detail-key { font-size: 0.77rem; color: var(--muted2); font-weight: 500; flex-shrink: 0; }
-        .detail-val { font-size: 0.82rem; font-weight: 600; color: #fff; text-align: right; word-break: break-all; }
-        .detail-val.mono { font-family: 'Courier New', monospace; font-size: 0.75rem; color: var(--muted2); }
-        .detail-val.link { color: #93c5fd; cursor: pointer; text-decoration: none; }
-        .detail-val.link:hover { text-decoration: underline; }
-        .detail-val.green { color: #86efac; }
-        .detail-val.muted { color: #555; font-style: italic; font-weight: 400; }
+        .drow:last-child { border-bottom: none; }
+        .dkey { font-size: .77rem; color: var(--muted2); font-weight: 500; flex-shrink: 0; }
+        .dval { font-size: .82rem; font-weight: 600; color: #fff; text-align: right; word-break: break-all; max-width: 220px; }
+        .dval.mono  { font-family: 'Courier New', monospace; font-size: .73rem; color: var(--muted2); }
+        .dval.green { color: #86efac; }
+        .dval.muted { color: #555; font-style: italic; font-weight: 400; }
+        .dval.link  { color: #93c5fd; }
+        .dval.link a { color: inherit; text-decoration: none; }
+        .dval.link a:hover { text-decoration: underline; }
 
-        /* Progress bar in modal */
-        .modal-prog-wrap { padding: .25rem 0; }
-        .modal-prog-labels { display: flex; justify-content: space-between; font-size: 0.7rem; color: var(--muted2); margin-bottom: 5px; }
-        .modal-prog-bar { height: 6px; background: #1a1a1a; border-radius: 3px; overflow: hidden; }
-        .modal-prog-fill { height: 100%; border-radius: 3px; background: #86efac; transition: width .4s ease; }
-
-        /* Copy link btn */
-        .copy-link-btn {
+        .copy-btn {
             background: rgba(255,255,255,.06); border: 1px solid var(--border);
-            color: var(--muted2); border-radius: 6px; padding: 3px 8px;
-            font-size: 0.68rem; font-weight: 600; cursor: pointer; transition: all .15s;
-            display: inline-flex; align-items: center; gap: 4px; margin-left: 6px;
+            color: #666; border-radius: 5px; padding: 2px 7px;
+            font-size: .66rem; font-weight: 600; cursor: pointer; transition: all .15s;
+            display: inline-flex; align-items: center; gap: 3px; margin-left: 5px; vertical-align: middle;
         }
-        .copy-link-btn:hover { background: rgba(255,255,255,.12); color: #fff; }
+        .copy-btn:hover { background: rgba(255,255,255,.12); color: #fff; }
+
+        .prog-wrap { padding: .1rem 0 .25rem; }
+        .prog-labels { display: flex; justify-content: space-between; font-size: .7rem; color: var(--muted2); margin-bottom: 5px; }
+        .prog-bar { height: 5px; background: #1a1a1a; border-radius: 3px; overflow: hidden; }
+        .prog-fill { height: 100%; border-radius: 3px; transition: width .4s ease; }
 
         /* ── Toast ── */
         #toast {
             position: fixed; bottom: 1.5rem; right: 1.5rem;
             background: #111; border: 1px solid var(--border);
             border-radius: 10px; padding: .65rem 1rem;
-            font-size: 0.82rem; font-weight: 500;
+            font-size: .82rem; font-weight: 500;
             display: flex; align-items: center; gap: 8px;
             z-index: 9999; max-width: 300px;
             transform: translateY(20px); opacity: 0;
@@ -287,23 +255,17 @@
         #toast.error   { border-color: rgba(239,68,68,.3); color: #fca5a5; }
         #toast.info    { border-color: rgba(59,130,246,.3); color: #93c5fd; }
 
-        /* Responsive */
+        /* ── Responsive ── */
         @media (max-width: 680px) {
             .stats-strip { grid-template-columns: repeat(2,1fr); }
             #page { padding: 1rem .75rem 3rem; }
-            .orders-table th:nth-child(4),
-            .orders-table td:nth-child(4) { display: none; } /* hide amount on small */
-            .orders-table th:nth-child(2),
-            .orders-table td:nth-child(2) { display: none; } /* hide customer */
-        }
-        @media (max-width: 460px) {
-            .stats-strip { grid-template-columns: repeat(2,1fr); }
+            .orders-table th:nth-child(2), .orders-table td:nth-child(2),
+            .orders-table th:nth-child(4), .orders-table td:nth-child(4) { display: none; }
         }
     </style>
 </head>
 <body>
 
-<!-- ═══ NAVBAR ═══ -->
 <nav id="topnav">
     <a href="/home" class="kiro-logo">
         <span class="logo-kiro">Kiro</span><span class="logo-boost">Boost</span>
@@ -314,16 +276,13 @@
     </a>
 </nav>
 
-<!-- ═══ PAGE ═══ -->
 <div id="page">
 
-    <!-- Header -->
     <div>
         <div class="page-title">Transactions</div>
         <div class="page-sub">Your boost order history and status tracking</div>
     </div>
 
-    <!-- Stats -->
     <div class="stats-strip">
         <div class="scard">
             <div class="scard-val" id="statTotal">—</div>
@@ -343,27 +302,26 @@
         </div>
     </div>
 
-    <!-- Toolbar -->
     <div class="toolbar">
         <div class="search-wrap">
             <span class="search-icon">
                 <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
             </span>
             <input type="text" class="search-input" id="searchInput"
-                placeholder="Search by reference note..."
+                placeholder="Search by reference or order ID…"
                 oninput="onSearchInput()"
-                onkeydown="if(event.key==='Enter') doSearch()">
+                onkeydown="if(event.key==='Enter')doSearch()">
         </div>
         <div class="filter-tabs">
-            <button class="ftab active" data-status=""          onclick="switchFilter(this)">All</button>
-            <button class="ftab"        data-status="pending"   onclick="switchFilter(this)">Pending</button>
+            <button class="ftab active" data-status=""           onclick="switchFilter(this)">All</button>
             <button class="ftab"        data-status="processing" onclick="switchFilter(this)">Processing</button>
-            <button class="ftab"        data-status="completed" onclick="switchFilter(this)">Completed</button>
-            <button class="ftab"        data-status="cancelled" onclick="switchFilter(this)">Cancelled</button>
-            <button class="ftab"        data-status="refunded"  onclick="switchFilter(this)">Refunded</button>
-            <button class="ftab"        data-status="partial"   onclick="switchFilter(this)">Partial</button>
+            <button class="ftab"        data-status="completed"  onclick="switchFilter(this)">Completed</button>
+            <button class="ftab"        data-status="partial"    onclick="switchFilter(this)">Partial</button>
+            <button class="ftab"        data-status="cancelled"  onclick="switchFilter(this)">Cancelled</button>
+            <button class="ftab"        data-status="pending"    onclick="switchFilter(this)">Pending</button>
+            <button class="ftab"        data-status="refunded"   onclick="switchFilter(this)">Refunded</button>
         </div>
-        <select class="sort-select" id="sortSelect" onchange="loadOrders(true)">
+        <select class="sort-select" id="sortSelect" onchange="applySort()">
             <option value="newest">Newest first</option>
             <option value="oldest">Oldest first</option>
             <option value="qty_desc">Qty: High → Low</option>
@@ -371,56 +329,35 @@
         </select>
     </div>
 
-    <!-- Table card -->
     <div class="table-card">
         <div class="table-header">
             <span class="table-title">Orders</span>
-            <span class="table-count" id="tableCount">—</span>
+            <span class="table-count" id="tableCount"></span>
         </div>
         <div style="overflow-x:auto;">
             <table class="orders-table">
                 <thead>
                     <tr>
-                        <th>Reference</th>
+                        <th>Reference / ID</th>
                         <th>Customer</th>
-                        <th>Qty</th>
+                        <th>Shares</th>
                         <th>Amount</th>
                         <th>Status</th>
                         <th>Date</th>
                         <th></th>
                     </tr>
                 </thead>
-                <tbody id="ordersBody">
-                    <!-- skeleton rows -->
-                    <tr id="skeletonRows">
-                        <td colspan="7">
-                            <div style="display:flex;flex-direction:column;gap:0;">
-                                ${Array(5).fill(0).map(()=>`
-                                <div style="display:flex;gap:16px;align-items:center;padding:1rem 1.25rem;border-bottom:1px solid rgba(255,255,255,.04);">
-                                    <div class="skeleton" style="height:12px;width:90px;"></div>
-                                    <div class="skeleton" style="height:12px;width:80px;flex:1;"></div>
-                                    <div class="skeleton" style="height:12px;width:40px;"></div>
-                                    <div class="skeleton" style="height:12px;width:55px;"></div>
-                                    <div class="skeleton" style="height:20px;width:75px;border-radius:20px;"></div>
-                                    <div class="skeleton" style="height:12px;width:70px;"></div>
-                                    <div class="skeleton" style="height:26px;width:50px;border-radius:7px;"></div>
-                                </div>`).join('')}
-                            </div>
-                        </td>
-                    </tr>
-                </tbody>
+                <tbody id="ordersBody"></tbody>
             </table>
         </div>
         <div class="load-more-wrap" id="loadMoreWrap" style="display:none;">
-            <button class="btn-load-more" id="loadMoreBtn" onclick="loadMore()">
-                Load more orders
-            </button>
+            <button class="btn-more" id="loadMoreBtn" onclick="loadMore()">Load more orders</button>
         </div>
     </div>
 
-</div><!-- /page -->
+</div>
 
-<!-- ═══ ORDER DETAIL MODAL ═══ -->
+<!-- ORDER DETAIL MODAL -->
 <div class="modal-overlay" id="orderModal">
     <div class="modal-box">
         <div class="modal-head">
@@ -429,15 +366,12 @@
                 <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
             </button>
         </div>
-        <div class="modal-body" id="modalBody">
-            <!-- filled dynamically -->
-        </div>
+        <div class="modal-body" id="modalBody"></div>
     </div>
 </div>
 
 <div id="toast"></div>
 
-<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
 <script>
 'use strict';
 
@@ -446,9 +380,11 @@ const TOKEN = localStorage.getItem('token') || localStorage.getItem('kb_token');
 if (!TOKEN) { window.location.href = '/login'; }
 function authHeaders() { return { 'Authorization': `Bearer ${TOKEN}`, 'Content-Type': 'application/json' }; }
 async function apiFetch(url, opts = {}) {
-    const res = await fetch(url, { ...opts, headers: { ...authHeaders(), ...(opts.headers||{}) } });
-    if (res.status === 401) { logout(); return null; }
-    return res.json();
+    try {
+        const res = await fetch(url, { ...opts, headers: { ...authHeaders(), ...(opts.headers||{}) } });
+        if (res.status === 401) { logout(); return null; }
+        return await res.json();
+    } catch (e) { return null; }
 }
 function logout() {
     ['token','kb_token','userRole','username','kb_user'].forEach(k => localStorage.removeItem(k));
@@ -459,89 +395,103 @@ function logout() {
 function toast(msg, type = 'success') {
     const el = document.getElementById('toast');
     const icons = {
-        success:`<svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="20 6 9 17 4 12"/></svg>`,
-        error:  `<svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/></svg>`,
-        info:   `<svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><circle cx="12" cy="12" r="10"/><line x1="12" y1="16" x2="12" y2="12"/><line x1="12" y1="8" x2="12.01" y2="8"/></svg>`
+        success: `<svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="20 6 9 17 4 12"/></svg>`,
+        error:   `<svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/></svg>`,
+        info:    `<svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><circle cx="12" cy="12" r="10"/><line x1="12" y1="16" x2="12" y2="12"/><line x1="12" y1="8" x2="12.01" y2="8"/></svg>`
     };
     el.className = `show ${type}`;
-    el.innerHTML = (icons[type]||icons.info) + msg;
+    el.innerHTML = (icons[type] || icons.info) + msg;
     clearTimeout(el._t);
     el._t = setTimeout(() => el.className = '', 3200);
 }
 
-function esc(s) { return (s||'').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;'); }
+function esc(s) {
+    return (s || '').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');
+}
 
 /* ── State ── */
-let allOrders     = [];
-let activeStatus  = '';
-let currentLimit  = 50;
-let totalCount    = 0;
-let searchMode    = false;
-let searchDebounce = null;
+let allOrders    = [];   // current page of orders shown
+let activeStatus = '';
+let currentLimit = 50;
+let searchMode   = false;
+let searchTimer  = null;
+let pendingOrder = null; // for modal copy reference
 
-/* ── Status badge HTML ── */
-function statusBadge(status) {
+/* ── Skeleton builder ── */
+function skeletonRows(n = 5) {
+    let html = '';
+    for (let i = 0; i < n; i++) {
+        html += `<tr>
+            <td><div class="sk" style="height:13px;width:90px;margin-bottom:5px;"></div><div class="sk" style="height:10px;width:70px;"></div></td>
+            <td><div class="sk" style="height:12px;width:80px;"></div></td>
+            <td><div class="sk" style="height:12px;width:40px;"></div></td>
+            <td><div class="sk" style="height:12px;width:45px;"></div></td>
+            <td><div class="sk" style="height:20px;width:78px;border-radius:20px;"></div></td>
+            <td><div class="sk" style="height:12px;width:70px;margin-bottom:4px;"></div><div class="sk" style="height:10px;width:50px;"></div></td>
+            <td><div class="sk" style="height:26px;width:46px;border-radius:7px;"></div></td>
+        </tr>`;
+    }
+    return html;
+}
+
+/* ── Status badge ── */
+function badge(status) {
     const map = {
-        pending:    `<span class="status-badge sb-pending"><span class="status-dot"></span>Pending</span>`,
-        processing: `<span class="status-badge sb-processing"><span class="status-dot"></span>Processing</span>`,
-        completed:  `<span class="status-badge sb-completed"><span class="status-dot"></span>Completed</span>`,
-        cancelled:  `<span class="status-badge sb-cancelled"><span class="status-dot"></span>Cancelled</span>`,
-        refunded:   `<span class="status-badge sb-refunded"><span class="status-dot"></span>Refunded</span>`,
-        partial:    `<span class="status-badge sb-partial"><span class="status-dot"></span>Partial</span>`,
+        pending:    'sb-pending',
+        processing: 'sb-processing',
+        completed:  'sb-completed',
+        cancelled:  'sb-cancelled',
+        refunded:   'sb-refunded',
+        partial:    'sb-partial'
     };
-    return map[status] || `<span class="status-badge sb-cancelled"><span class="status-dot"></span>${esc(status)}</span>`;
+    const cls   = map[status] || 'sb-cancelled';
+    const label = status ? (status.charAt(0).toUpperCase() + status.slice(1)) : 'Unknown';
+    return `<span class="sb ${cls}"><span class="sdot"></span>${label}</span>`;
 }
 
-/* ── Sort orders client-side ── */
-function sortOrders(orders) {
-    const sort = document.getElementById('sortSelect').value;
-    const arr  = [...orders];
-    if (sort === 'oldest')   return arr.reverse();
-    if (sort === 'qty_desc') return arr.sort((a,b) => b.quantity - a.quantity);
-    if (sort === 'qty_asc')  return arr.sort((a,b) => a.quantity - b.quantity);
-    return arr; // newest = default from API
-}
-
-/* ── Render table ── */
-function renderTable(orders) {
-    const body  = document.getElementById('ordersBody');
-    document.getElementById('skeletonRows')?.remove();
-
+/* ── Render table rows ── */
+function renderRows(orders) {
     if (!orders.length) {
-        body.innerHTML = `<tr><td colspan="7">
-            <div class="empty-state">
-                <svg width="40" height="40" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.3"><rect x="3" y="3" width="18" height="18" rx="2"/><path d="M3 9h18M9 21V9"/></svg>
-                <div class="empty-title">${searchMode ? 'No orders found' : activeStatus ? 'No ' + activeStatus + ' orders' : 'No orders yet'}</div>
-                <div class="empty-sub">${searchMode ? 'Try a different reference note' : 'Your boost orders will appear here'}</div>
-            </div>
-        </td></tr>`;
+        const emptyMsg = searchMode
+            ? 'No orders match your search'
+            : activeStatus ? `No ${activeStatus} orders yet` : 'No orders yet';
+        const emptySub = searchMode
+            ? 'Try a different reference note or order ID'
+            : 'Your boost sessions will appear here once you start boosting';
+        document.getElementById('ordersBody').innerHTML = `
+            <tr><td colspan="7">
+                <div class="empty-state">
+                    <svg width="40" height="40" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.3"><rect x="3" y="3" width="18" height="18" rx="2"/><path d="M3 9h18M9 21V9"/></svg>
+                    <div class="empty-ttl">${emptyMsg}</div>
+                    <div class="empty-sub">${emptySub}</div>
+                </div>
+            </td></tr>`;
         document.getElementById('tableCount').textContent = '0 orders';
         return;
     }
 
-    const sorted = sortOrders(orders);
+    const sorted = sortList(orders);
     document.getElementById('tableCount').textContent = `${orders.length}${orders.length >= currentLimit && !searchMode ? '+' : ''} orders`;
 
-    body.innerHTML = sorted.map(o => {
-        const refDisplay = o.referenceNote
+    document.getElementById('ordersBody').innerHTML = sorted.map(o => {
+        const refHtml = o.referenceNote
             ? `<span class="ref-note">${esc(o.referenceNote)}</span>`
-            : `<span class="ref-note empty">No reference</span>`;
-        const amtDisplay = o.amount > 0
-            ? `<span class="amount-val">₱${parseFloat(o.amount).toFixed(2)}</span>`
-            : `<span class="amount-val zero">—</span>`;
-        return `
-        <tr onclick="openModal('${esc(o.orderId)}')">
+            : `<span class="ref-empty">No reference</span>`;
+        const amtHtml = o.amount > 0
+            ? `<span class="amt-val">₱${parseFloat(o.amount).toFixed(2)}</span>`
+            : `<span class="amt-zero">—</span>`;
+        return `<tr onclick="openModal('${esc(o.orderId)}')">
             <td>
-                ${refDisplay}
+                ${refHtml}
                 <div class="order-id">${esc(o.orderId)}</div>
             </td>
-            <td><span class="customer-name" title="${esc(o.customerName)}">${esc(o.customerName)}</span></td>
+            <td><span class="cust-name" title="${esc(o.customerName)}">${esc(o.customerName)}</span></td>
             <td><span class="qty-val">${Number(o.quantity).toLocaleString()}</span></td>
-            <td>${amtDisplay}</td>
-            <td>${statusBadge(o.status)}</td>
+            <td>${amtHtml}</td>
+            <td>${badge(o.status)}</td>
             <td>
-                <div class="date-val">${esc(o.date)}</div>
-                <div class="time-val">${esc(o.time)}</div>
+                <div class="date-val">${esc(o.date || '')}</div>
+                <div class="time-val">${esc(o.time || '')}</div>
             </td>
             <td>
                 <button class="view-btn" onclick="event.stopPropagation();openModal('${esc(o.orderId)}')">View</button>
@@ -550,7 +500,18 @@ function renderTable(orders) {
     }).join('');
 }
 
-/* ── Filter switch ── */
+/* ── Sort ── */
+function sortList(orders) {
+    const s = document.getElementById('sortSelect').value;
+    const a = [...orders];
+    if (s === 'oldest')   return a.reverse();
+    if (s === 'qty_desc') return a.sort((a,b) => b.quantity - a.quantity);
+    if (s === 'qty_asc')  return a.sort((a,b) => a.quantity - b.quantity);
+    return a; // newest = API default
+}
+function applySort() { renderRows(allOrders); }
+
+/* ── Filter ── */
 function switchFilter(el) {
     document.querySelectorAll('.ftab').forEach(t => t.classList.remove('active'));
     el.classList.add('active');
@@ -562,258 +523,261 @@ function switchFilter(el) {
 
 /* ── Search ── */
 function onSearchInput() {
-    clearTimeout(searchDebounce);
+    clearTimeout(searchTimer);
     const val = document.getElementById('searchInput').value.trim();
     if (!val) {
         searchMode = false;
-        renderTable(allOrders);
-        document.getElementById('tableCount').textContent = `${allOrders.length} orders`;
+        renderRows(allOrders);
         return;
     }
-    searchDebounce = setTimeout(doSearch, 420);
+    // Instant local filter
+    const local = allOrders.filter(o =>
+        (o.referenceNote || '').toLowerCase().includes(val.toLowerCase()) ||
+        (o.orderId || '').toLowerCase().includes(val.toLowerCase())
+    );
+    searchMode = true;
+    renderRows(local);
+    // Debounce server search for fuller results
+    searchTimer = setTimeout(() => doSearch(val), 450);
 }
 
-async function doSearch() {
-    const val = document.getElementById('searchInput').value.trim();
+async function doSearch(val) {
     if (!val) return;
-    searchMode = true;
-
-    // First: filter locally
-    const local = allOrders.filter(o =>
-        (o.referenceNote||'').toLowerCase().includes(val.toLowerCase()) ||
-        (o.orderId||'').toLowerCase().includes(val.toLowerCase())
-    );
-    renderTable(local);
-
-    // Then: hit the server search endpoint for fuller results
     const data = await apiFetch(`/api/user/orders/search?reference=${encodeURIComponent(val)}`);
     if (data?.success && data.orders?.length) {
-        renderTable(data.orders);
+        renderRows(data.orders);
+        document.getElementById('tableCount').textContent = `${data.orders.length} results`;
     }
+    // If 404 / no results, keep local filter visible (already rendered above)
 }
 
 /* ── Load orders ── */
 async function loadOrders(reset = false) {
     if (reset) {
-        currentLimit = 50;
         allOrders = [];
+        currentLimit = 50;
         document.getElementById('loadMoreWrap').style.display = 'none';
-        // Show skeleton
-        const body = document.getElementById('ordersBody');
-        body.innerHTML = `<tr id="skeletonRows"><td colspan="7">
-            <div style="display:flex;flex-direction:column;gap:0;">
-                ${Array(5).fill(0).map(()=>`
-                <div style="display:flex;gap:16px;align-items:center;padding:1rem 1.25rem;border-bottom:1px solid rgba(255,255,255,.04);">
-                    <div class="skeleton" style="height:12px;width:90px;"></div>
-                    <div class="skeleton" style="height:12px;width:80px;flex:1;"></div>
-                    <div class="skeleton" style="height:12px;width:40px;"></div>
-                    <div class="skeleton" style="height:12px;width:55px;"></div>
-                    <div class="skeleton" style="height:20px;width:75px;border-radius:20px;"></div>
-                    <div class="skeleton" style="height:12px;width:70px;"></div>
-                    <div class="skeleton" style="height:26px;width:50px;border-radius:7px;"></div>
-                </div>`).join('')}
-            </div>
-        </td></tr>`;
+        document.getElementById('ordersBody').innerHTML = skeletonRows(5);
     }
 
-    let url = `/api/user/orders/history?limit=${currentLimit}`;
-    if (activeStatus) url += `&status=${activeStatus}`;
-
+    const url = `/api/user/orders/history?limit=${currentLimit}` + (activeStatus ? `&status=${activeStatus}` : '');
     const data = await apiFetch(url);
-    document.getElementById('skeletonRows')?.remove();
 
     if (!data || !data.success) {
+        document.getElementById('ordersBody').innerHTML = `
+            <tr><td colspan="7">
+                <div class="empty-state">
+                    <div class="empty-ttl">Failed to load orders</div>
+                    <div class="empty-sub">Check your connection and try refreshing</div>
+                </div>
+            </td></tr>`;
         toast('Failed to load orders.', 'error');
-        document.getElementById('ordersBody').innerHTML = `<tr><td colspan="7"><div class="empty-state"><span>Failed to load orders.</span></div></td></tr>`;
         return;
     }
 
-    allOrders = data.orders || [];
-    totalCount = data.summary?.total || allOrders.length;
-
-    // Update stats (only on first full load without status filter)
-    if (!activeStatus && reset) {
-        document.getElementById('statTotal').textContent      = data.summary?.total ?? '—';
-        document.getElementById('statCompleted').textContent  = data.summary?.completed ?? '—';
-        document.getElementById('statPending').textContent    = data.summary?.pending ?? '—';
-        // processing = total - completed - pending (approximate)
-        const proc = Math.max(0, (data.summary?.total||0) - (data.summary?.completed||0) - (data.summary?.pending||0));
-        document.getElementById('statProcessing').textContent = proc || '—';
+    // Accumulate for load-more: if reset, replace; otherwise append new items
+    if (reset) {
+        allOrders = data.orders || [];
+    } else {
+        // Merge — keep existing + new items beyond the previous limit
+        const prev = currentLimit - 50;
+        allOrders = data.orders || [];
     }
 
-    renderTable(allOrders);
+    // Update stats on every full (no-filter) load
+    if (!activeStatus) {
+        document.getElementById('statTotal').textContent      = data.summary?.total      ?? '—';
+        document.getElementById('statCompleted').textContent  = data.summary?.completed  ?? '—';
+        document.getElementById('statPending').textContent    = data.summary?.pending    ?? '—';
+        document.getElementById('statProcessing').textContent = data.summary?.processing ?? '—';
+    }
 
-    // Show load more if there might be more
-    const lmWrap = document.getElementById('loadMoreWrap');
+    renderRows(allOrders);
+
+    // Show load more only if we got a full page
+    const lm = document.getElementById('loadMoreWrap');
+    const btn = document.getElementById('loadMoreBtn');
     if (allOrders.length >= currentLimit) {
-        lmWrap.style.display = 'block';
-        document.getElementById('loadMoreBtn').disabled = false;
-        document.getElementById('loadMoreBtn').textContent = 'Load more orders';
+        lm.style.display  = 'block';
+        btn.disabled      = false;
+        btn.textContent   = 'Load more orders';
     } else {
-        lmWrap.style.display = 'none';
+        lm.style.display  = 'none';
     }
 }
 
 /* ── Load more ── */
 async function loadMore() {
     const btn = document.getElementById('loadMoreBtn');
-    btn.disabled = true;
-    btn.textContent = 'Loading...';
-    currentLimit += 50;
+    btn.disabled    = true;
+    btn.textContent = 'Loading…';
+    currentLimit   += 50;
     await loadOrders(false);
 }
 
-/* ── Open order detail modal ── */
+/* ── Modal ── */
 async function openModal(orderId) {
     const modal = document.getElementById('orderModal');
     const body  = document.getElementById('modalBody');
     modal.classList.add('open');
 
-    // Loading state
-    body.innerHTML = `<div style="display:flex;flex-direction:column;gap:12px;padding:.5rem 0;">
-        ${Array(6).fill(0).map(()=>`
-        <div style="display:flex;justify-content:space-between;align-items:center;padding:.5rem 0;border-bottom:1px solid rgba(255,255,255,.04);">
-            <div class="skeleton" style="height:11px;width:90px;"></div>
-            <div class="skeleton" style="height:11px;width:120px;"></div>
+    // Show skeleton
+    body.innerHTML = `<div style="display:flex;flex-direction:column;gap:0;padding:.25rem 0;">
+        ${Array(7).fill(0).map(() => `
+        <div style="display:flex;justify-content:space-between;align-items:center;padding:.55rem 0;border-bottom:1px solid rgba(255,255,255,.04);">
+            <div class="sk" style="height:11px;width:85px;"></div>
+            <div class="sk" style="height:11px;width:120px;"></div>
         </div>`).join('')}
     </div>`;
 
-    // Try local first for instant preview
+    // Instant preview from local data
     const local = allOrders.find(o => o.orderId === orderId);
     if (local) renderModal(local, true);
 
-    // Fetch full detail
+    // Full detail from server
     const data = await apiFetch(`/api/admin/orders/${orderId}`);
-    if (!data?.success) {
-        if (!local) {
-            body.innerHTML = `<div style="padding:2rem;text-align:center;color:#555;">Order not found.</div>`;
-        }
-        return;
+    if (data?.success && data.order) {
+        pendingOrder = data.order;
+        renderModal(data.order, false);
+    } else if (!local) {
+        body.innerHTML = `<div style="padding:2rem;text-align:center;color:#555;">Order not found.</div>`;
     }
-    renderModal(data.order, false);
 }
 
-function renderModal(o, isPreview) {
+function renderModal(o, preview) {
     const body = document.getElementById('modalBody');
 
-    const progress = o.quantity > 0
-        ? Math.min(100, Math.round(((o.currentCount||0) / o.quantity) * 100))
+    const pct = o.quantity > 0
+        ? Math.min(100, Math.round(((o.currentCount || 0) / o.quantity) * 100))
         : 0;
 
-    const postLinkHtml = o.postLink
-        ? `<span class="detail-val"><a href="${esc(o.postLink)}" target="_blank" rel="noopener" class="detail-val link" style="font-size:.75rem;">${esc(o.postLink.length > 45 ? o.postLink.substring(0,45)+'…' : o.postLink)}</a>
-           <button class="copy-link-btn" onclick="copyText('${esc(o.postLink)}')">
-               <svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><rect x="9" y="9" width="13" height="13" rx="2"/><path d="M5 15H4a2 2 0 01-2-2V4a2 2 0 012-2h9a2 2 0 012 2v1"/></svg>
-               Copy
-           </button></span>`
-        : `<span class="detail-val muted">N/A</span>`;
+    const progColor = { completed: '#86efac', partial: '#fdba74', cancelled: '#fca5a5', stopped: '#fca5a5' }[o.status] || '#93c5fd';
+
+    // Post link row — safe, no inline onclick with raw URL
+    const hasLink = o.postLink && o.postLink.length > 0;
+    const linkHtml = hasLink
+        ? `<span class="dval link">
+               <a href="${esc(o.postLink)}" target="_blank" rel="noopener noreferrer">
+                   ${esc(o.postLink.length > 42 ? o.postLink.substring(0, 42) + '…' : o.postLink)}
+               </a>
+               <button class="copy-btn" data-copy="${esc(o.postLink)}">
+                   <svg width="9" height="9" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><rect x="9" y="9" width="13" height="13" rx="2"/><path d="M5 15H4a2 2 0 01-2-2V4a2 2 0 012-2h9a2 2 0 012 2v1"/></svg>
+                   Copy
+               </button>
+           </span>`
+        : `<span class="dval muted">Not recorded</span>`;
 
     body.innerHTML = `
-        <!-- Status + IDs -->
-        <div class="detail-section">
-            <div class="detail-section-label">Overview</div>
-            <div style="display:flex;align-items:center;justify-content:space-between;padding:.4rem 0;border-bottom:1px solid rgba(255,255,255,.04);">
-                <span class="detail-key">Status</span>
-                ${statusBadge(o.status)}
+        <div class="dsec">
+            <div class="dsec-label">Overview</div>
+            <div class="drow" style="padding-top:.3rem;">
+                <span class="dkey">Status</span>
+                ${badge(o.status)}
             </div>
-            <div class="detail-row">
-                <span class="detail-key">Order ID</span>
-                <span class="detail-val mono">${esc(o.orderId)}</span>
+            <div class="drow">
+                <span class="dkey">Order ID</span>
+                <span class="dval mono">${esc(o.orderId)}</span>
             </div>
-            <div class="detail-row">
-                <span class="detail-key">Reference</span>
-                <span class="detail-val">${o.referenceNote ? esc(o.referenceNote) : '<span style="color:#555;font-style:italic;font-weight:400;">None</span>'}</span>
+            <div class="drow">
+                <span class="dkey">Reference</span>
+                <span class="dval">${o.referenceNote ? esc(o.referenceNote) : '<span style="color:#555;font-style:italic;font-weight:400;">None</span>'}</span>
+            </div>
+            <div class="drow">
+                <span class="dkey">Created</span>
+                <span class="dval" style="font-size:.78rem;">${esc(o.createdAt || o.date || '—')}</span>
+            </div>
+            ${o.completedAt ? `<div class="drow"><span class="dkey">Completed</span><span class="dval green" style="font-size:.78rem;">${esc(o.completedAt)}</span></div>` : ''}
+        </div>
+
+        <div class="dsec">
+            <div class="dsec-label">Boost</div>
+            <div class="drow">
+                <span class="dkey">Post Link</span>
+                ${linkHtml}
+            </div>
+            <div class="drow">
+                <span class="dkey">Speed</span>
+                <span class="dval" style="text-transform:capitalize;">${esc(o.speed || 'instant')}</span>
             </div>
         </div>
 
-        <!-- Customer -->
-        <div class="detail-section">
-            <div class="detail-section-label">Customer</div>
-            <div class="detail-row">
-                <span class="detail-key">Name</span>
-                <span class="detail-val">${esc(o.customerName)}</span>
-            </div>
-            <div class="detail-row">
-                <span class="detail-key">Post Link</span>
-                ${postLinkHtml}
-            </div>
-        </div>
-
-        <!-- Quantities -->
-        <div class="detail-section">
-            <div class="detail-section-label">Progress</div>
-            ${!isPreview ? `
-            <div class="modal-prog-wrap">
-                <div class="modal-prog-labels">
-                    <span>${(o.currentCount||0).toLocaleString()} of ${Number(o.quantity).toLocaleString()} shares</span>
-                    <span>${progress}%</span>
+        <div class="dsec">
+            <div class="dsec-label">Progress</div>
+            ${!preview ? `
+            <div class="prog-wrap">
+                <div class="prog-labels">
+                    <span>${(o.currentCount || 0).toLocaleString()} of ${Number(o.quantity).toLocaleString()} shares</span>
+                    <span>${pct}%</span>
                 </div>
-                <div class="modal-prog-bar">
-                    <div class="modal-prog-fill" style="width:${progress}%;background:${o.status==='completed'?'#86efac':o.status==='cancelled'?'#fca5a5':'#93c5fd'};"></div>
+                <div class="prog-bar">
+                    <div class="prog-fill" style="width:${pct}%;background:${progColor};"></div>
                 </div>
             </div>` : ''}
-            <div class="detail-row">
-                <span class="detail-key">Target Qty</span>
-                <span class="detail-val">${Number(o.quantity).toLocaleString()}</span>
+            <div class="drow">
+                <span class="dkey">Target</span>
+                <span class="dval">${Number(o.quantity).toLocaleString()}</span>
             </div>
-            ${!isPreview ? `
-            <div class="detail-row">
-                <span class="detail-key">Current Count</span>
-                <span class="detail-val green">${(o.currentCount||0).toLocaleString()}</span>
+            ${!preview ? `
+            <div class="drow">
+                <span class="dkey">Shared</span>
+                <span class="dval green">${(o.currentCount || 0).toLocaleString()}</span>
             </div>
-            <div class="detail-row">
-                <span class="detail-key">Remaining</span>
-                <span class="detail-val">${(o.remainingCount ?? o.quantity).toLocaleString()}</span>
+            <div class="drow">
+                <span class="dkey">Remaining</span>
+                <span class="dval">${(o.remainingCount ?? o.quantity).toLocaleString()}</span>
             </div>` : ''}
         </div>
 
-        <!-- Billing -->
-        <div class="detail-section">
-            <div class="detail-section-label">Billing</div>
-            <div class="detail-row">
-                <span class="detail-key">Amount</span>
-                <span class="detail-val">${o.amount > 0 ? '₱' + parseFloat(o.amount).toFixed(2) : '<span style="color:#555;">Not set</span>'}</span>
-            </div>
-            ${!isPreview ? `
-            <div class="detail-row">
-                <span class="detail-key">Speed</span>
-                <span class="detail-val">${esc(o.speed || 'instant')}</span>
-            </div>
-            <div class="detail-row">
-                <span class="detail-key">Priority</span>
-                <span class="detail-val">${o.priority > 0 ? '⭐ ' + o.priority : 'Normal'}</span>
-            </div>` : ''}
-        </div>
+        ${o.notes ? `
+        <div class="dsec">
+            <div class="dsec-label">Notes</div>
+            <div class="drow"><span class="dval" style="font-size:.78rem;color:var(--muted2);text-align:left;">${esc(o.notes)}</span></div>
+        </div>` : ''}
 
-        <!-- Notes + Dates -->
-        <div class="detail-section">
-            <div class="detail-section-label">Details</div>
-            ${o.notes ? `<div class="detail-row"><span class="detail-key">Notes</span><span class="detail-val" style="font-size:.78rem;color:var(--muted2);">${esc(o.notes)}</span></div>` : ''}
-            <div class="detail-row">
-                <span class="detail-key">Created</span>
-                <span class="detail-val" style="font-size:.78rem;">${esc(o.createdAt||o.date)}</span>
-            </div>
-            ${o.completedAt ? `<div class="detail-row"><span class="detail-key">Completed</span><span class="detail-val green" style="font-size:.78rem;">${esc(o.completedAt)}</span></div>` : ''}
-        </div>
-
-        ${isPreview ? `<div style="font-size:.7rem;color:#444;text-align:center;padding-top:.25rem;">Loading full details…</div>` : ''}
+        ${preview ? `<div style="font-size:.7rem;color:#444;text-align:center;padding:.5rem 0;">Loading full details…</div>` : ''}
     `;
+
+    // Wire copy buttons safely — no inline onclick with raw URLs
+    body.querySelectorAll('[data-copy]').forEach(btn => {
+        btn.addEventListener('click', e => {
+            e.stopPropagation();
+            const text = btn.getAttribute('data-copy');
+            navigator.clipboard.writeText(text)
+                .then(() => { toast('Copied!', 'info'); btn.textContent = 'Copied'; setTimeout(() => { btn.innerHTML = `<svg width="9" height="9" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><rect x="9" y="9" width="13" height="13" rx="2"/><path d="M5 15H4a2 2 0 01-2-2V4a2 2 0 012-2h9a2 2 0 012 2v1"/></svg> Copy`; }, 2000); })
+                .catch(() => toast('Copy failed.', 'error'));
+        });
+    });
 }
 
 function closeModal() {
     document.getElementById('orderModal').classList.remove('open');
+    pendingOrder = null;
 }
+
 document.getElementById('orderModal').addEventListener('click', function(e) {
     if (e.target === this) closeModal();
 });
 
-/* ── Copy helper ── */
-function copyText(text) {
-    navigator.clipboard.writeText(text).then(() => toast('Copied!', 'info')).catch(() => toast('Copy failed.', 'error'));
+/* ── Escape key to close modal ── */
+document.addEventListener('keydown', e => {
+    if (e.key === 'Escape') closeModal();
+});
+
+/* ── Auto-refresh every 30s for processing orders ── */
+let autoRefreshTimer = null;
+function scheduleAutoRefresh() {
+    clearTimeout(autoRefreshTimer);
+    const hasProcessing = allOrders.some(o => o.status === 'processing');
+    if (hasProcessing) {
+        autoRefreshTimer = setTimeout(() => {
+            loadOrders(false);
+            scheduleAutoRefresh();
+        }, 30000);
+    }
 }
 
 /* ── Init ── */
-loadOrders(true);
+loadOrders(true).then(scheduleAutoRefresh);
 </script>
 
 </body>
