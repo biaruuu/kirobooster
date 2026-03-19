@@ -527,7 +527,7 @@ function statusBadge(status) {
 
 /* ── Live badge ── */
 function liveBadgeHtml(uid) {
-    const state = liveStatus.get(uid);
+    const state = liveStatus.get(String(uid));
     if (!state) return '';
     if (state === 'checking') return '<span class="live-badge checking show">Checking…</span>';
     if (state === 'live')     return '<span class="live-badge live show">🟢 Live</span>';
@@ -581,7 +581,7 @@ function renderList() {
     }
 
     list.innerHTML = visible.map(c => {
-        const isSel  = selected.has(c.id);
+        const isSel  = selected.has(String(c.id));
         const lastUsed = c.lastUsed ? `Last used ${c.lastUsed}` : 'Never used';
         return `<div class="cookie-row${isSel ? ' selected' : ''}" id="cookie-${c.id}" data-id="${c.id}">
             <div class="ck-box${isSel ? ' checked' : ''}" onclick="toggleSelect('${c.id}', event)"></div>
@@ -611,76 +611,150 @@ function renderList() {
 
 /* ── Check Live / Dead ── */
 async function checkAllLive() {
-    if (!allCookies.length) return;
+    if (!allCookies.length) {
+        toast('No cookies to check.', 'info');
+        return;
+    }
 
-    const btn      = document.getElementById('checkLiveBtn');
-    const btnText  = document.getElementById('checkLiveBtnText');
-    const banner   = document.getElementById('checkBanner');
-    const bannerTxt= document.getElementById('checkBannerText');
-    const progBar  = document.getElementById('checkProgressBar');
-    const countTxt = document.getElementById('checkBannerCount');
+    const btn     = document.getElementById('checkLiveBtn');
+    const btnText = document.getElementById('checkLiveBtnText');
+    const banner  = document.getElementById('checkBanner');
+    const bannerTxt = document.getElementById('checkBannerText');
+    const progBar   = document.getElementById('checkProgressBar');
+    const countTxt  = document.getElementById('checkBannerCount');
 
     btn.disabled = true;
     btnText.innerHTML = SPINNER;
     banner.classList.add('show');
     bannerTxt.textContent = 'Checking accounts…';
     progBar.style.width = '0%';
+    countTxt.textContent = '';
 
-    // Mark all as checking
-    allCookies.forEach(c => liveStatus.set(c.uid, 'checking'));
+    // Mark every account as "checking" immediately so user sees feedback
+    allCookies.forEach(c => liveStatus.set(String(c.uid), 'checking'));
     renderList();
 
-    // Batch into chunks of 50 (API max)
-    const uids   = allCookies.map(c => c.uid);
-    const chunks = [];
-    for (let i = 0; i < uids.length; i += 50) chunks.push(uids.slice(i, i + 50));
+    // Split into batches of 50 (hitools API limit)
+    const allUids = allCookies.map(c => String(c.uid));
+    const chunks  = [];
+    for (let i = 0; i < allUids.length; i += 50) {
+        chunks.push(allUids.slice(i, i + 50));
+    }
 
-    let done = 0;
-    let live = 0, dead = 0;
+    let done = 0, liveCount = 0, deadCount = 0;
+    const deadUids = new Set(); // UIDs confirmed dead
 
-    for (const chunk of chunks) {
+    for (let ci = 0; ci < chunks.length; ci++) {
+        const chunk = chunks[ci];
+
         try {
-            const data = await fetch('/api/check-uid', {
-                method : 'POST',
-                headers: { 'Content-Type': 'application/json' },
-                body   : JSON.stringify({ uids: chunk })
-            }).then(r => r.json()).catch(() => null);
+            const res  = await fetch('/api/check-uid', {
+                method  : 'POST',
+                headers : { 'Content-Type': 'application/json' },
+                body    : JSON.stringify({ uids: chunk })
+            });
+            const data = await res.json().catch(() => null);
 
-            if (data?.success && Array.isArray(data.results)) {
+            if (data && data.success && Array.isArray(data.results) && data.results.length > 0) {
                 data.results.forEach(r => {
+                    const uid   = String(r.uid);
                     const state = r.live ? 'live' : 'dead';
-                    liveStatus.set(String(r.uid), state);
-                    if (r.live) live++; else dead++;
+                    liveStatus.set(uid, state);
+                    if (r.live) { liveCount++; } else { deadCount++; deadUids.add(uid); }
                 });
             } else {
-                // If batch failed, mark all in this chunk as unknown (remove checking)
+                // API failed for this batch — clear checking state for these UIDs
                 chunk.forEach(uid => liveStatus.delete(uid));
-                toast(data?.error || 'Check failed for a batch.', 'error');
+                const errMsg = data?.error || 'Batch check failed';
+                console.warn('[check-uid] batch error:', errMsg, data);
+                toast(errMsg, 'error');
             }
-        } catch (e) {
+        } catch (err) {
             chunk.forEach(uid => liveStatus.delete(uid));
+            console.error('[check-uid] fetch error:', err);
+            toast('Network error during check.', 'error');
         }
 
         done += chunk.length;
-        const pct = Math.round((done / uids.length) * 100);
+        const pct = Math.round((done / allUids.length) * 100);
         progBar.style.width = pct + '%';
-        countTxt.textContent = `${done}/${uids.length}`;
+        countTxt.textContent = `${done}/${allUids.length}`;
+        bannerTxt.textContent = `Checking… ${liveCount} live · ${deadCount} dead so far`;
+
         renderList();
 
-        // Small pause between chunks to avoid rate limiting
-        if (chunks.indexOf(chunk) < chunks.length - 1) {
-            await new Promise(r => setTimeout(r, 800));
+        // Pause between batches to avoid rate limiting
+        if (ci < chunks.length - 1) {
+            await new Promise(r => setTimeout(r, 1000));
         }
     }
 
+    // Done — update UI
     btn.disabled = false;
     btnText.innerHTML = `<svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg> Check Live`;
-    bannerTxt.textContent = `Done — ${live} live, ${dead} dead`;
-    progBar.style.width = '100%';
-    countTxt.textContent = '';
+    bannerTxt.textContent = `Done — ${liveCount} live · ${deadCount} dead`;
+    progBar.style.width   = '100%';
+    countTxt.textContent  = '';
+
+    toast(`Check complete: ${liveCount} live · ${deadCount} dead`, deadCount > 0 ? 'error' : 'success');
+
+    // Auto-delete dead accounts after a short delay so user can see the red badges
+    if (deadUids.size > 0) {
+        setTimeout(() => autoDeleteDead(deadUids), 1800);
+    } else {
+        setTimeout(() => banner.classList.remove('show'), 4000);
+    }
+}
+
+// Auto-delete all dead accounts
+async function autoDeleteDead(deadUids) {
+    const banner    = document.getElementById('checkBanner');
+    const bannerTxt = document.getElementById('checkBannerText');
+    const progBar   = document.getElementById('checkProgressBar');
+
+    // Find cookie IDs for dead UIDs
+    const deadCookieIds = allCookies
+        .filter(c => deadUids.has(String(c.uid)))
+        .map(c => String(c.id));
+
+    if (!deadCookieIds.length) {
+        banner.classList.remove('show');
+        return;
+    }
+
+    bannerTxt.textContent = `Removing ${deadCookieIds.length} dead account${deadCookieIds.length > 1 ? 's' : ''}…`;
+    progBar.style.width   = '0%';
+
+    try {
+        const data = await apiFetch('/api/user/cookies/delete-multiple', {
+            method: 'POST',
+            body  : JSON.stringify({ cookieIds: deadCookieIds })
+        });
+
+        if (data?.success) {
+            // Remove from local state
+            const deletedCount = data.deletedCount || deadCookieIds.length;
+            allCookies = allCookies.filter(c => !deadCookieIds.includes(String(c.id)));
+            deadUids.forEach(uid => liveStatus.delete(uid));
+            selected.clear();
+
+            updateStats();
+            updateBulkBar();
+            renderList();
+
+            progBar.style.width   = '100%';
+            bannerTxt.textContent = `✓ Removed ${deletedCount} dead account${deletedCount > 1 ? 's' : ''} automatically`;
+            toast(`${deletedCount} dead account${deletedCount > 1 ? 's' : ''} auto-deleted.`, 'success');
+        } else {
+            bannerTxt.textContent = 'Failed to delete dead accounts.';
+            toast(data?.message || 'Failed to auto-delete dead accounts.', 'error');
+        }
+    } catch (err) {
+        bannerTxt.textContent = 'Error deleting dead accounts.';
+        toast('Error during auto-delete.', 'error');
+    }
 
     setTimeout(() => banner.classList.remove('show'), 4000);
-    toast(`Check complete: ${live} live · ${dead} dead`, live > 0 ? 'success' : 'error');
 }
 
 /* ── Selection ── */
