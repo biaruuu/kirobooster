@@ -657,27 +657,24 @@ app.post('/api/check-uid', async (req, res) => {
         }
 
         const response = await requestWithRetry({
-            method : 'POST',
-            url    : 'https://hitools.pro/api/check-uid-facebook',
-            data   : { uids: uids.map(String) },
-            headers: { ...HITOOLS_HEADERS, Referer: 'https://hitools.pro/check-live-uid' },
-            timeout: 30000,
+            method      : 'POST',
+            url         : 'https://hitools.pro/api/check-uid-facebook',
+            data        : { uids: uids.map(String) },
+            headers     : { ...HITOOLS_HEADERS, Referer: 'https://hitools.pro/check-live-uid' },
+            timeout     : 30000,
+            responseType: 'text',  // NDJSON - prevent axios from auto-parsing
         });
 
-        // API returns newline-delimited JSON: one JSON object per line
-        const raw = typeof response.data === 'string' ? response.data : null;
-        let results = [];
+        // Parse NDJSON — one {"uid":"...","live":true/false} per line
+        const raw     = String(response.data || '');
+        const results = raw
+            .split('\n')
+            .map(l => l.trim())
+            .filter(Boolean)
+            .map(line => { try { return JSON.parse(line); } catch { return null; } })
+            .filter(Boolean);
 
-        if (raw) {
-            results = raw.split('\n')
-                .filter(l => l.trim())
-                .map(line => JSON.parse(line));
-        } else if (Array.isArray(response.data)) {
-            results = response.data;
-        } else {
-            results = [response.data];
-        }
-
+        console.log(`[check-uid] ${uids.length} requested, ${results.length} parsed`);
         return res.json({ success: true, results });
     } catch (err) {
         console.error('Check-uid error:', err.message);
