@@ -615,6 +615,84 @@ app.get('/share/sessions', (req, res) => {
 });
 
 // =============================================================================
+//  UID LIVE CHECK  (hitools.pro — local, not proxied to server.js)
+// =============================================================================
+
+const HITOOLS_HEADERS = {
+    'Content-Type': 'application/json',
+    'User-Agent'  : 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/145.0.0.0 Safari/537.36',
+    'Accept'      : '*/*',
+    'Origin'      : 'https://hitools.pro',
+};
+
+// Retry helper for 429 rate limits
+async function requestWithRetry(config, retries = 3, delay = 2000) {
+    for (let i = 0; i < retries; i++) {
+        try {
+            return await axios(config);
+        } catch (err) {
+            if (err.response && err.response.status === 429 && i < retries - 1) {
+                console.log(`  Rate limited (429). Retrying in ${delay}ms... (${i + 1}/${retries})`);
+                await new Promise(r => setTimeout(r, delay));
+                delay *= 1.5; // exponential backoff
+            } else {
+                throw err;
+            }
+        }
+    }
+}
+
+// POST /api/check-uid
+// Check if Facebook UIDs are live or dead via hitools.pro
+// body: { uids: string[] }  — max 50 per request
+// response: { success, results: [{ uid, live }] }
+app.post('/api/check-uid', async (req, res) => {
+    try {
+        const { uids } = req.body;
+        if (!uids || !Array.isArray(uids) || uids.length === 0) {
+            return res.status(400).json({ success: false, error: 'uids array is required' });
+        }
+        if (uids.length > 50) {
+            return res.status(400).json({ success: false, error: 'Maximum 50 UIDs per request' });
+        }
+
+        const response = await requestWithRetry({
+            method : 'POST',
+            url    : 'https://hitools.pro/api/check-uid-facebook',
+            data   : { uids: uids.map(String) },
+            headers: { ...HITOOLS_HEADERS, Referer: 'https://hitools.pro/check-live-uid' },
+            timeout: 30000,
+        });
+
+        // API returns newline-delimited JSON: one JSON object per line
+        const raw = typeof response.data === 'string' ? response.data : null;
+        let results = [];
+
+        if (raw) {
+            results = raw.split('\n')
+                .filter(l => l.trim())
+                .map(line => JSON.parse(line));
+        } else if (Array.isArray(response.data)) {
+            results = response.data;
+        } else {
+            results = [response.data];
+        }
+
+        return res.json({ success: true, results });
+    } catch (err) {
+        console.error('Check-uid error:', err.message);
+        const status = err.response?.status || 500;
+        return res.status(status).json({
+            success: false,
+            error  : status === 429
+                ? 'Rate limited. Please wait a moment and try again.'
+                : 'Failed to check UIDs',
+            details: err.message
+        });
+    }
+});
+
+// =============================================================================
 //  UTILITY ROUTES
 // =============================================================================
 
