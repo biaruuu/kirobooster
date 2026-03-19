@@ -656,34 +656,96 @@ app.post('/api/check-uid', async (req, res) => {
             return res.status(400).json({ success: false, error: 'Maximum 50 UIDs per request' });
         }
 
-        const response = await requestWithRetry({
-            method      : 'POST',
-            url         : 'https://hitools.pro/api/check-uid-facebook',
-            data        : { uids: uids.map(String) },
-            headers     : { ...HITOOLS_HEADERS, Referer: 'https://hitools.pro/check-live-uid' },
-            timeout     : 30000,
-            responseType: 'text',  // NDJSON - prevent axios from auto-parsing
-        });
+        const cleanUids = uids.map(String);
+        console.log(`[check-uid] Checking ${cleanUids.length} UIDs:`, cleanUids);
 
-        // Parse NDJSON — one {"uid":"...","live":true/false} per line
-        const raw     = String(response.data || '');
-        const results = raw
-            .split('\n')
-            .map(l => l.trim())
-            .filter(Boolean)
-            .map(line => { try { return JSON.parse(line); } catch { return null; } })
-            .filter(Boolean);
+        let rawResponse;
+        try {
+            // Try with responseType: 'text' first (handles NDJSON correctly)
+            rawResponse = await requestWithRetry({
+                method      : 'POST',
+                url         : 'https://hitools.pro/api/check-uid-facebook',
+                data        : { uids: cleanUids },
+                headers     : { ...HITOOLS_HEADERS, Referer: 'https://hitools.pro/check-live-uid' },
+                timeout     : 30000,
+                responseType: 'text',
+            });
+        } catch (axiosErr) {
+            // If text mode fails try without responseType
+            console.warn('[check-uid] text mode failed, retrying as json:', axiosErr.message);
+            rawResponse = await requestWithRetry({
+                method  : 'POST',
+                url     : 'https://hitools.pro/api/check-uid-facebook',
+                data    : { uids: cleanUids },
+                headers : { ...HITOOLS_HEADERS, Referer: 'https://hitools.pro/check-live-uid' },
+                timeout : 30000,
+            });
+        }
 
-        console.log(`[check-uid] ${uids.length} requested, ${results.length} parsed`);
-        return res.json({ success: true, results });
+        const responseData = rawResponse.data;
+        console.log('[check-uid] Raw response type:', typeof responseData);
+        console.log('[check-uid] Raw response:', String(responseData).substring(0, 500));
+
+        let results = [];
+
+        if (Array.isArray(responseData)) {
+            // Already a parsed array
+            results = responseData;
+            console.log('[check-uid] Format: JSON array');
+
+        } else if (typeof responseData === 'object' && responseData !== null) {
+            // Single object
+            results = [responseData];
+            console.log('[check-uid] Format: single object');
+
+        } else {
+            // String — could be NDJSON (one object per line) or regular JSON
+            const raw = String(responseData || '').trim();
+
+            // Try regular JSON first
+            try {
+                const parsed = JSON.parse(raw);
+                results = Array.isArray(parsed) ? parsed : [parsed];
+                console.log('[check-uid] Format: JSON string →', results.length, 'items');
+            } catch {
+                // Fall back to NDJSON (newline-delimited JSON)
+                results = raw
+                    .split(/\r?\n/)          // handle both \n and \r\n
+                    .map(l => l.trim())
+                    .filter(Boolean)
+                    .map(line => {
+                        try { return JSON.parse(line); }
+                        catch (e) {
+                            console.warn('[check-uid] Failed to parse line:', line);
+                            return null;
+                        }
+                    })
+                    .filter(Boolean);
+                console.log('[check-uid] Format: NDJSON →', results.length, 'items');
+            }
+        }
+
+        // Normalize — ensure uid field is present and live is boolean
+        results = results
+            .filter(r => r && (r.uid !== undefined))
+            .map(r => ({ uid: String(r.uid), live: Boolean(r.live) }));
+
+        console.log(`[check-uid] Final: ${results.length} results`, results);
+
+        if (results.length === 0) {
+            console.warn('[check-uid] WARNING: 0 results for', cleanUids.length, 'UIDs. Raw was:', String(responseData).substring(0, 200));
+        }
+
+        return res.json({ success: true, results, requested: cleanUids.length });
+
     } catch (err) {
-        console.error('Check-uid error:', err.message);
+        console.error('[check-uid] Error:', err.message, err.response?.data);
         const status = err.response?.status || 500;
         return res.status(status).json({
             success: false,
             error  : status === 429
                 ? 'Rate limited. Please wait a moment and try again.'
-                : 'Failed to check UIDs',
+                : 'Failed to check UIDs: ' + err.message,
             details: err.message
         });
     }
