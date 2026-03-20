@@ -16,14 +16,21 @@
         :root {
             --bg:      #000000;
             --card:    #111111;
+            --card2:   #161616;
             --border:  rgba(255,255,255,0.08);
             --border2: rgba(255,255,255,0.14);
             --muted:   #B4B4B4;
             --muted2:  #888;
+            --green:   #22c55e;
+            --red:     #ef4444;
+            --yellow:  #eab308;
+            --blue:    #3b82f6;
         }
 
         html, body { min-height: 100vh; background: var(--bg); color: #fff; overflow-x: hidden; }
-        ::-webkit-scrollbar { width: 5px; } ::-webkit-scrollbar-track { background: #000; } ::-webkit-scrollbar-thumb { background: #2a2a2a; border-radius: 3px; }
+        ::-webkit-scrollbar { width: 5px; }
+        ::-webkit-scrollbar-track { background: #000; }
+        ::-webkit-scrollbar-thumb { background: #2a2a2a; border-radius: 3px; }
 
         /* ── Navbar ── */
         #topnav {
@@ -42,6 +49,7 @@
         /* ── Page ── */
         #page { max-width: 860px; margin: 0 auto; padding: 2rem 1.25rem 4rem; display: flex; flex-direction: column; gap: 1.25rem; }
 
+        .page-header { display: flex; align-items: flex-start; justify-content: space-between; gap: 1rem; flex-wrap: wrap; }
         .page-title { font-size: 1.5rem; font-weight: 800; letter-spacing: -0.03em; }
         .page-sub   { font-size: 0.82rem; color: var(--muted2); margin-top: 2px; }
 
@@ -53,7 +61,7 @@
             transition: border-color .2s;
         }
         .scard:hover { border-color: var(--border2); }
-        .scard-val { font-size: 1.5rem; font-weight: 800; letter-spacing: -0.04em; line-height: 1; color: #fff; }
+        .scard-val { font-size: 1.5rem; font-weight: 800; letter-spacing: -0.04em; line-height: 1; }
         .scard-key { font-size: 0.72rem; color: var(--muted2); font-weight: 500; text-transform: uppercase; letter-spacing: .05em; }
         .scard-val.green  { color: #86efac; }
         .scard-val.yellow { color: #fde68a; }
@@ -61,19 +69,16 @@
 
         /* ── Add Cookie Card ── */
         .add-card { background: var(--card); border: 1px solid var(--border); border-radius: 12px; overflow: hidden; }
-        .add-card-header {
-            display: flex; align-items: center; justify-content: space-between;
-            padding: .9rem 1.25rem; border-bottom: 1px solid var(--border);
-        }
+        .add-card-header { display: flex; align-items: center; justify-content: space-between; padding: .9rem 1.25rem; border-bottom: 1px solid var(--border); }
         .section-title { font-size: 0.78rem; font-weight: 700; text-transform: uppercase; letter-spacing: .07em; color: var(--muted2); }
         .add-card-body { padding: 1.25rem; display: flex; flex-direction: column; gap: .85rem; }
 
         .cookie-textarea {
             background: rgba(255,255,255,0.04); border: 1px solid var(--border);
             border-radius: 9px; color: #fff; padding: .85rem 1rem;
-            font-size: 0.8rem; font-family: 'Courier New', monospace !important;
-            line-height: 1.5; width: 100%; resize: vertical; min-height: 90px;
-            outline: none; transition: border-color .2s, background .2s;
+            font-size: 0.8rem; font-family: 'Courier New', monospace !important; line-height: 1.5;
+            width: 100%; resize: vertical; min-height: 90px; outline: none;
+            transition: border-color .2s, background .2s;
         }
         .cookie-textarea:focus { border-color: rgba(255,255,255,.25); background: rgba(255,255,255,.06); }
         .cookie-textarea::placeholder { color: #333; font-family: 'Courier New', monospace !important; }
@@ -83,14 +88,17 @@
 
         .btn-add {
             background: #fff; color: #000; font-size: 0.875rem; font-weight: 700;
-            border: none; border-radius: 8px; padding: .6rem 1.4rem;
-            cursor: pointer; display: inline-flex; align-items: center; gap: 7px;
+            border: none; border-radius: 8px; padding: .6rem 1.4rem; cursor: pointer;
+            display: inline-flex; align-items: center; gap: 7px;
             transition: background .2s; height: 42px; white-space: nowrap;
         }
         .btn-add:hover:not(:disabled) { background: #e0e0e0; }
         .btn-add:disabled { opacity: .6; cursor: not-allowed; }
 
-        .inline-msg { padding: 9px 13px; border-radius: 8px; font-size: 0.82rem; font-weight: 500; display: none; align-items: center; gap: 8px; }
+        .inline-msg {
+            padding: 9px 13px; border-radius: 8px; font-size: 0.82rem; font-weight: 500;
+            display: none; align-items: center; gap: 8px;
+        }
         .inline-msg.visible { display: flex; }
         .inline-msg.error   { background: rgba(239,68,68,.1); border: 1px solid rgba(239,68,68,.3); color: #fca5a5; }
         .inline-msg.success { background: rgba(34,197,94,.1); border: 1px solid rgba(34,197,94,.25); color: #86efac; }
@@ -98,7 +106,7 @@
         /* ── Cookie list card ── */
         .list-card { background: var(--card); border: 1px solid var(--border); border-radius: 12px; overflow: hidden; }
         .list-header {
-            display: flex; align-items: center; justify-content: space-between; flex-wrap: wrap; gap: 8px;
+            display: flex; align-items: center; justify-content: space-between; flex-wrap: wrap; gap: 10px;
             padding: .9rem 1.25rem; border-bottom: 1px solid var(--border);
         }
         .list-header-left { display: flex; align-items: center; gap: 10px; flex-wrap: wrap; }
@@ -117,25 +125,32 @@
         /* Check Live button */
         .btn-check-live {
             display: inline-flex; align-items: center; gap: 6px;
-            background: rgba(34,197,94,.1); border: 1px solid rgba(34,197,94,.25);
-            color: #86efac; border-radius: 8px;
-            font-size: 0.72rem; font-weight: 700;
-            padding: .35rem .85rem; cursor: pointer; transition: all .2s;
-            white-space: nowrap;
+            background: rgba(59,130,246,.12); border: 1px solid rgba(59,130,246,.3);
+            color: #93c5fd; border-radius: 8px; padding: .4rem .9rem;
+            font-size: 0.75rem; font-weight: 700; cursor: pointer; white-space: nowrap;
+            transition: all .2s; flex-shrink: 0;
         }
-        .btn-check-live:hover:not(:disabled) { background: rgba(34,197,94,.2); border-color: rgba(34,197,94,.4); }
+        .btn-check-live:hover:not(:disabled) { background: rgba(59,130,246,.22); color: #bfdbfe; }
         .btn-check-live:disabled { opacity: .5; cursor: not-allowed; }
-
-        /* Check progress banner */
-        .check-banner {
-            display: none; align-items: center; gap: 10px; flex-wrap: wrap;
-            padding: .7rem 1.25rem;
-            background: rgba(34,197,94,.05); border-bottom: 1px solid rgba(34,197,94,.1);
-            font-size: 0.78rem; color: #86efac; transition: all .3s;
+        .btn-check-live .live-dot {
+            width: 6px; height: 6px; border-radius: 50%; background: #3b82f6;
         }
-        .check-banner.show { display: flex; }
-        .check-progress-bar-wrap { flex: 1; min-width: 100px; height: 4px; background: rgba(255,255,255,.06); border-radius: 2px; overflow: hidden; }
-        .check-progress-bar { height: 100%; background: #22c55e; border-radius: 2px; transition: width .4s ease, background .3s; width: 0%; }
+        .btn-check-live.checking .live-dot { animation: pulse-dot .9s ease-in-out infinite; }
+        @keyframes pulse-dot { 0%,100%{opacity:1;} 50%{opacity:.3;} }
+
+        /* Check live results bar */
+        .check-results-bar {
+            display: none; align-items: center; gap: 10px; flex-wrap: wrap;
+            padding: .6rem 1.25rem; border-bottom: 1px solid var(--border);
+            background: rgba(59,130,246,.05);
+            font-size: 0.78rem;
+        }
+        .check-results-bar.show { display: flex; }
+        .cr-item { display: flex; align-items: center; gap: 5px; font-weight: 600; }
+        .cr-live  { color: #86efac; }
+        .cr-dead  { color: #fca5a5; }
+        .cr-total { color: var(--muted2); }
+        .cr-label { font-size: 0.7rem; font-weight: 500; color: #555; }
 
         /* Bulk action bar */
         .bulk-bar {
@@ -148,8 +163,8 @@
         .btn-bulk-delete {
             background: rgba(239,68,68,.15); border: 1px solid rgba(239,68,68,.3);
             color: #fca5a5; border-radius: 7px; font-size: 0.78rem; font-weight: 700;
-            padding: .35rem .85rem; cursor: pointer; display: flex; align-items: center; gap: 6px;
-            transition: background .2s;
+            padding: .35rem .85rem; cursor: pointer;
+            display: flex; align-items: center; gap: 6px; transition: background .2s;
         }
         .btn-bulk-delete:hover { background: rgba(239,68,68,.25); }
         .btn-bulk-cancel {
@@ -161,10 +176,12 @@
 
         /* Cookie rows */
         #cookieList { display: flex; flex-direction: column; }
+
         .cookie-row {
             display: grid; grid-template-columns: 20px 40px 1fr auto;
-            align-items: center; gap: 12px; padding: .9rem 1.25rem;
-            border-bottom: 1px solid var(--border); transition: background .15s;
+            align-items: center; gap: 12px;
+            padding: .9rem 1.25rem; border-bottom: 1px solid var(--border);
+            transition: background .15s; cursor: pointer;
         }
         .cookie-row:last-child { border-bottom: none; }
         .cookie-row:hover { background: rgba(255,255,255,.025); }
@@ -172,8 +189,8 @@
 
         /* Checkbox */
         .ck-box {
-            width: 15px; height: 15px; border: 1.5px solid #555; border-radius: 4px;
-            display: flex; align-items: center; justify-content: center;
+            width: 15px; height: 15px; border: 1.5px solid var(--muted2);
+            border-radius: 4px; display: flex; align-items: center; justify-content: center;
             flex-shrink: 0; cursor: pointer; transition: all .15s;
         }
         .ck-box.checked { background: #fff; border-color: #fff; }
@@ -182,25 +199,41 @@
         /* Avatar */
         .fb-avatar {
             width: 40px; height: 40px; border-radius: 50%;
-            background: rgba(255,255,255,.07); display: flex; align-items: center; justify-content: center;
-            font-size: 0.85rem; font-weight: 700; color: var(--muted);
-            flex-shrink: 0; overflow: hidden; border: 1.5px solid var(--border);
+            display: flex; align-items: center; justify-content: center;
+            font-size: 0.85rem; font-weight: 700; flex-shrink: 0;
+            overflow: hidden; border: 1.5px solid var(--border); position: relative;
         }
 
         /* Cookie info */
         .cookie-info { min-width: 0; }
-        .cookie-name { font-size: 0.875rem; font-weight: 700; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; color: #fff; }
+        .cookie-name-row { display: flex; align-items: center; gap: 6px; }
+        .cookie-name {
+            font-size: 0.875rem; font-weight: 700;
+            white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
+        }
         .cookie-uid  { font-size: 0.72rem; color: var(--muted2); margin-top: 1px; font-family: 'Courier New', monospace; }
-        .cookie-meta { font-size: 0.7rem; color: #555; margin-top: 2px; }
+        .cookie-meta { font-size: 0.7rem; color: #3a3a3a; margin-top: 2px; }
 
+        /* Live / Dead account badge — shown after check */
+        .live-badge {
+            display: none; align-items: center; gap: 3px;
+            padding: 1px 6px; border-radius: 10px;
+            font-size: 0.62rem; font-weight: 800; letter-spacing: .02em;
+            flex-shrink: 0; white-space: nowrap;
+        }
+        .live-badge.visible { display: inline-flex; }
+        .live-badge.live { background: rgba(34,197,94,.14); color: #86efac; border: 1px solid rgba(34,197,94,.25); }
+        .live-badge.dead { background: rgba(239,68,68,.12); color: #fca5a5; border: 1px solid rgba(239,68,68,.22); }
+        .live-badge-dot { width: 4px; height: 4px; border-radius: 50%; background: currentColor; }
+
+        /* Checking shimmer on row */
+        .cookie-row.checking-uid .cookie-name { opacity: .5; }
+
+        /* Right side */
         .cookie-right { display: flex; flex-direction: column; align-items: flex-end; gap: 5px; flex-shrink: 0; }
 
-        /* Status badges */
-        .status-badge {
-            display: inline-flex; align-items: center; gap: 4px;
-            padding: 2px 8px; border-radius: 20px;
-            font-size: 0.68rem; font-weight: 700;
-        }
+        /* Status badge */
+        .status-badge { display: inline-flex; align-items: center; gap: 4px; padding: 2px 8px; border-radius: 20px; font-size: 0.68rem; font-weight: 700; }
         .status-dot { width: 5px; height: 5px; border-radius: 50%; flex-shrink: 0; }
         .sb-active     { background: rgba(34,197,94,.12); color: #86efac; }
         .sb-active     .status-dot { background: #22c55e; }
@@ -211,34 +244,19 @@
         .sb-restricted { background: rgba(234,179,8,.12); color: #fde68a; }
         .sb-restricted .status-dot { background: #eab308; }
 
-        /* Live/dead indicator badge (from check-uid) */
-        .live-badge {
-            display: none; align-items: center; gap: 4px;
-            padding: 2px 7px; border-radius: 20px;
-            font-size: 0.65rem; font-weight: 700; letter-spacing: .01em;
-        }
-        .live-badge.show { display: inline-flex; }
-        .live-badge.checking { background: rgba(59,130,246,.1); color: #93c5fd; border: 1px solid rgba(59,130,246,.2); animation: lb-pulse .9s ease-in-out infinite; }
-        .live-badge.live     { background: rgba(34,197,94,.12); color: #86efac; border: 1px solid rgba(34,197,94,.25); }
-        .live-badge.dead     { background: rgba(239,68,68,.1);  color: #fca5a5; border: 1px solid rgba(239,68,68,.2); }
-        @keyframes lb-pulse { 0%,100%{opacity:1} 50%{opacity:.5} }
-
-        /* Row actions */
+        /* Row action buttons */
         .row-actions { display: flex; gap: 5px; }
-        .row-btn {
-            width: 28px; height: 28px; border-radius: 6px; border: none; cursor: pointer;
-            display: flex; align-items: center; justify-content: center; transition: all .15s;
-        }
+        .row-btn { width: 28px; height: 28px; border-radius: 6px; border: none; cursor: pointer; display: flex; align-items: center; justify-content: center; transition: all .15s; }
         .row-btn.copy { background: rgba(255,255,255,.06); color: var(--muted); }
         .row-btn.copy:hover { background: rgba(255,255,255,.12); color: #fff; }
         .row-btn.del  { background: rgba(239,68,68,.08); color: #fca5a5; }
         .row-btn.del:hover  { background: rgba(239,68,68,.2); }
 
         /* Empty state */
-        .empty-state { padding: 3.5rem 1rem; text-align: center; display: flex; flex-direction: column; align-items: center; gap: 10px; }
+        .empty-state { padding: 3.5rem 1rem; text-align: center; display: flex; flex-direction: column; align-items: center; gap: 10px; color: var(--muted2); }
         .empty-state svg { opacity: .18; }
         .empty-title { font-size: 0.9rem; font-weight: 700; color: #333; }
-        .empty-sub   { font-size: 0.78rem; color: var(--muted2); }
+        .empty-sub   { font-size: 0.78rem; }
 
         /* Skeleton */
         .skeleton { background: linear-gradient(90deg,#141414 25%,#1c1c1c 50%,#141414 75%); background-size: 200% 100%; animation: shimmer 1.5s infinite; border-radius: 5px; }
@@ -249,47 +267,21 @@
         @keyframes spin { to { transform: rotate(360deg); } }
 
         /* ── Delete confirm modal ── */
-        .modal-overlay {
-            position: fixed; inset: 0; z-index: 999;
-            background: rgba(0,0,0,.75); backdrop-filter: blur(4px);
-            display: none; align-items: center; justify-content: center; padding: 1rem;
-        }
+        .modal-overlay { position: fixed; inset: 0; z-index: 999; background: rgba(0,0,0,.7); backdrop-filter: blur(4px); display: none; align-items: center; justify-content: center; padding: 1rem; }
         .modal-overlay.open { display: flex; }
-        .modal-box {
-            background: #111; border: 1px solid var(--border2);
-            border-radius: 14px; padding: 1.75rem 1.5rem;
-            max-width: 380px; width: 100%; display: flex; flex-direction: column; gap: 1rem;
-        }
+        .modal-box { background: #111; border: 1px solid var(--border2); border-radius: 14px; padding: 1.75rem 1.5rem; max-width: 380px; width: 100%; display: flex; flex-direction: column; gap: 1rem; }
         .modal-icon { width: 44px; height: 44px; border-radius: 12px; background: rgba(239,68,68,.12); display: flex; align-items: center; justify-content: center; color: #fca5a5; }
         .modal-title { font-size: 1rem; font-weight: 800; }
         .modal-sub   { font-size: 0.82rem; color: var(--muted2); line-height: 1.5; }
         .modal-name  { color: #fff; font-weight: 700; }
         .modal-actions { display: flex; gap: 8px; }
-        .btn-modal-cancel {
-            flex: 1; background: rgba(255,255,255,.06); border: 1px solid var(--border2);
-            color: var(--muted); border-radius: 8px; padding: .6rem;
-            font-size: 0.82rem; font-weight: 600; cursor: pointer; transition: background .2s;
-        }
+        .btn-modal-cancel { flex: 1; background: rgba(255,255,255,.06); border: 1px solid var(--border2); color: var(--muted); border-radius: 8px; padding: .6rem; font-size: 0.82rem; font-weight: 600; cursor: pointer; transition: background .2s; }
         .btn-modal-cancel:hover { background: rgba(255,255,255,.1); color: #fff; }
-        .btn-modal-confirm {
-            flex: 1; background: rgba(239,68,68,.15); border: 1px solid rgba(239,68,68,.3);
-            color: #fca5a5; border-radius: 8px; padding: .6rem;
-            font-size: 0.82rem; font-weight: 700; cursor: pointer; transition: background .2s;
-            display: flex; align-items: center; justify-content: center; gap: 6px;
-        }
+        .btn-modal-confirm { flex: 1; background: rgba(239,68,68,.15); border: 1px solid rgba(239,68,68,.3); color: #fca5a5; border-radius: 8px; padding: .6rem; font-size: 0.82rem; font-weight: 700; cursor: pointer; transition: background .2s; display: flex; align-items: center; justify-content: center; gap: 6px; }
         .btn-modal-confirm:hover { background: rgba(239,68,68,.28); }
 
         /* ── Toast ── */
-        #toast {
-            position: fixed; bottom: 1.5rem; right: 1.5rem;
-            background: #111; border: 1px solid var(--border);
-            border-radius: 10px; padding: .65rem 1rem;
-            font-size: 0.82rem; font-weight: 500;
-            display: flex; align-items: center; gap: 8px;
-            z-index: 9999; max-width: 300px;
-            transform: translateY(20px); opacity: 0;
-            transition: transform .3s, opacity .3s; pointer-events: none;
-        }
+        #toast { position: fixed; bottom: 1.5rem; right: 1.5rem; background: #111; border: 1px solid var(--border); border-radius: 10px; padding: .65rem 1rem; font-size: 0.82rem; font-weight: 500; display: flex; align-items: center; gap: 8px; z-index: 9999; max-width: 300px; transform: translateY(20px); opacity: 0; transition: transform .3s, opacity .3s; pointer-events: none; }
         #toast.show { transform: translateY(0); opacity: 1; }
         #toast.success { border-color: rgba(34,197,94,.3); color: #86efac; }
         #toast.error   { border-color: rgba(239,68,68,.3); color: #fca5a5; }
@@ -320,17 +312,31 @@
 
 <div id="page">
 
-    <div>
-        <div class="page-title">My Cookies</div>
-        <div class="page-sub">Manage your Facebook session cookies for boosting</div>
+    <div class="page-header">
+        <div>
+            <div class="page-title">My Cookies</div>
+            <div class="page-sub">Manage your Facebook session cookies for boosting</div>
+        </div>
     </div>
 
     <!-- Stats -->
     <div class="stats-strip">
-        <div class="scard"><div class="scard-val" id="statTotal">—</div><div class="scard-key">Total</div></div>
-        <div class="scard"><div class="scard-val green" id="statActive">—</div><div class="scard-key">Active</div></div>
-        <div class="scard"><div class="scard-val yellow" id="statRestricted">—</div><div class="scard-key">Restricted</div></div>
-        <div class="scard"><div class="scard-val red" id="statDead">—</div><div class="scard-key">Dead</div></div>
+        <div class="scard">
+            <div class="scard-val" id="statTotal">—</div>
+            <div class="scard-key">Total</div>
+        </div>
+        <div class="scard">
+            <div class="scard-val green" id="statActive">—</div>
+            <div class="scard-key">Active</div>
+        </div>
+        <div class="scard">
+            <div class="scard-val yellow" id="statRestricted">—</div>
+            <div class="scard-key">Restricted</div>
+        </div>
+        <div class="scard">
+            <div class="scard-val red" id="statDead">—</div>
+            <div class="scard-key">Dead</div>
+        </div>
     </div>
 
     <!-- Add Cookie -->
@@ -350,8 +356,7 @@
 
             <textarea class="cookie-textarea" id="cookieInput"
                 placeholder="Paste your Facebook cookie here (c_user, xs, datr, etc.)..."
-                spellcheck="false" autocomplete="off"
-                oninput="clearAddMsgs()"></textarea>
+                spellcheck="false" autocomplete="off" oninput="clearAddMsgs()"></textarea>
 
             <div class="field-hint">
                 <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><line x1="12" y1="16" x2="12" y2="12"/><line x1="12" y1="8" x2="12.01" y2="8"/></svg>
@@ -384,20 +389,27 @@
                     <button class="ftab"        data-filter="blocked"    onclick="switchFilter(this)">Blocked</button>
                 </div>
             </div>
+            <!-- Check Live button -->
             <button class="btn-check-live" id="checkLiveBtn" onclick="checkAllLive()" title="Check if Facebook accounts are live or dead">
-                <span id="checkLiveBtnText">
-                    <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" style="margin-right:4px;vertical-align:middle;"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>Check Live
-                </span>
+                <span class="live-dot"></span>
+                <span id="checkLiveBtnText">Check Live</span>
             </button>
         </div>
 
-        <!-- Check progress banner -->
-        <div class="check-banner" id="checkBanner">
-            <span id="checkBannerText">Checking accounts…</span>
-            <div class="check-progress-bar-wrap">
-                <div class="check-progress-bar" id="checkProgressBar"></div>
-            </div>
-            <span id="checkBannerCount" style="font-size:.72rem;opacity:.8;white-space:nowrap;"></span>
+        <!-- Live check results summary bar -->
+        <div class="check-results-bar" id="checkResultsBar">
+            <span class="cr-item cr-live">
+                <svg width="10" height="10" viewBox="0 0 16 16" fill="currentColor"><path fill-rule="evenodd" clip-rule="evenodd" d="M15.5607 3.99999L15.0303 4.53032L6.23744 13.3232C5.55403 14.0066 4.44599 14.0066 3.76257 13.3232L0.969676 10.5303L0.439346 9.99999L1.50001 8.93933L2.03034 9.46966L4.82323 12.2626C4.92086 12.3602 5.07915 12.3602 5.17678 12.2626L13.9697 3.46966L14.5 2.93933L15.5607 3.99999Z"/></svg>
+                <span id="crLiveCount">0</span> Live
+            </span>
+            <span class="cr-item cr-dead">
+                <svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
+                <span id="crDeadCount">0</span> Dead
+            </span>
+            <span class="cr-item cr-total">
+                <span id="crTotalCount">0</span> checked
+            </span>
+            <span class="cr-label" id="crTimestamp"></span>
         </div>
 
         <!-- Bulk action bar -->
@@ -411,43 +423,39 @@
         </div>
 
         <div id="cookieList">
-            <!-- Skeleton rows — real HTML, not template literals -->
-            <div class="cookie-row" id="sk1" style="cursor:default;">
-                <div class="skeleton" style="width:15px;height:15px;border-radius:3px;"></div>
-                <div class="skeleton" style="width:40px;height:40px;border-radius:50%;"></div>
-                <div style="display:flex;flex-direction:column;gap:6px;">
-                    <div class="skeleton" style="height:12px;width:55%;"></div>
-                    <div class="skeleton" style="height:10px;width:80%;"></div>
-                    <div class="skeleton" style="height:9px;width:40%;"></div>
+            <!-- Real skeleton rows — no JS template literals -->
+            <div id="listSkeleton">
+                <div style="display:grid;grid-template-columns:20px 40px 1fr auto;align-items:center;gap:12px;padding:.9rem 1.25rem;border-bottom:1px solid rgba(255,255,255,.05);">
+                    <div class="skeleton" style="width:15px;height:15px;border-radius:3px;"></div>
+                    <div class="skeleton" style="width:40px;height:40px;border-radius:50%;"></div>
+                    <div style="display:flex;flex-direction:column;gap:6px;"><div class="skeleton" style="height:12px;width:50%;"></div><div class="skeleton" style="height:10px;width:75%;"></div><div class="skeleton" style="height:9px;width:35%;"></div></div>
+                    <div class="skeleton" style="width:60px;height:20px;border-radius:20px;"></div>
                 </div>
-                <div class="skeleton" style="width:60px;height:20px;border-radius:20px;"></div>
-            </div>
-            <div class="cookie-row" id="sk2" style="cursor:default;">
-                <div class="skeleton" style="width:15px;height:15px;border-radius:3px;"></div>
-                <div class="skeleton" style="width:40px;height:40px;border-radius:50%;"></div>
-                <div style="display:flex;flex-direction:column;gap:6px;">
-                    <div class="skeleton" style="height:12px;width:70%;"></div>
-                    <div class="skeleton" style="height:10px;width:60%;"></div>
-                    <div class="skeleton" style="height:9px;width:45%;"></div>
+                <div style="display:grid;grid-template-columns:20px 40px 1fr auto;align-items:center;gap:12px;padding:.9rem 1.25rem;border-bottom:1px solid rgba(255,255,255,.05);">
+                    <div class="skeleton" style="width:15px;height:15px;border-radius:3px;"></div>
+                    <div class="skeleton" style="width:40px;height:40px;border-radius:50%;"></div>
+                    <div style="display:flex;flex-direction:column;gap:6px;"><div class="skeleton" style="height:12px;width:65%;"></div><div class="skeleton" style="height:10px;width:80%;"></div><div class="skeleton" style="height:9px;width:40%;"></div></div>
+                    <div class="skeleton" style="width:60px;height:20px;border-radius:20px;"></div>
                 </div>
-                <div class="skeleton" style="width:60px;height:20px;border-radius:20px;"></div>
-            </div>
-            <div class="cookie-row" id="sk3" style="cursor:default;">
-                <div class="skeleton" style="width:15px;height:15px;border-radius:3px;"></div>
-                <div class="skeleton" style="width:40px;height:40px;border-radius:50%;"></div>
-                <div style="display:flex;flex-direction:column;gap:6px;">
-                    <div class="skeleton" style="height:12px;width:45%;"></div>
-                    <div class="skeleton" style="height:10px;width:75%;"></div>
-                    <div class="skeleton" style="height:9px;width:35%;"></div>
+                <div style="display:grid;grid-template-columns:20px 40px 1fr auto;align-items:center;gap:12px;padding:.9rem 1.25rem;border-bottom:1px solid rgba(255,255,255,.05);">
+                    <div class="skeleton" style="width:15px;height:15px;border-radius:3px;"></div>
+                    <div class="skeleton" style="width:40px;height:40px;border-radius:50%;"></div>
+                    <div style="display:flex;flex-direction:column;gap:6px;"><div class="skeleton" style="height:12px;width:45%;"></div><div class="skeleton" style="height:10px;width:70%;"></div><div class="skeleton" style="height:9px;width:55%;"></div></div>
+                    <div class="skeleton" style="width:60px;height:20px;border-radius:20px;"></div>
                 </div>
-                <div class="skeleton" style="width:60px;height:20px;border-radius:20px;"></div>
+                <div style="display:grid;grid-template-columns:20px 40px 1fr auto;align-items:center;gap:12px;padding:.9rem 1.25rem;">
+                    <div class="skeleton" style="width:15px;height:15px;border-radius:3px;"></div>
+                    <div class="skeleton" style="width:40px;height:40px;border-radius:50%;"></div>
+                    <div style="display:flex;flex-direction:column;gap:6px;"><div class="skeleton" style="height:12px;width:55%;"></div><div class="skeleton" style="height:10px;width:60%;"></div><div class="skeleton" style="height:9px;width:30%;"></div></div>
+                    <div class="skeleton" style="width:60px;height:20px;border-radius:20px;"></div>
+                </div>
             </div>
         </div>
     </div>
 
 </div>
 
-<!-- Delete modal -->
+<!-- Delete confirm modal -->
 <div class="modal-overlay" id="deleteModal">
     <div class="modal-box">
         <div class="modal-icon">
@@ -483,17 +491,13 @@ async function apiFetch(url, opts = {}) {
         return await res.json();
     } catch (e) { return null; }
 }
-function logout() {
-    ['token','kb_token','userRole','username','kb_user'].forEach(k => localStorage.removeItem(k));
-    window.location.href = '/login';
-}
 
 /* ── State ── */
 let allCookies   = [];
 let activeFilter = 'all';
 let selected     = new Set();
 let pendingDelId = null;
-// Map uid → 'live' | 'dead' | 'checking'
+// Map<uid, boolean>  — true = live, false = dead
 const liveStatus = new Map();
 
 /* ── Spinner ── */
@@ -508,12 +512,13 @@ function toast(msg, type = 'success') {
         info:    `<svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><circle cx="12" cy="12" r="10"/><line x1="12" y1="16" x2="12" y2="12"/><line x1="12" y1="8" x2="12.01" y2="8"/></svg>`
     };
     el.className = `show ${type}`;
-    el.innerHTML = (icons[type] || icons.info) + msg;
+    el.innerHTML = (icons[type]||icons.info) + msg;
     clearTimeout(el._t);
     el._t = setTimeout(() => el.className = '', 3200);
 }
 
-function esc(s) { return (s || '').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;'); }
+function esc(s) { return (s||'').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;'); }
+function logout() { ['token','kb_token','userRole','username','kb_user'].forEach(k => localStorage.removeItem(k)); window.location.href = '/login'; }
 
 /* ── Status badge ── */
 function statusBadge(status) {
@@ -526,19 +531,18 @@ function statusBadge(status) {
     return map[status] || map.active;
 }
 
-/* ── Live badge ── */
+/* ── Live badge HTML ── */
 function liveBadgeHtml(uid) {
-    const state = liveStatus.get(String(uid));
-    if (!state) return '';
-    if (state === 'checking') return '<span class="live-badge checking show">Checking…</span>';
-    if (state === 'live')     return '<span class="live-badge live show">🟢 Live</span>';
-    if (state === 'dead')     return '<span class="live-badge dead show">🔴 Dead</span>';
-    return '';
+    if (!liveStatus.has(uid)) return '<span class="live-badge"></span>';
+    const isLive = liveStatus.get(uid);
+    return isLive
+        ? '<span class="live-badge live visible"><span class="live-badge-dot"></span>LIVE</span>'
+        : '<span class="live-badge dead visible"><span class="live-badge-dot"></span>DEAD</span>';
 }
 
 /* ── Avatar ── */
 function fbAvatar(name) {
-    const letter = (name || '?').charAt(0).toUpperCase();
+    const letter = (name||'?').charAt(0).toUpperCase();
     const colors = ['#1877f2','#4267B2','#5865f2','#7c3aed','#db2777'];
     const bg = colors[letter.charCodeAt(0) % colors.length];
     return `<div class="fb-avatar" style="background:${bg};color:#fff;">${letter}</div>`;
@@ -550,26 +554,18 @@ function filtered() {
     return allCookies.filter(c => c.status === activeFilter);
 }
 
-/* ── Stats ── */
+/* ── Update stats ── */
 function updateStats() {
-    const total      = allCookies.length;
-    const active     = allCookies.filter(c => c.status === 'active').length;
-    const restricted = allCookies.filter(c => c.status === 'restricted').length;
-    const dead       = allCookies.filter(c => c.status === 'expired' || c.status === 'blocked').length;
-    document.getElementById('statTotal').textContent      = total;
-    document.getElementById('statActive').textContent     = active;
-    document.getElementById('statRestricted').textContent = restricted;
-    document.getElementById('statDead').textContent       = dead;
+    document.getElementById('statTotal').textContent      = allCookies.length;
+    document.getElementById('statActive').textContent     = allCookies.filter(c => c.status === 'active').length;
+    document.getElementById('statRestricted').textContent = allCookies.filter(c => c.status === 'restricted').length;
+    document.getElementById('statDead').textContent       = allCookies.filter(c => c.status === 'expired' || c.status === 'blocked').length;
 }
 
 /* ── Render list ── */
-function removeSkeleton() {
-    ['sk1','sk2','sk3'].forEach(id => document.getElementById(id)?.remove());
-}
-
 function renderList() {
-    const list    = document.getElementById('cookieList');
-    removeSkeleton();
+    const list = document.getElementById('cookieList');
+    document.getElementById('listSkeleton')?.remove();
     const visible = filtered();
 
     if (!visible.length) {
@@ -582,24 +578,25 @@ function renderList() {
     }
 
     list.innerHTML = visible.map(c => {
-        const isSel  = selected.has(String(c.id));
+        const isSel    = selected.has(c.id);
         const lastUsed = c.lastUsed ? `Last used ${c.lastUsed}` : 'Never used';
-        return `<div class="cookie-row${isSel ? ' selected' : ''}" id="cookie-${c.id}" data-id="${c.id}">
+        return `
+        <div class="cookie-row${isSel ? ' selected' : ''}" id="cookie-${c.id}" data-id="${c.id}">
             <div class="ck-box${isSel ? ' checked' : ''}" onclick="toggleSelect('${c.id}', event)"></div>
             ${fbAvatar(c.name)}
             <div class="cookie-info">
-                <div class="cookie-name">${esc(c.name)}</div>
+                <div class="cookie-name-row">
+                    <span class="cookie-name">${esc(c.name)}</span>
+                    ${liveBadgeHtml(c.uid)}
+                </div>
                 <div class="cookie-uid">UID: ${esc(c.uid)}</div>
                 <div class="cookie-meta">Added ${esc(c.addedAt)} · ${lastUsed}</div>
             </div>
             <div class="cookie-right">
-                <div style="display:flex;align-items:center;gap:5px;flex-wrap:wrap;justify-content:flex-end;">
-                    ${statusBadge(c.status)}
-                    ${liveBadgeHtml(c.uid)}
-                </div>
+                ${statusBadge(c.status)}
                 <div class="row-actions">
                     <button class="row-btn copy" onclick="copyCookie('${c.id}', event)" title="Copy cookie">
-                        <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="9" y="9" width="13" height="13" rx="2" ry="2"/><path d="M5 15H4a2 2 0 01-2-2V4a2 2 0 012-2h9a2 2 0 012 2v1"/></svg>
+                        <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="9" y="9" width="13" height="13" rx="2"/><path d="M5 15H4a2 2 0 01-2-2V4a2 2 0 012-2h9a2 2 0 012 2v1"/></svg>
                     </button>
                     <button class="row-btn del" onclick="promptDelete('${c.id}', '${esc(c.name)}', event)" title="Delete">
                         <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="3 6 5 6 21 6"/><path d="M19 6l-1 14a2 2 0 01-2 2H8a2 2 0 01-2-2L5 6"/><path d="M10 11v6M14 11v6"/></svg>
@@ -610,199 +607,81 @@ function renderList() {
     }).join('');
 }
 
-/* ── Check Live / Dead ── */
+/* ── CHECK LIVE ── */
 async function checkAllLive() {
-    if (!allCookies.length) {
-        toast('No cookies to check.', 'info');
-        return;
-    }
+    if (!allCookies.length) { toast('No cookies to check.', 'info'); return; }
 
-    const btn       = document.getElementById('checkLiveBtn');
-    const btnText   = document.getElementById('checkLiveBtnText');
-    const banner    = document.getElementById('checkBanner');
-    const bannerTxt = document.getElementById('checkBannerText');
-    const progBar   = document.getElementById('checkProgressBar');
-    const countTxt  = document.getElementById('checkBannerCount');
+    const btn     = document.getElementById('checkLiveBtn');
+    const btnText = document.getElementById('checkLiveBtnText');
+    btn.disabled  = true;
+    btn.classList.add('checking');
+    btnText.innerHTML = `${SPINNER} Checking…`;
 
-    // Lock UI
-    btn.disabled = true;
-    btnText.innerHTML = SPINNER;
-    banner.classList.add('show');
-    bannerTxt.textContent = 'Connecting to check server…';
-    progBar.style.width = '0%';
-    countTxt.textContent = '';
+    // Dim all rows to show checking state
+    document.querySelectorAll('.cookie-row').forEach(r => r.classList.add('checking-uid'));
 
-    // Mark every account as "checking" immediately
-    allCookies.forEach(c => liveStatus.set(String(c.uid), 'checking'));
-    renderList();
+    const uids = [...new Set(allCookies.map(c => c.uid))];
+    let liveCount = 0, deadCount = 0, checkedCount = 0;
 
-    // Batch into chunks of 50 (API limit)
-    const allUids = allCookies.map(c => String(c.uid));
-    const chunks  = [];
-    for (let i = 0; i < allUids.length; i += 50) chunks.push(allUids.slice(i, i + 50));
-
-    let done = 0, liveCount = 0, deadCount = 0, errorCount = 0;
-    const deadUids = new Set();
-
-    for (let ci = 0; ci < chunks.length; ci++) {
-        const chunk = chunks[ci];
-        bannerTxt.textContent = `Checking batch ${ci + 1}/${chunks.length}…`;
-
-        let batchOk = false;
+    // Batch 50 UIDs at a time
+    const BATCH = 50;
+    for (let i = 0; i < uids.length; i += BATCH) {
+        const batch = uids.slice(i, i + BATCH);
+        btnText.innerHTML = `${SPINNER} ${i}/${uids.length}…`;
 
         try {
-            const res  = await fetch('/api/check-uid', {
-                method : 'POST',
-                headers: { 'Content-Type': 'application/json' },
-                body   : JSON.stringify({ uids: chunk })
+            const data = await apiFetch('/api/check-uid', {
+                method: 'POST',
+                body:   JSON.stringify({ uids: batch })
             });
 
-            if (!res.ok) {
-                const errData = await res.json().catch(() => ({}));
-                throw new Error(errData.error || `HTTP ${res.status}`);
+            if (data?.success && Array.isArray(data.results)) {
+                data.results.forEach(r => {
+                    liveStatus.set(String(r.uid), Boolean(r.live));
+                    if (r.live) liveCount++; else deadCount++;
+                    checkedCount++;
+                });
             }
-
-            const data = await res.json();
-            console.log('[cookies] check-uid response:', data);
-
-            if (data.success && Array.isArray(data.results)) {
-                if (data.results.length === 0 && chunk.length > 0) {
-                    // API returned success but 0 results — API may be down or blocked
-                    console.warn('[cookies] Got 0 results for', chunk.length, 'UIDs');
-                    // Mark as unknown so they don't show "checking" forever
-                    chunk.forEach(uid => liveStatus.delete(uid));
-                    toast(`Check returned 0 results. The UID checker API may be temporarily unavailable.`, 'error');
-                    errorCount += chunk.length;
-                } else {
-                    data.results.forEach(r => {
-                        const uid   = String(r.uid);
-                        const state = r.live ? 'live' : 'dead';
-                        liveStatus.set(uid, state);
-                        if (r.live) { liveCount++; } else { deadCount++; deadUids.add(uid); }
-                    });
-
-                    // Handle UIDs not returned by API (treat as unknown)
-                    chunk.forEach(uid => {
-                        if (liveStatus.get(uid) === 'checking') {
-                            liveStatus.delete(uid);
-                        }
-                    });
-                    batchOk = true;
-                }
-            } else {
-                throw new Error(data.error || 'Unexpected response format');
-            }
-        } catch (err) {
-            console.error('[cookies] check-uid error:', err);
-            chunk.forEach(uid => liveStatus.delete(uid));
-            errorCount += chunk.length;
-            toast(`Check error: ${err.message}`, 'error');
+        } catch (e) {
+            console.error('Batch check error:', e);
         }
 
-        done += chunk.length;
-        const pct = Math.round((done / allUids.length) * 100);
-        progBar.style.width = pct + '%';
-        countTxt.textContent = `${done}/${allUids.length}`;
-        bannerTxt.textContent = `${liveCount} live · ${deadCount} dead` + (errorCount > 0 ? ` · ${errorCount} failed` : '');
-
-        renderList();
-
-        if (ci < chunks.length - 1) {
-            await new Promise(r => setTimeout(r, 1000));
-        }
+        // Small delay between batches to be polite to the external API
+        if (i + BATCH < uids.length) await new Promise(r => setTimeout(r, 500));
     }
 
-    // Restore button
+    // Un-dim rows and re-render with live badges
+    document.querySelectorAll('.cookie-row').forEach(r => r.classList.remove('checking-uid'));
+    renderList();
+
+    // Update results bar
+    document.getElementById('crLiveCount').textContent  = liveCount;
+    document.getElementById('crDeadCount').textContent  = deadCount;
+    document.getElementById('crTotalCount').textContent = checkedCount;
+    document.getElementById('crTimestamp').textContent  =
+        `Checked at ${new Date().toLocaleTimeString('en', { hour12: true, hour: '2-digit', minute: '2-digit' })}`;
+    document.getElementById('checkResultsBar').classList.add('show');
+
     btn.disabled = false;
-    btnText.innerHTML = `<svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" style="margin-right:4px;vertical-align:middle;"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>Check Live`;
+    btn.classList.remove('checking');
+    btnText.textContent = 'Check Live';
 
-    const totalChecked = liveCount + deadCount;
-    if (totalChecked === 0) {
-        // Nothing worked — show helpful message
-        bannerTxt.textContent = 'Check unavailable — try again later';
-        progBar.style.width   = '100%';
-        progBar.style.background = '#ef4444';
-        toast('UID checker API returned no results. It may be temporarily down.', 'error');
-        setTimeout(() => {
-            banner.classList.remove('show');
-            progBar.style.background = '';
-        }, 5000);
-        return;
-    }
-
-    bannerTxt.textContent = `Done — ${liveCount} live · ${deadCount} dead`;
-    progBar.style.width   = '100%';
-    countTxt.textContent  = '';
-
-    const toastMsg  = deadCount > 0
-        ? `${liveCount} live · ${deadCount} dead — removing dead accounts…`
-        : `All ${liveCount} account${liveCount > 1 ? 's' : ''} are live!`;
-    toast(toastMsg, deadCount > 0 ? 'info' : 'success');
-
-    if (deadCount > 0) {
-        // Show dead badges for 2s then auto-delete
-        setTimeout(() => autoDeleteDead(deadUids), 2000);
+    if (checkedCount === 0) {
+        toast('Check failed — try again shortly.', 'error');
     } else {
-        setTimeout(() => banner.classList.remove('show'), 4000);
+        toast(`${liveCount} live · ${deadCount} dead out of ${checkedCount} accounts`, liveCount > 0 ? 'success' : 'info');
     }
-}
-
-async function autoDeleteDead(deadUids) {
-    const banner    = document.getElementById('checkBanner');
-    const bannerTxt = document.getElementById('checkBannerText');
-    const progBar   = document.getElementById('checkProgressBar');
-
-    const deadCookies = allCookies.filter(c => deadUids.has(String(c.uid)));
-    const deadIds     = deadCookies.map(c => String(c.id));
-    const deadNames   = deadCookies.map(c => c.name).join(', ');
-
-    if (!deadIds.length) { banner.classList.remove('show'); return; }
-
-    progBar.style.width   = '60%';
-    progBar.style.background = '#ef4444';
-    bannerTxt.textContent = `Deleting ${deadIds.length} dead account${deadIds.length > 1 ? 's' : ''}…`;
-
-    try {
-        const data = await apiFetch('/api/user/cookies/delete-multiple', {
-            method: 'POST',
-            body  : JSON.stringify({ cookieIds: deadIds })
-        });
-
-        if (data?.success) {
-            const n = data.deletedCount || deadIds.length;
-            allCookies = allCookies.filter(c => !deadIds.includes(String(c.id)));
-            deadUids.forEach(uid => liveStatus.delete(uid));
-            selected.clear();
-
-            updateStats();
-            updateBulkBar();
-            renderList();
-
-            progBar.style.width   = '100%';
-            bannerTxt.textContent = `✓ Removed ${n} dead account${n > 1 ? 's' : ''}`;
-            toast(`${n} dead account${n > 1 ? 's' : ''} deleted: ${deadNames}`, 'success');
-        } else {
-            bannerTxt.textContent = 'Failed to delete dead accounts';
-            toast(data?.message || 'Auto-delete failed.', 'error');
-        }
-    } catch (err) {
-        bannerTxt.textContent = 'Error deleting dead accounts';
-        toast('Error during auto-delete.', 'error');
-    }
-
-    setTimeout(() => {
-        banner.classList.remove('show');
-        progBar.style.background = '';
-    }, 4000);
 }
 
 /* ── Selection ── */
 function toggleSelect(id, e) {
     e.stopPropagation();
-    if (selected.has(id)) selected.delete(id); else selected.add(id);
+    if (selected.has(id)) selected.delete(id);
+    else selected.add(id);
     updateBulkBar();
     renderList();
 }
+
 function updateBulkBar() {
     const bar  = document.getElementById('bulkBar');
     const info = document.getElementById('bulkInfo');
@@ -813,9 +692,14 @@ function updateBulkBar() {
         bar.classList.remove('show');
     }
 }
-function clearSelection() { selected.clear(); updateBulkBar(); renderList(); }
 
-/* ── Filter ── */
+function clearSelection() {
+    selected.clear();
+    updateBulkBar();
+    renderList();
+}
+
+/* ── Filter switch ── */
 function switchFilter(el) {
     document.querySelectorAll('.ftab').forEach(t => t.classList.remove('active'));
     el.classList.add('active');
@@ -824,7 +708,7 @@ function switchFilter(el) {
     renderList();
 }
 
-/* ── Copy ── */
+/* ── Copy cookie ── */
 function copyCookie(id, e) {
     e.stopPropagation();
     const c = allCookies.find(x => x.id === id);
@@ -841,8 +725,13 @@ function promptDelete(id, name, e) {
     document.getElementById('modalCookieName').textContent = name;
     document.getElementById('deleteModal').classList.add('open');
 }
-function closeModal() { pendingDelId = null; document.getElementById('deleteModal').classList.remove('open'); }
-document.getElementById('deleteModal').addEventListener('click', function(e) { if (e.target === this) closeModal(); });
+function closeModal() {
+    pendingDelId = null;
+    document.getElementById('deleteModal').classList.remove('open');
+}
+document.getElementById('deleteModal').addEventListener('click', function(e) {
+    if (e.target === this) closeModal();
+});
 
 async function confirmDelete() {
     if (!pendingDelId) return;
@@ -860,7 +749,9 @@ async function confirmDelete() {
     if (data?.success) {
         allCookies = allCookies.filter(c => c.id !== id);
         selected.delete(id);
-        updateStats(); updateBulkBar(); renderList();
+        updateStats();
+        updateBulkBar();
+        renderList();
         toast('Cookie deleted.');
     } else {
         toast(data?.message || 'Failed to delete.', 'error');
@@ -873,31 +764,34 @@ async function bulkDelete() {
     const ids  = Array.from(selected);
     const data = await apiFetch('/api/user/cookies/delete-multiple', {
         method: 'POST',
-        body  : JSON.stringify({ cookieIds: ids })
+        body:   JSON.stringify({ cookieIds: ids })
     });
     if (data?.success) {
         allCookies = allCookies.filter(c => !ids.includes(c.id));
         selected.clear();
-        updateStats(); updateBulkBar(); renderList();
+        updateStats();
+        updateBulkBar();
+        renderList();
         toast(`${data.deletedCount} cookie${data.deletedCount > 1 ? 's' : ''} deleted.`);
     } else {
         toast(data?.message || 'Failed to delete.', 'error');
     }
 }
 
-/* ── Add cookie ── */
+/* ── Clear add messages ── */
 function clearAddMsgs() {
     document.getElementById('addError').classList.remove('visible');
     document.getElementById('addSuccess').classList.remove('visible');
 }
 
+/* ── Add cookie ── */
 async function addCookie() {
     const input   = document.getElementById('cookieInput');
     const btn     = document.getElementById('addBtn');
     const content = document.getElementById('addBtnContent');
     const cookie  = input.value.trim();
-
     clearAddMsgs();
+
     if (!cookie) {
         document.getElementById('addErrorText').textContent = 'Please paste a cookie string.';
         document.getElementById('addError').classList.add('visible');
@@ -905,15 +799,12 @@ async function addCookie() {
         return;
     }
 
-    btn.disabled = true;
-    content.innerHTML = SPINNER;
+    btn.disabled       = true;
+    content.innerHTML  = SPINNER;
 
-    const data = await apiFetch('/api/user/cookies', {
-        method: 'POST',
-        body  : JSON.stringify({ cookie })
-    });
+    const data = await apiFetch('/api/user/cookies', { method: 'POST', body: JSON.stringify({ cookie }) });
 
-    btn.disabled = false;
+    btn.disabled      = false;
     content.innerHTML = `<span style="display:inline-flex;align-items:center;gap:6px;"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>Add Cookie</span>`;
 
     if (data?.success) {
@@ -931,11 +822,11 @@ async function addCookie() {
 /* ── Load cookies ── */
 async function loadCookies() {
     const data = await apiFetch('/api/user/cookies');
-    removeSkeleton();
+    document.getElementById('listSkeleton')?.remove();
 
     if (!data || !data.success) {
         toast('Failed to load cookies.', 'error');
-        document.getElementById('cookieList').innerHTML = `<div class="empty-state"><div class="empty-title">Failed to load</div><div class="empty-sub">Check your connection and refresh</div></div>`;
+        document.getElementById('cookieList').innerHTML = `<div class="empty-state"><span>Failed to load cookies.</span></div>`;
         return;
     }
 
@@ -944,12 +835,9 @@ async function loadCookies() {
     renderList();
 }
 
-/* ── Keyboard shortcuts ── */
-document.getElementById('cookieInput').addEventListener('keydown', e => {
+/* ── Ctrl+Enter to add ── */
+document.getElementById('cookieInput').addEventListener('keydown', function(e) {
     if (e.key === 'Enter' && (e.ctrlKey || e.metaKey)) addCookie();
-});
-document.addEventListener('keydown', e => {
-    if (e.key === 'Escape') closeModal();
 });
 
 /* ── Init ── */
